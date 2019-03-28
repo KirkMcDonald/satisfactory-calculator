@@ -22,6 +22,7 @@ class Header {
 export function displayItems(spec, totals) {
     let headers = [
         new Header("items/" + spec.format.rateName, 2),
+        new Header("belts", 2),
         new Header("buildings", 2),
     ]
     // null item to represent the header when we do the join.
@@ -49,6 +50,7 @@ export function displayItems(spec, totals) {
         .data(items)
         .enter().append("tr")
             .classed("display-row", true)
+    // items/m
     row.append("td")
         .append("img")
             .classed("icon", true)
@@ -60,6 +62,21 @@ export function displayItems(spec, totals) {
         .classed("right-align", true)
         .append("tt")
             .text(d => spec.format.alignRate(d.rate))
+    // belts
+    let beltCell = row.append("td")
+        .classed("pad", true)
+    beltCell.append("img")
+        .classed("icon", true)
+        .attr("src", "images/" + spec.belt.name + ".png")
+        .attr("width", 32)
+        .attr("height", 32)
+        .attr("title", spec.belt.name)
+    beltCell.append(d => new Text(" \u00d7"))
+    row.append("td")
+        .classed("right-align", true)
+        .append("tt")
+            .text(d => spec.format.alignCount(spec.getBeltCount(d.rate)))
+    // buildings
     let buildingCell = row.append("td")
         .classed("pad", true)
     buildingCell.append("img")

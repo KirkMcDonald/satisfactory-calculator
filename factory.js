@@ -35,15 +35,18 @@ class FactorySpecification {
         this.items = null
         this.recipes = null
         this.buildings = null
+        this.belts = null
 
         this.buildTargets = []
 
         // Map resource recipe to {miner, purity}
         this.minerSettings = new Map()
 
+        this.belt = null
+
         this.format = new Formatter()
     }
-    setData(items, recipes, buildings) {
+    setData(items, recipes, buildings, belts) {
         this.items = items
         this.recipes = recipes
         this.buildings = new Map()
@@ -55,6 +58,8 @@ class FactorySpecification {
             }
             category.push(building)
         }
+        this.belts = belts
+        this.belt = belts.get("belt1")
         for (let [recipeKey, recipe] of recipes) {
             if (minerCategories.has(recipe.category)) {
                 let miners = this.buildings.get(recipe.category)
@@ -80,6 +85,9 @@ class FactorySpecification {
     getCount(recipe, rate) {
         let building = this.getBuilding(recipe)
         return building.getCount(this, recipe, rate)
+    }
+    getBeltCount(rate) {
+        return rate.div(this.belt.rate)
     }
     addTarget(itemKey) {
         if (itemKey === undefined) {
