@@ -19,3 +19,14 @@ export function plusHandler() {
     spec.addTarget()
     spec.updateSolution()
 }
+
+export function clickTab(tabName) {
+    d3.selectAll(".tab")
+        .style("display", "none")
+    d3.selectAll(".tab_button")
+        .classed("active", false)
+    d3.select("#" + tabName + "_tab")
+        .style("display", "block")
+    d3.select("#" + tabName + "_button")
+        .classed("active", true)
+}

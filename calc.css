@@ -41,6 +41,9 @@ input:focus, select:focus {
     border-color: var(--accent);
     outline: none;
 }
+.right-align {
+    text-align: right;
+}
 button.ui {
     color: var(--accent);
     background: linear-gradient(to bottom, var(--light), var(--medium));
@@ -53,6 +56,10 @@ button.ui:active {
 button.ui:focus {
     border-color: var(--accent);
     outline: none;
+}
+img.icon {
+    display: inline-block;
+    vertical-align: middle;
 }
 /* build targets */
 .targetButton {
@@ -76,7 +83,37 @@ label.selected {
     font-weight: bold;
     color: var(--bright);
 }
-
+/* tabs */
+div.tabs {
+    overflow: hidden;
+}
+div.tabs button.tab_button {
+    color: var(--accent);
+    background-color: inherit;
+    border-top-left-radius: 0.25em;
+    border-top-right-radius: 0.25em;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0.5em;
+}
+div.tabs button.tab_button:hover {
+    background-color: var(--medium);
+}
+div.tabs button.active, div.tabs button.active:hover {
+    color: var(--bright);
+    background-color: var(--main);
+}
+div.tab {
+    display: none;
+    padding: 1em;
+    background-color: var(--main);
+}
+/* visualizer */
+div.graph {
+    min-width: max-content;
+}
 g.node rect {
     stroke: var(--foreground);
     stroke-width: 1px;
@@ -85,4 +122,15 @@ g text {
     stroke: none;
     fill: var(--foreground);
     font: 12px sans-serif;
+}
+/* items tab */
+#totals {
+    border-collapse: collapse;
+}
+tr.display-row td.pad, th.pad {
+    padding-left: 1em;
+}
+tr.display-row td {
+    padding-top: 8px;
+    padding-bottom: 8px;
 }

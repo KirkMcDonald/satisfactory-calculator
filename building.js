@@ -20,12 +20,20 @@ class Building {
         this.power = power
         this.max = max
     }
+    getCount(spec, recipe, rate) {
+        let count = rate.mul(recipe.time)
+        return count
+    }
 }
 
 class Miner extends Building {
     constructor(name, category, power, baseRate) {
         super(name, category, power, null)
         this.baseRate = baseRate
+    }
+    getCount(spec, recipe, rate) {
+        let purity = spec.getResourcePurity(recipe)
+        return rate.div(this.baseRate.mul(purity.factor))
     }
 }
 
@@ -44,7 +52,7 @@ export function getBuildings(data) {
             d.name,
             d.category,
             Rational.from_float(d.power),
-            d.base_rate,
+            Rational.from_float(d.base_rate).div(Rational.from_float(60)),
         ))
     }
     return buildings

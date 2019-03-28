@@ -19,9 +19,10 @@
         var handlers = {}
     </script>
     <script type="module">
-        import { plusHandler } from "./events.js"
+        import { plusHandler, clickTab } from "./events.js"
         import { init } from "./init.js"
         handlers.plusHandler = plusHandler
+        handlers.clickTab = clickTab
         handlers.init = init
     </script>
 </head>
@@ -47,6 +48,18 @@ limitations under the License.-->
                     onclick="handlers.plusHandler()">+</button>
         </li>
     </ul>
-    <svg id="graph"><g /></svg>
+
+    <div class="tabs">
+        <button class="tab_button" id="graph_button" onclick="handlers.clickTab('graph')">Visualize</button>
+        <button class="tab_button" id="totals_button" onclick="handlers.clickTab('totals')">Items</button>
+    </div>
+
+    <div id="graph_tab" class="tab graph">
+        <svg id="graph"><g /></svg>
+    </div>
+
+    <div id="totals_tab" class="tab">
+        <table id="totals"></table>
+    </div>
 </body>
 </html>

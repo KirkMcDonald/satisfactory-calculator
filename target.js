@@ -93,8 +93,8 @@ export class BuildTarget {
             .node()
 
         this.rateLabel = element.append("label")
-            .text(" Items/minute: ")
             .node()
+        this.setRateLabel()
 
         this.rateInput = element.append("input")
             .on("change", changeRateHandler(this))
@@ -104,19 +104,23 @@ export class BuildTarget {
             .attr("title", "Enter a value to specify the rate. The number of buildings will be determined based on the rate.")
             .node()
     }
+    setRateLabel() {
+        this.rateLabel.textContent = " Items/" + spec.format.longRate + ": "
+    }
     getRate() {
+        this.setRateLabel()
         let rate = zero
         // TODO: Alternate recipes.
         let recipe = this.item.recipes[0]
-        let baseRate = Rational.from_float(60).div(recipe.time).mul(recipe.gives(this.item))
+        let baseRate = recipe.time.mul(recipe.gives(this.item)).reciprocate()
         if (this.changedBuilding) {
             rate = baseRate.mul(this.buildings)
-            this.rateInput.value = rate.toDecimal(3)
+            this.rateInput.value = spec.format.rate(rate)
         } else {
             rate = this.rate
             var count = rate.div(baseRate)
-            this.buildingInput.value = count.toDecimal(1)
-            this.rateInput.value = rate.toDecimal(3)
+            this.buildingInput.value = spec.format.count(count)
+            this.rateInput.value = spec.format.rate(rate)
         }
         return rate
     }
@@ -137,7 +141,7 @@ export class BuildTarget {
         this.buildingLabel.classList.remove(SELECTED_INPUT)
         this.rateLabel.classList.add(SELECTED_INPUT)
         this.buildings = zero
-        this.rate = Rational.from_string(this.rateInput.value)
+        this.rate = Rational.from_string(this.rateInput.value).div(spec.format.rateFactor)
         this.buildingInput.value = ""
     }
     setRate(rate) {

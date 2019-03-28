@@ -11,6 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
+import { spec } from "./factory.js"
 import { Rational, zero } from "./rational.js"
 import { Ingredient } from "./recipe.js"
 
@@ -42,10 +43,7 @@ function makeGraph(totals, targets) {
     nodeMap.set("output", nodes[0])
 
     for (let [recipe, rate] of totals.rates) {
-        let count = zero
-        if (recipe.time && !recipe.time.isZero()) {
-            count = rate.div(Rational.from_float(60).div(recipe.time))
-        }
+        let count = spec.getCount(recipe, rate)
         let node = {
             "name": recipe.name,
             "ingredients": recipe.ingredients,
@@ -170,7 +168,7 @@ export function renderTotals(totals, targets) {
             .classed("node", true)
 
     rects.append("title")
-        .text(d => `${d.name}\nBuildings \u00d7 ${d.count.toUpDecimal(1)}`)
+        .text(d => `${d.name}\nBuildings \u00d7 ${spec.format.count(d.count)}`)
     rects.append("rect")
         .attr("x", d => d.x0)
         .attr("y", d => d.y0)
@@ -200,7 +198,7 @@ export function renderTotals(totals, targets) {
         .attr("stroke-width", d => Math.max(1, d.width))
 
     link.append("title")
-        .text(d => `${d.source.name} \u2192 ${d.target.name}\n${d.rate.toDecimal(3)}`)
+        .text(d => `${d.source.name} \u2192 ${d.target.name}\n${spec.format.rate(d.rate)}`)
 
     // Building count labels
     svg.append("g")
@@ -212,7 +210,7 @@ export function renderTotals(totals, targets) {
             .attr("y", d => (d.y0 + d.y1) / 2)
             .attr("dy", "0.35em")
             .attr("text-anchor", "start")
-            .text(d => d.count.isZero() ? "" : "\u00d7 " + d.count.toUpDecimal(1))
+            .text(d => d.count.isZero() ? "" : "\u00d7 " + spec.format.count(d.count))
 
     // Link rate labels
     svg.append("g")
@@ -223,6 +221,6 @@ export function renderTotals(totals, targets) {
             .attr("y", d => d.y0)
             .attr("dy", "0.35em")
             .attr("text-anchor", "start")
-            .text(d => d.rate.toDecimal(3) + "/m")
+            .text(d => spec.format.rate(d.rate) + "/" + spec.format.rateName)
 }
 
