@@ -1,0 +1,88 @@
+:root {
+    /* main background, dropdown backgrounds */
+    --dark: #171717;
+    /* tooltip background; should be same as dark, but with alpha channel */
+    --dark-overlay: rgba(23, 23, 23, 0.8);
+    /* visualization node backgrounds, button backgrounds */
+    --medium: #212427;
+    /* background of main visual area */
+    --main: #272b30;
+    /* input field backgrounds, collapsed dropdown borders */
+    --light: #3a3f44;
+
+    /* main foreground text color */
+    --foreground: #c8c8c8;
+    /* makes things stand out */
+    --accent: #ff7200;
+    /* slightly brighter than main foreground color */
+    --bright: #f1fff2;
+}
+/* top-level/shared elements */
+body {
+    font-family: sans-serif;
+    color: var(--foreground);
+    background-color: var(--dark);
+}
+a {
+    text-decoration: none;
+    color: var(--accent);
+}
+a:active {
+    color: var(--bright);
+}
+input, select {
+    color: var(--foreground);
+    background-color: var(--light);
+    padding: 0.25em;
+    border: 1px solid var(--light);
+    border-radius: 0.4em;
+}
+input:focus, select:focus {
+    border-color: var(--accent);
+    outline: none;
+}
+button.ui {
+    color: var(--accent);
+    background: linear-gradient(to bottom, var(--light), var(--medium));
+    border: 2px outset var(--light);
+    border-radius: 0.4em;
+}
+button.ui:active {
+    border-style: inset;
+}
+button.ui:focus {
+    border-color: var(--accent);
+    outline: none;
+}
+/* build targets */
+.targetButton {
+    height: 2em;
+    width: 2em;
+    padding: 0;
+    text-align: center;
+    font-weight: bold;
+    font-family: sans-serif;
+    margin-right: 0.5em;
+}
+ul#targets {
+    list-style-type: none;
+    margin-top: 0;
+}
+ul#targets li {
+    margin: 0.25em;
+    border-radius: 0.5em;
+}
+label.selected {
+    font-weight: bold;
+    color: var(--bright);
+}
+
+g.node rect {
+    stroke: var(--foreground);
+    stroke-width: 1px;
+}
+g text {
+    stroke: none;
+    fill: var(--foreground);
+    font: 12px sans-serif;
+}

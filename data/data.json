@@ -1,0 +1,759 @@
+{
+    "buildings": [
+        {
+            "name": "Constructor",
+            "key_name": "constructor",
+            "category": "crafting1",
+            "power": 4,
+            "max": 1
+        },
+        {
+            "name": "Assembler",
+            "key_name": "assembler",
+            "category": "crafting2",
+            "power": 15,
+            "max": 2
+        },
+        {
+            "name": "Manufacturer",
+            "key_name": "manufacturer",
+            "category": "crafting3",
+            "power": 55,
+            "max": 4
+        },
+        {
+            "name": "Smelter",
+            "key_name": "smelter",
+            "category": "smelting1",
+            "power": 4,
+            "max": 1
+        },
+        {
+            "name": "Foundry",
+            "key_name": "foundry",
+            "category": "smelting2",
+            "power": 16,
+            "max": 2
+        },
+        {
+            "name": "Oil Refinery",
+            "key_name": "oil-refinery",
+            "category": "refining",
+            "power": 50,
+            "max": 1
+        }
+    ],
+    "miners": [
+        {
+            "name": "Miner MK1",
+            "key_name": "miner-mk1",
+            "category": "mineral",
+            "base_rate": 60,
+            "power": 5
+        },
+        {
+            "name": "Miner MK2",
+            "key_name": "miner-mk2",
+            "category": "mineral",
+            "base_rate": 120,
+            "power": 12
+        },
+        {
+            "name": "Oil Pump",
+            "key_name": "oil-pump",
+            "category": "oil",
+            "base_rate": 120,
+            "power": 40
+        }
+    ],
+    "items": [
+        {
+            "name": "Iron Ore",
+            "key_name": "iron-ore",
+            "stack_size": 100
+        },
+        {
+            "name": "Copper Ore",
+            "key_name": "copper-ore",
+            "stack_size": 100
+        },
+        {
+            "name": "Coal",
+            "key_name": "coal",
+            "stack_size": 100
+        },
+        {
+            "name": "Iron Ingot",
+            "key_name": "iron-ingot",
+            "stack_size": 100
+        },
+        {
+            "name": "Copper Ingot",
+            "key_name": "copper-ingot",
+            "stack_size": 100
+        },
+        {
+            "name": "Steel Ingot",
+            "key_name": "steel-ingot",
+            "stack_size": 100
+        },
+        {
+            "name": "Iron Plate",
+            "key_name": "iron-plate",
+            "stack_size": 100
+        },
+        {
+            "name": "Iron Rod",
+            "key_name": "iron-rod",
+            "stack_size": 100
+        },
+        {
+            "name": "Wire",
+            "key_name": "wire",
+            "stack_size": 500
+        },
+        {
+            "name": "Cable",
+            "key_name": "cable",
+            "stack_size": 100
+        },
+        {
+            "name": "Biomass",
+            "key_name": "biomass",
+            "stack_size": 200
+        },
+        {
+            "name": "Concrete",
+            "key_name": "concrete",
+            "stack_size": 100
+        },
+        {
+            "name": "Leaves",
+            "key_name": "leaves",
+            "stack_size": 500
+        },
+        {
+            "name": "Limestone",
+            "key_name": "limestone",
+            "stack_size": 100
+        },
+        {
+            "name": "Screw",
+            "key_name": "screw",
+            "stack_size": 500
+        },
+        {
+            "name": "Wood",
+            "key_name": "wood",
+            "stack_size": 100
+        },
+        {
+            "name": "Alien Carapace",
+            "key_name": "alien-carapace",
+            "stack_size": 100
+        },
+        {
+            "name": "Mycelia",
+            "key_name": "mycelia",
+            "stack_size": 200
+        },
+        {
+            "name": "Biofuel",
+            "key_name": "biofuel",
+            "stack_size": 200
+        },
+        {
+            "name": "Color Cartridge",
+            "key_name": "color-cartridge",
+            "stack_size": 100
+        },
+        {
+            "name": "Steel Beam",
+            "key_name": "steel-beam",
+            "stack_size": 100
+        },
+        {
+            "name": "Steel Pipe",
+            "key_name": "steel-pipe",
+            "stack_size": 100
+        },
+        {
+            "name": "Reinforced Iron Plate",
+            "key_name": "reinforced-iron-plate",
+            "stack_size": 100
+        },
+        {
+            "name": "Rotor",
+            "key_name": "rotor",
+            "stack_size": 100
+        },
+        {
+            "name": "Modular Frame",
+            "key_name": "modular-frame",
+            "stack_size": 50
+        },
+        {
+            "name": "Encased Industrial Beam",
+            "key_name": "encased-industrial-beam",
+            "stack_size": 100
+        },
+        {
+            "name": "Stator",
+            "key_name": "stator",
+            "stack_size": 100
+        },
+        {
+            "name": "Motor",
+            "key_name": "motor",
+            "stack_size": 50
+        },
+        {
+            "name": "Circuit Board",
+            "key_name": "circuit-board",
+            "stack_size": 100
+        },
+        {
+            "name": "Plastic",
+            "key_name": "plastic",
+            "stack_size": 100
+        },
+        {
+            "name": "Crude Oil",
+            "key_name": "crude-oil",
+            "stack_size": 100
+        },
+        {
+            "name": "Fuel",
+            "key_name": "fuel",
+            "stack_size": 100
+        },
+        {
+            "name": "Rubber",
+            "key_name": "rubber",
+            "stack_size": 100
+        },
+        {
+            "name": "Heavy Modular Frame",
+            "key_name": "heavy-modular-frame",
+            "stack_size": 100
+        },
+        {
+            "name": "Computer",
+            "key_name": "computer",
+            "stack_size": 100
+        },
+        {
+            "name": "Caterium Ore",
+            "key_name": "caterium-ore",
+            "stack_size": 100
+        },
+        {
+            "name": "Caterium Ingot",
+            "key_name": "caterium-ingot",
+            "stack_size": 100
+        },
+        {
+            "name": "Quickwire",
+            "key_name": "quickwire",
+            "stack_size": 500
+        },
+        {
+            "name": "Supercomputer",
+            "key_name": "supercomputer",
+            "stack_size": 100
+        },
+        {
+            "name": "High-Speed Connector",
+            "key_name": "high-speed-connector",
+            "stack_size": 100
+        },
+        {
+            "name": "A.I. Limiter",
+            "key_name": "ai-limiter",
+            "stack_size": 100
+        },
+        {
+            "name": "Fabric",
+            "key_name": "fabric",
+            "stack_size": 100
+        },
+        {
+            "name": "Filter",
+            "key_name": "filter",
+            "stack_size": 100
+        },
+        {
+            "name": "Flower Petals",
+            "key_name": "flower-petals",
+            "stack_size": 200
+        }
+    ],
+    "recipes": [
+        {
+            "name": "Iron Ingot",
+            "key_name": "iron-ingot",
+            "category": "smelting1",
+            "time": 2,
+            "ingredients": [
+                ["iron-ore", 1]
+            ],
+            "product": ["iron-ingot", 1]
+        },
+        {
+            "name": "Copper Ingot",
+            "key_name": "copper-ingot",
+            "category": "smelting1",
+            "time": 2,
+            "ingredients": [
+                ["copper-ore", 1]
+            ],
+            "product": ["copper-ingot", 1]
+        },
+        {
+            "name": "Steel Ingot",
+            "key_name": "steel-ingot",
+            "category": "smelting2",
+            "time": 4,
+            "ingredients": [
+                ["iron-ore", 3],
+                ["coal", 3]
+            ],
+            "product": ["steel-ingot", 2]
+        },
+        {
+            "name": "Iron Plate",
+            "key_name": "iron-plate",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["iron-ingot", 2]
+            ],
+            "product": ["iron-plate", 1]
+        },
+        {
+            "name": "Iron Rod",
+            "key_name": "iron-rod",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["iron-ingot", 1]
+            ],
+            "product": ["iron-rod", 1]
+        },
+        {
+            "name": "Wire",
+            "key_name": "wire",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["copper-ingot", 1]
+            ],
+            "product": ["wire", 3]
+        },
+        {
+            "name": "Cable",
+            "key_name": "cable",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["wire", 2]
+            ],
+            "product": ["cable", 1]
+        },
+        {
+            "name": "Biomass",
+            "key_name": "biomass-from-leaves",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["leaves", 10]
+            ],
+            "product": ["biomass", 6]
+        },
+        {
+            "name": "Concrete",
+            "key_name": "concrete",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["limestone", 3]
+            ],
+            "product": ["concrete", 1]
+        },
+        {
+            "name": "Screw",
+            "key_name": "screw",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["iron-rod", 1]
+            ],
+            "product": ["screw", 6]
+        },
+        {
+            "name": "Biomass",
+            "key_name": "biomass-from-wood",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["wood", 5]
+            ],
+            "product": ["biomass", 25]
+        },
+        {
+            "name": "Biomass",
+            "key_name": "biomass-from-alien-carapace",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["alien-carapace", 1]
+            ],
+            "product": ["biomass", 100]
+        },
+        {
+            "name": "Biomass",
+            "key_name": "biomass-from-mycelia",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["mycelia", 10]
+            ],
+            "product": ["biomass", 10]
+        },
+        {
+            "name": "Biofuel",
+            "key_name": "biofuel",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["biomass", 4]
+            ],
+            "product": ["biofuel", 2]
+        },
+        {
+            "name": "Color Cartridge",
+            "key_name": "color-cartridge",
+            "category": "crafting1",
+            "time": 40,
+            "ingredients": [
+                ["flower-petals", 25]
+            ],
+            "product": ["color-cartridge", 50]
+        },
+        {
+            "name": "Steel Beam",
+            "key_name": "steel-beam",
+            "category": "crafting1",
+            "time": 6,
+            "ingredients": [
+                ["steel-ingot", 3]
+            ],
+            "product": ["steel-beam", 1]
+        },
+        {
+            "name": "Steel Pipe",
+            "key_name": "steel-pipe",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["steel-ingot", 1]
+            ],
+            "product": ["steel-pipe", 1]
+        },
+        {
+            "name": "Reinforced Iron Plate",
+            "key_name": "reinforced-iron-plate",
+            "category": "crafting2",
+            "time": 12,
+            "ingredients": [
+                ["iron-plate", 4],
+                ["screw", 24]
+            ],
+            "product": ["reinforced-iron-plate", 1]
+        },
+        {
+            "name": "Alternate: Reinforced Iron Plate",
+            "key_name": "alt-reinforced-iron-plate",
+            "category": "crafting2",
+            "time": 24,
+            "ingredients": [
+                ["iron-plate", 10],
+                ["screw", 24]
+            ],
+            "product": ["reinforced-iron-plate", 3]
+        },
+        {
+            "name": "Alternate: Stitched Iron Plate",
+            "key_name": "alt-stitched-iron-plate",
+            "category": "crafting2",
+            "time": 24,
+            "ingredients": [
+                ["iron-plate", 6],
+                ["wire", 30]
+            ],
+            "product": ["reinforced-iron-plate", 3]
+        },
+        {
+            "name": "Rotor",
+            "key_name": "rotor",
+            "category": "crafting2",
+            "time": 10,
+            "ingredients": [
+                ["iron-rod", 3],
+                ["screw", 22]
+            ],
+            "product": ["rotor", 1]
+        },
+        {
+            "name": "Modular Frame",
+            "key_name": "modular-frame",
+            "category": "crafting2",
+            "time": 15,
+            "ingredients": [
+                ["reinforced-iron-plate", 3],
+                ["iron-rod", 6]
+            ],
+            "product": ["modular-frame", 1]
+        },
+        {
+            "name": "Encased Industrial Beam",
+            "key_name": "encased-industrial-beam",
+            "category": "crafting2",
+            "time": 15,
+            "ingredients": [
+                ["steel-beam", 4],
+                ["concrete", 5]
+            ],
+            "product": ["encased-industrial-beam", 1]
+        },
+        {
+            "name": "Alternate: Encased Industrial Beam",
+            "key_name": "alt-encased-industrial-beam",
+            "category": "crafting2",
+            "time": 30,
+            "ingredients": [
+                ["steel-pipe", 18],
+                ["concrete", 10]
+            ],
+            "product": ["encased-industrial-beam", 3]
+        },
+        {
+            "name": "Stator",
+            "key_name": "stator",
+            "category": "crafting2",
+            "time": 10,
+            "ingredients": [
+                ["steel-pipe", 3],
+                ["wire", 10]
+            ],
+            "product": ["stator", 1]
+        },
+        {
+            "name": "Motor",
+            "key_name": "motor",
+            "category": "crafting2",
+            "time": 12,
+            "ingredients": [
+                ["rotor", 2],
+                ["stator", 2]
+            ],
+            "product": ["motor", 1]
+        },
+        {
+            "name": "Circuit Board",
+            "key_name": "circuit-board",
+            "category": "crafting2",
+            "time": 12,
+            "ingredients": [
+                ["wire", 12],
+                ["plastic", 6]
+            ],
+            "product": ["circuit-board", 1]
+        },
+        {
+            "name": "Alternate: Quickwire Circuit Board",
+            "key_name": "alt-quickwire-circuit-board",
+            "category": "crafting2",
+            "time": 24,
+            "ingredients": [
+                ["plastic", 12],
+                ["quickwire", 32]
+            ],
+            "product": ["circuit-board", 3]
+        },
+        {
+            "name": "Plastic",
+            "key_name": "plastic",
+            "category": "refining",
+            "time": 8,
+            "ingredients": [
+                ["crude-oil", 4]
+            ],
+            "product": ["plastic", 3]
+        },
+        {
+            "name": "Fuel",
+            "key_name": "fuel",
+            "category": "refining",
+            "time": 8,
+            "ingredients": [
+                ["crude-oil", 8]
+            ],
+            "product": ["fuel", 5]
+        },
+        {
+            "name": "Rubber",
+            "key_name": "rubber",
+            "category": "refining",
+            "time": 8,
+            "ingredients": [
+                ["crude-oil", 4]
+            ],
+            "product": ["rubber", 4]
+        },
+        {
+            "name": "Heavy Modular Frame",
+            "key_name": "heavy-modular-frame",
+            "category": "crafting3",
+            "time": 30,
+            "ingredients": [
+                ["modular-frame", 5],
+                ["steel-pipe", 15],
+                ["encased-industrial-beam", 5],
+                ["screw", 90]
+            ],
+            "product": ["heavy-modular-frame", 1]
+        },
+        {
+            "name": "Alternate: Heavy Modular Frame",
+            "key_name": "alt-heavy-modular-frame",
+            "category": "crafting3",
+            "time": 64,
+            "ingredients": [
+                ["modular-frame", 8],
+                ["encased-industrial-beam", 10],
+                ["steel-pipe", 36],
+                ["concrete", 25]
+            ],
+            "product": ["heavy-modular-frame", 3]
+        },
+        {
+            "name": "Computer",
+            "key_name": "computer",
+            "category": "crafting3",
+            "time": 32,
+            "ingredients": [
+                ["circuit-board", 5],
+                ["cable", 12],
+                ["plastic", 18],
+                ["screw", 60]
+            ],
+            "product": ["computer", 1]
+        },
+        {
+            "name": "Caterium Ingot",
+            "key_name": "caterium-ingot",
+            "category": "smelting1",
+            "time": 4,
+            "ingredients": [
+                ["caterium-ore", 4]
+            ],
+            "product": ["caterium-ingot", 1]
+        },
+        {
+            "name": "Quickwire",
+            "key_name": "quickwire",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["caterium-ingot", 1]
+            ],
+            "product": ["quickwire", 4]
+        },
+        {
+            "name": "Supercomputer",
+            "key_name": "supercomputer",
+            "category": "crafting3",
+            "time": 32,
+            "ingredients": [
+                ["computer", 2],
+                ["ai-limiter", 2],
+                ["high-speed-connector", 3],
+                ["plastic", 21]
+            ],
+            "product": ["supercomputer", 1]
+        },
+        {
+            "name": "High-Speed Connector",
+            "key_name": "high-speed-connector",
+            "category": "crafting3",
+            "time": 24,
+            "ingredients": [
+                ["quickwire", 40],
+                ["cable", 10],
+                ["plastic", 6]
+            ],
+            "product": ["high-speed-connector", 1]
+        },
+        {
+            "name": "A.I. Limiter",
+            "key_name": "ai-limiter",
+            "category": "crafting2",
+            "time": 12,
+            "ingredients": [
+                ["circuit-board", 1],
+                ["quickwire", 18]
+            ],
+            "product": ["ai-limiter", 1]
+        },
+        {
+            "name": "Fabric",
+            "key_name": "fabric",
+            "category": "crafting2",
+            "time": 4,
+            "ingredients": [
+                ["mycelia", 1],
+                ["leaves", 2]
+            ],
+            "product": ["fabric", 1]
+        },
+        {
+            "name": "Filter",
+            "key_name": "filter",
+            "category": "crafting3",
+            "time": 8,
+            "ingredients": [
+                ["coal", 5],
+                ["rubber", 2],
+                ["fabric", 2]
+            ],
+            "product": ["filter", 1]
+        }
+    ],
+    "resources": [
+        {
+            "key_name": "iron-ore",
+            "category": "mineral"
+        },
+        {
+            "key_name": "copper-ore",
+            "category": "mineral"
+        },
+        {
+            "key_name": "coal",
+            "category": "mineral"
+        },
+        {
+            "key_name": "limestone",
+            "category": "mineral"
+        },
+        {
+            "key_name": "caterium-ore",
+            "category": "mineral"
+        },
+        {
+            "key_name": "crude-oil",
+            "category": "oil"
+        }
+    ]
+}
