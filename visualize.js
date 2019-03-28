@@ -24,8 +24,17 @@ const maxNodeHeight = 175
 
 function makeGraph(totals, targets) {
     let outputs = []
+    let rates = new Map()
     for (let target of targets) {
-        let ing = new Ingredient(target.item, target.getRate())
+        let rate = rates.get(target.item)
+        if (rate === undefined) {
+            rate = zero
+        }
+        rate = rate.add(target.getRate())
+        rates.set(target.item, rate)
+    }
+    for (let [item, rate] of rates) {
+        let ing = new Ingredient(item, rate)
         outputs.push(ing)
     }
     let nodes = [{"name": "output", "ingredients": outputs, "count": zero}]
@@ -98,7 +107,7 @@ export function renderTotals(totals, targets) {
     let maxRank = 0
     let ranks = new Map()
     let largestValue = zero
-    for (let [recipe, rank] of totals.ranks) {
+    for (let [recipe, rank] of totals.heights) {
         let rankList = ranks.get(rank)
         if (rankList === undefined) {
             rankList = []
@@ -117,9 +126,10 @@ export function renderTotals(totals, targets) {
     if (largestValue.isZero()) {
         return
     }
+    console.log(maxRank)
     // The width of the display is the number of ranks, times the width of each
     // rank, plus a small constant for the output node.
-    let width = (maxRank + 1) * columnWidth + nodeWidth
+    let width = maxRank * columnWidth + nodeWidth
     // The height of the display is normalized by the height of the tallest box
     // in the graph. We define it to be (approximately) maxNodeHeight pixels
     // high.
@@ -145,8 +155,8 @@ export function renderTotals(totals, targets) {
     let sankey = d3.sankey()
         .nodeWidth(nodeWidth)
         .nodePadding(nodePadding)
+        .nodeAlign(d3.sankeyRight)
         .extent([[10, 10], [width + 10, height + 10]])
-        .iterations(10)
     let {nodes, links} = sankey(data)
 
     let color = d3.scaleOrdinal(d3.schemeCategory10)

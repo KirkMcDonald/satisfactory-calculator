@@ -16,28 +16,23 @@ import { zero } from "./rational.js"
 export class Totals {
     constructor() {
         this.rates = new Map()
-        this.depth = 0
-        this.ranks = new Map()
-        this.highestRank = -1
+        this.heights = new Map()
     }
     add(recipe, rate) {
         this.rates.set(recipe, (this.rates.get(recipe) || zero).add(rate))
     }
-    updateRank(recipe, rank) {
-        if (rank > this.highestRank) {
-            this.highestRank = rank
-        }
-        let knownRank = this.ranks.get(recipe)
-        if (knownRank === undefined || knownRank < rank) {
-            this.ranks.set(recipe, rank)
+    updateHeight(recipe, height) {
+        let knownHeight = this.heights.get(recipe)
+        if (knownHeight === undefined || knownHeight < height) {
+            this.heights.set(recipe, height)
         }
     }
     combine(other) {
         for (let [recipe, rate] of other.rates) {
             this.add(recipe, rate)
         }
-        for (let [recipe, rank] of other.ranks) {
-            this.updateRank(recipe, rank)
+        for (let [recipe, height] of other.heights) {
+            this.updateHeight(recipe, height + 1)
         }
     }
 }

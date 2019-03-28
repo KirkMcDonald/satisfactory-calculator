@@ -37,7 +37,7 @@ export class Item {
             let subtotals = ing.item.produce(rate.mul(ing.amount))
             totals.combine(subtotals)
         }
-        totals.updateRank(recipe, totals.highestRank + 1)
+        totals.updateHeight(recipe, 0)
         return totals
     }
 }
