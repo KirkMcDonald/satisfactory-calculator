@@ -21,6 +21,7 @@ const SELECTED_INPUT = "selected"
 function itemHandler(target) {
     return function() {
         let itemKey = this.value
+        target.itemKey = itemKey
         target.item = spec.items.get(itemKey)
         spec.updateSolution()
     }
@@ -48,8 +49,9 @@ function changeRateHandler(target) {
 }
 
 export class BuildTarget {
-    constructor(index, item, items) {
+    constructor(index, itemKey, item, items) {
         this.index = index
+        this.itemKey = itemKey
         this.item = item
         this.changedBuilding = true
         this.buildings = one

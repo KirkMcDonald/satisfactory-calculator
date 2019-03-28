@@ -13,21 +13,41 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 import { getBuildings } from "./building.js"
 import { spec } from "./factory.js"
+import { loadSettings } from "./fragment.js"
 import { getItems } from "./item.js"
 import { getRecipes } from "./recipe.js"
 
-function loadData() {
+function loadData(settings) {
     d3.json("data/data.json").then(function(data) {
         let items = getItems(data)
         let recipes = getRecipes(data, items)
         let buildings = getBuildings(data)
         spec.setData(items, recipes, buildings)
 
-        spec.addTarget()
+        let targetSetting = settings.get("items")
+        if (targetSetting !== undefined && targetSetting !== "") {
+            let targets = targetSetting.split(",")
+            for (let targetString of targets) {
+                let parts = targetString.split(":")
+                let itemKey = parts[0]
+                let target = spec.addTarget(itemKey)
+                let type = parts[1]
+                if (type === "f") {
+                    target.setBuildings(parts[2])
+                } else if (type === "r") {
+                    target.setRate(parts[2])
+                } else {
+                    throw new Error("unknown target type")
+                }
+            }
+        } else {
+            spec.addTarget()
+        }
         spec.updateSolution()
     })
 }
 
 export function init() {
-    loadData()
+    let settings = loadSettings(window.location.hash)
+    loadData(settings)
 }

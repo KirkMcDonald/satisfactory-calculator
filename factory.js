@@ -11,6 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
+import { formatSettings } from "./fragment.js"
 import { BuildTarget } from "./target.js"
 import { Totals } from "./totals.js"
 import { renderTotals } from "./visualize.js"
@@ -36,7 +37,7 @@ class FactorySpecification {
             itemKey = DEFAULT_ITEM_KEY
         }
         let item = this.items.get(itemKey)
-        let target = new BuildTarget(this.buildTargets.length, item, this.items)
+        let target = new BuildTarget(this.buildTargets.length, itemKey, item, this.items)
         this.buildTargets.push(target)
         d3.select("#targets").insert(() => target.element, "#plusButton")
         return target
@@ -59,6 +60,8 @@ class FactorySpecification {
     updateSolution() {
         let totals = this.solve()
         renderTotals(totals, this.buildTargets)
+
+        window.location.hash = "#" + formatSettings()
     }
 }
 
