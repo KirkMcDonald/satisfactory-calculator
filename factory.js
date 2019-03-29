@@ -14,7 +14,7 @@ limitations under the License.*/
 import { Formatter } from "./align.js"
 import { displayItems } from "./display.js"
 import { formatSettings } from "./fragment.js"
-import { Rational, half, one } from "./rational.js"
+import { Rational, zero, half, one } from "./rational.js"
 import { BuildTarget } from "./target.js"
 import { Totals } from "./totals.js"
 import { renderTotals } from "./visualize.js"
@@ -82,13 +82,24 @@ class FactorySpecification {
         }
     }
     getBuilding(recipe) {
-        if (this.minerSettings.has(recipe)) {
+        if (recipe.category === null) {
+            return null
+        } else if (this.minerSettings.has(recipe)) {
             return this.minerSettings.get(recipe).miner
         } else {
             // NOTE: Only miners offer alternative buildings. May need to
             // revisit this if higher tiers of constructors are added.
             return this.buildings.get(recipe.category)[0]
         }
+    }
+    // Returns the recipe-rate at which a single building can produce a recipe.
+    // Returns null for recipes that do not have a building.
+    getRecipeRate(recipe) {
+        let building = this.getBuilding(recipe)
+        if (building === null) {
+            return null
+        }
+        return building.getRecipeRate(this, recipe)
     }
     getResourcePurity(recipe) {
         return this.minerSettings.get(recipe).purity
@@ -98,6 +109,9 @@ class FactorySpecification {
     }
     getCount(recipe, rate) {
         let building = this.getBuilding(recipe)
+        if (building === null) {
+            return zero
+        }
         return building.getCount(this, recipe, rate)
     }
     getBeltCount(rate) {

@@ -69,5 +69,10 @@ export function getRecipes(data, items) {
         let item = items.get(d.key_name)
         recipes.set(d.key_name, new ResourceRecipe(item, d.category))
     }
+    for (let [itemKey, item] of items) {
+        if (item.recipes.length === 0) {
+            recipes.set(itemKey, new ResourceRecipe(item, null))
+        }
+    }
     return recipes
 }

@@ -77,7 +77,8 @@ export function displayItems(spec, totals) {
         .append("tt")
             .text(d => spec.format.alignCount(spec.getBeltCount(d.rate)))
     // buildings
-    let buildingCell = row.append("td")
+    let buildingRow = row.filter(d => d.building !== null)
+    let buildingCell = buildingRow.append("td")
         .classed("pad", true)
     buildingCell.append("img")
         .classed("icon", true)
@@ -86,7 +87,7 @@ export function displayItems(spec, totals) {
         .attr("height", 32)
         .attr("title", d => d.building.name)
     buildingCell.append(d => new Text(" \u00d7"))
-    row.append("td")
+    buildingRow.append("td")
         .classed("right-align", true)
         .append("tt")
             .text(d => spec.format.alignCount(d.count))

@@ -25,6 +25,9 @@ class Building {
         let count = rate.mul(recipe.time)
         return count
     }
+    getRecipeRate(spec, recipe) {
+        return recipe.time.reciprocate()
+    }
 }
 
 class Miner extends Building {
@@ -33,8 +36,11 @@ class Miner extends Building {
         this.baseRate = baseRate
     }
     getCount(spec, recipe, rate) {
+        return rate.div(this.getRecipeRate(spec, recipe))
+    }
+    getRecipeRate(spec, recipe) {
         let purity = spec.getResourcePurity(recipe)
-        return rate.div(this.baseRate.mul(purity.factor))
+        return this.baseRate.mul(purity.factor)
     }
 }
 

@@ -37,7 +37,7 @@ export function formatSettings() {
         if (target.changedBuilding) {
             targetString = `${target.itemKey}:f:${target.buildingInput.value}`
         } else {
-            targetString = `${target.itemKey}:r:${target.rate.toString()}`
+            targetString = `${target.itemKey}:r:${target.rate.mul(spec.format.rateFactor).toString()}`
         }
         targetStrings.push(targetString)
     }

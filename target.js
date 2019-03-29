@@ -112,14 +112,24 @@ export class BuildTarget {
         let rate = zero
         // TODO: Alternate recipes.
         let recipe = this.item.recipes[0]
-        let baseRate = recipe.time.mul(recipe.gives(this.item)).reciprocate()
+        if (recipe.category === null && this.changedBuilding) {
+            this.rateChanged()
+        }
+        let baseRate = spec.getRecipeRate(recipe)
+        if (baseRate !== null) {
+            baseRate = baseRate.mul(recipe.gives(this.item))
+        }
         if (this.changedBuilding) {
             rate = baseRate.mul(this.buildings)
             this.rateInput.value = spec.format.rate(rate)
         } else {
             rate = this.rate
-            var count = rate.div(baseRate)
-            this.buildingInput.value = spec.format.count(count)
+            if (baseRate !== null) {
+                let count = rate.div(baseRate)
+                this.buildingInput.value = spec.format.count(count)
+            } else {
+                this.buildingInput.value = "N/A"
+            }
             this.rateInput.value = spec.format.rate(rate)
         }
         return rate

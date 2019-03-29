@@ -38,16 +38,18 @@ function makeGraph(totals, targets) {
         let ing = new Ingredient(item, rate)
         outputs.push(ing)
     }
-    let nodes = [{"name": "output", "ingredients": outputs, "count": zero}]
+    let nodes = [{"name": "output", "ingredients": outputs, "building": null, "count": zero}]
     let nodeMap = new Map()
     nodeMap.set("output", nodes[0])
 
     for (let [recipe, rate] of totals.rates) {
+        let building = spec.getBuilding(recipe)
         let count = spec.getCount(recipe, rate)
         let node = {
             "name": recipe.name,
             "ingredients": recipe.ingredients,
             "recipe": recipe,
+            "building": building,
             "count": count,
         }
         nodes.push(node)
@@ -167,7 +169,7 @@ export function renderTotals(totals, targets) {
             .classed("node", true)
 
     rects.append("title")
-        .text(d => `${d.name}\nBuildings \u00d7 ${spec.format.count(d.count)}`)
+        .text(d => d.name + (d.count.isZero() ? "" : `\n${d.building.name} \u00d7 ${spec.format.count(d.count)}`))
     rects.append("rect")
         .attr("x", d => d.x0)
         .attr("y", d => d.y0)
