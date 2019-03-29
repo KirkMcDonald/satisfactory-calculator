@@ -38,7 +38,13 @@ function makeGraph(totals, targets) {
         let ing = new Ingredient(item, rate)
         outputs.push(ing)
     }
-    let nodes = [{"name": "output", "ingredients": outputs, "building": null, "count": zero}]
+    let nodes = [{
+        "name": "output",
+        "ingredients": outputs,
+        "building": null,
+        "count": zero,
+        "rate": null,
+    }]
     let nodeMap = new Map()
     nodeMap.set("output", nodes[0])
 
@@ -51,6 +57,7 @@ function makeGraph(totals, targets) {
             "recipe": recipe,
             "building": building,
             "count": count,
+            "rate": rate,
         }
         nodes.push(node)
         nodeMap.set(recipe.name, node)
@@ -211,7 +218,11 @@ export function renderTotals(totals, targets) {
             .attr("y", d => (d.y0 + d.y1) / 2)
             .attr("dy", "0.35em")
             .attr("text-anchor", "start")
-            .text(d => d.count.isZero() ? "" : "\u00d7 " + spec.format.count(d.count))
+            .text(
+                d => d.count.isZero() ?
+                    (d.rate === null ?
+                        "" : `\u00d7 ${spec.format.rate(d.rate)}/${spec.format.rateName}`)
+                    : "\u00d7 " + spec.format.count(d.count))
 
     // Link rate labels
     svg.append("g")
