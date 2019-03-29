@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 import { Rational, one } from "./rational.js"
 
-const DEFAULT_RATE = "m"
+export const DEFAULT_RATE = "m"
 
 let seconds = one
 let minutes = Rational.from_float(60)

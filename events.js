@@ -12,6 +12,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 import { spec } from "./factory.js"
+import { formatSettings } from "./fragment.js"
+import { initDone } from "./init.js"
 
 // build target events
 
@@ -20,7 +22,14 @@ export function plusHandler() {
     spec.updateSolution()
 }
 
+// tab events
+
+export const DEFAULT_TAB = "graph"
+
+export let currentTab = DEFAULT_TAB
+
 export function clickTab(tabName) {
+    currentTab = tabName
     d3.selectAll(".tab")
         .style("display", "none")
     d3.selectAll(".tab_button")
@@ -29,4 +38,7 @@ export function clickTab(tabName) {
         .style("display", "block")
     d3.select("#" + tabName + "_button")
         .classed("active", true)
+    if (initDone) {
+        window.location.hash = "#" + formatSettings()
+    }
 }

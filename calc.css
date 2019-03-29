@@ -83,6 +83,34 @@ label.selected {
     font-weight: bold;
     color: var(--bright);
 }
+/* settings */
+table#settings {
+    border-collapse: collapse;
+}
+tr.setting-section td {
+    padding-top: 1em;
+    padding-bottom: 0.5em;
+}
+tr.setting-section td span {
+    color: var(--bright);
+    font-style: italic;
+    /*border-bottom: 1px ridge var(--bright);*/
+}
+tr.setting-section td hr {
+    display: block;
+    border: 1px solid var(--bright);
+    /*border-color: var(--bright);
+    border-style: solid;*/
+}
+tr.setting-row td:first-child {
+    padding-left: 3em;
+}
+td.setting-label {
+    text-align: right;
+}
+.top {
+    vertical-align: top;
+}
 /* tabs */
 div.tabs {
     overflow: hidden;

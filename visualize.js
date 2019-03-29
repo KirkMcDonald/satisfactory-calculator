@@ -124,7 +124,6 @@ export function renderTotals(totals, targets) {
     if (largestValue.isZero()) {
         return
     }
-    console.log(maxRank)
     // The width of the display is the number of ranks, times the width of each
     // rank, plus a small constant for the output node.
     let width = maxRank * columnWidth + nodeWidth

@@ -11,10 +11,19 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
+import { DEFAULT_RATE } from "./align.js"
+import { DEFAULT_TAB, currentTab } from "./events.js"
 import { spec } from "./factory.js"
 
 export function formatSettings() {
-    let settings = "items="
+    let settings = ""
+    if (currentTab !== DEFAULT_TAB) {
+        settings += "tab=" + currentTab + "&"
+    }
+    if (spec.format.rateName !== DEFAULT_RATE) {
+        settings += "rate=" + spec.format.rateName + "&"
+    }
+    settings += "items="
     let targetStrings = []
     for (let target of spec.buildTargets) {
         let targetString = ""

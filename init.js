@@ -18,6 +18,9 @@ import { spec } from "./factory.js"
 import { loadSettings } from "./fragment.js"
 import { getItems } from "./item.js"
 import { getRecipes } from "./recipe.js"
+import { renderSettings } from "./settings.js"
+
+export let initDone = false
 
 function loadData(settings) {
     d3.json("data/data.json").then(function(data) {
@@ -26,6 +29,8 @@ function loadData(settings) {
         let buildings = getBuildings(data)
         let belts = getBelts(data)
         spec.setData(items, recipes, buildings, belts)
+
+        renderSettings(settings)
 
         let targetSetting = settings.get("items")
         if (targetSetting !== undefined && targetSetting !== "") {
@@ -46,6 +51,7 @@ function loadData(settings) {
         } else {
             spec.addTarget()
         }
+        initDone = true
         spec.updateSolution()
     })
 }
@@ -53,5 +59,4 @@ function loadData(settings) {
 export function init() {
     let settings = loadSettings(window.location.hash)
     loadData(settings)
-    clickTab("graph")
 }
