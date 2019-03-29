@@ -42,3 +42,15 @@ export function clickTab(tabName) {
         window.location.hash = "#" + formatSettings()
     }
 }
+
+// setting events
+
+export function changeRatePrecision(event) {
+    spec.format.ratePrecision = Number(event.target.value)
+    spec.updateSolution()
+}
+
+export function changeCountPrecision(event) {
+    spec.format.countPrecision = Number(event.target.value)
+    spec.updateSolution()
+}

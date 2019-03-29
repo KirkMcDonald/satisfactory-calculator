@@ -14,6 +14,8 @@ limitations under the License.*/
 import { Rational, one } from "./rational.js"
 
 export const DEFAULT_RATE = "m"
+export const DEFAULT_RATE_PRECISION = 3
+export const DEFAULT_COUNT_PRECISION = 1
 
 let seconds = one
 let minutes = Rational.from_float(60)
@@ -35,8 +37,8 @@ export class Formatter {
     constructor() {
         this.setDisplayRate(DEFAULT_RATE)
         this.displayFormat = "decimal"
-        this.ratePrecision = 3
-        this.countPrecision = 1
+        this.ratePrecision = DEFAULT_RATE_PRECISION
+        this.countPrecision = DEFAULT_COUNT_PRECISION
     }
     setDisplayRate(rate) {
         this.rateName = rate

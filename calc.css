@@ -111,6 +111,9 @@ td.setting-label {
 .top {
     vertical-align: top;
 }
+input.prec {
+    width: 4em;
+}
 /* tabs */
 div.tabs {
     overflow: hidden;

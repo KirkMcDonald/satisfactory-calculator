@@ -11,7 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
-import { DEFAULT_RATE, longRateNames } from "./align.js"
+import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION, longRateNames } from "./align.js"
 import { DEFAULT_TAB, clickTab } from "./events.js"
 import { spec } from "./factory.js"
 
@@ -69,7 +69,21 @@ function renderRateOptions(settings) {
     rateOption.append("br")
 }
 
+function renderPrecisions(settings) {
+    spec.format.ratePrecision = DEFAULT_RATE_PRECISION
+    if (settings.has("rp")) {
+        spec.format.ratePrecision = Number(settings.get("rp"))
+    }
+    d3.select("#rprec").attr("value", spec.format.ratePrecision)
+    spec.format.countPrecision = DEFAULT_COUNT_PRECISION
+    if (settings.has("cp")) {
+        spec.format.countPrecision = Number(settings.get("cp"))
+    }
+    d3.select("#cprec").attr("value", spec.format.countPrecision)
+}
+
 export function renderSettings(settings) {
     renderTab(settings)
     renderRateOptions(settings)
+    renderPrecisions(settings)
 }

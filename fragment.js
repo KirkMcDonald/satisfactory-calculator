@@ -11,7 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
-import { DEFAULT_RATE } from "./align.js"
+import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION } from "./align.js"
 import { DEFAULT_TAB, currentTab } from "./events.js"
 import { spec } from "./factory.js"
 
@@ -22,6 +22,12 @@ export function formatSettings() {
     }
     if (spec.format.rateName !== DEFAULT_RATE) {
         settings += "rate=" + spec.format.rateName + "&"
+    }
+    if (spec.format.ratePrecision !== DEFAULT_RATE_PRECISION) {
+        settings += "rp=" + spec.format.ratePrecision + "&"
+    }
+    if (spec.format.countPrecision !== DEFAULT_COUNT_PRECISION) {
+        settings += "cp=" + spec.format.countPrecision + "&"
     }
     settings += "items="
     let targetStrings = []

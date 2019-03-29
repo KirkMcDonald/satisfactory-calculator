@@ -19,10 +19,12 @@
         var handlers = {}
     </script>
     <script type="module">
-        import { plusHandler, clickTab } from "./events.js"
+        import { plusHandler, clickTab, changeRatePrecision, changeCountPrecision } from "./events.js"
         import { init } from "./init.js"
         handlers.plusHandler = plusHandler
         handlers.clickTab = clickTab
+        handlers.changeRatePrecision = changeRatePrecision
+        handlers.changeCountPrecision = changeCountPrecision
         handlers.init = init
     </script>
 </head>
@@ -72,6 +74,16 @@ limitations under the License.-->
         <tr class="setting-row">
         <td class="setting-label top">Display rates as:</td>
         <td><form id="display_rate"></form></td>
+        </tr>
+
+        <tr class="setting-row">
+        <td class="setting-label">Rate precision:</td>
+        <td><input id="rprec" class="prec" type="number" value="3" min="0" onchange="handlers.changeRatePrecision(event)"></td>
+        </tr>
+
+        <tr class="setting-row">
+        <td class="setting-label">Count precision:</td>
+        <td><input id="cprec" class="prec" type="number" value="1" min="0" onchange="handlers.changeCountPrecision(event)"></td>
         </tr>
         </table>
     </div>
