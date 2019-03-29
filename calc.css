@@ -92,15 +92,12 @@ tr.setting-section td {
     padding-bottom: 0.5em;
 }
 tr.setting-section td span {
-    color: var(--bright);
+    color: var(--accent);
     font-style: italic;
-    /*border-bottom: 1px ridge var(--bright);*/
 }
 tr.setting-section td hr {
     display: block;
-    border: 1px solid var(--bright);
-    /*border-color: var(--bright);
-    border-style: solid;*/
+    border: 1px solid var(--accent);
 }
 tr.setting-row td:first-child {
     padding-left: 3em;
@@ -108,11 +105,34 @@ tr.setting-row td:first-child {
 td.setting-label {
     text-align: right;
 }
+div#resource_settings {
+    padding-left: 3em;
+}
 .top {
     vertical-align: top;
 }
 input.prec {
     width: 4em;
+}
+table.resource {
+    border-collapse: collapse;
+}
+table.resource td {
+    text-align: right;
+    width: 25%;
+}
+table.resource input[type="radio"] {
+    display: none;
+}
+table.resource input[type="radio"] + label {
+    cursor: pointer;
+    fill: var(--light);
+}
+table.resource input[type="radio"] + label:hover {
+    fill: var(--bright);
+}
+table.resource input[type="radio"]:checked + label {
+    fill: var(--accent);
 }
 /* tabs */
 div.tabs {

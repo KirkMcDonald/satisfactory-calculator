@@ -23,7 +23,7 @@ const DEFAULT_ITEM_KEY = "supercomputer"
 
 let minerCategories = new Set(["mineral", "oil"])
 
-let resourcePurities = [
+export let resourcePurities = [
     {name: "Impure", factor: half},
     {name: "Normal", factor: one},
     {name: "Pure", factor: Rational.from_float(2)},
@@ -65,6 +65,7 @@ class FactorySpecification {
                 let miners = this.buildings.get(recipe.category)
                 // Default to miner mk2.
                 let miner = miners[miners.length - 1]
+                // Default to normal purity.
                 let purity = resourcePurities[1]
                 this.minerSettings.set(recipe, {miner, purity})
             }
@@ -81,6 +82,9 @@ class FactorySpecification {
     }
     getResourcePurity(recipe) {
         return this.minerSettings.get(recipe).purity
+    }
+    setMiner(recipe, miner, purity) {
+        this.minerSettings.set(recipe, {miner, purity})
     }
     getCount(recipe, rate) {
         let building = this.getBuilding(recipe)
