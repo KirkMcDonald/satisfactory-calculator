@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION } from "./align.js"
 import { DEFAULT_TAB, currentTab } from "./events.js"
-import { spec } from "./factory.js"
+import { spec, DEFAULT_PURITY } from "./factory.js"
 
 export function formatSettings() {
     let settings = ""
@@ -29,6 +29,7 @@ export function formatSettings() {
     if (spec.format.countPrecision !== DEFAULT_COUNT_PRECISION) {
         settings += "cp=" + spec.format.countPrecision + "&"
     }
+
     settings += "items="
     let targetStrings = []
     for (let target of spec.buildTargets) {
@@ -41,6 +42,19 @@ export function formatSettings() {
         targetStrings.push(targetString)
     }
     settings += targetStrings.join(",")
+
+    let minerStrings = []
+    for (let [recipe, {miner, purity}] of spec.minerSettings) {
+        let miners = spec.buildings.get(recipe.category)
+        let defaultMiner = miners[0]
+        if (miner !== defaultMiner || purity !== DEFAULT_PURITY) {
+            let s = `${recipe.key}:${miner.key}:${purity.key}`
+            minerStrings.push(s)
+        }
+    }
+    if (minerStrings.length > 0) {
+        settings += "&miners=" + minerStrings.join(",")
+    }
 
     return settings
 }

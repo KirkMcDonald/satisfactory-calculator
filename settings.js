@@ -88,6 +88,18 @@ function mineHandler(d) {
 }
 
 function renderResources(settings) {
+    spec.initMinerSettings()
+    if (settings.has("miners")) {
+        let miners = settings.get("miners").split(",")
+        for (let minerString of miners) {
+            let [recipeKey, minerKey, purityKey] = minerString.split(":")
+            let recipe = spec.recipes.get(recipeKey)
+            let miner = spec.miners.get(minerKey)
+            let purity = resourcePurities[Number(purityKey)]
+            spec.setMiner(recipe, miner, purity)
+        }
+    }
+
     let div = d3.select("#resource_settings")
     div.selectAll("*").remove()
     let resources = []
@@ -103,7 +115,7 @@ function renderResources(settings) {
                     purity: purityDef,
                     miner: minerDef,
                     selected: selected,
-                    id: `miner.${recipe.key}.${purityDef.name}.${minerDef.key}`
+                    id: `miner.${recipe.key}.${purityDef.key}.${minerDef.key}`
                 })
             }
             purities.push({miners, purityDef})

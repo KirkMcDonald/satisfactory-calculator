@@ -24,10 +24,12 @@ const DEFAULT_ITEM_KEY = "supercomputer"
 let minerCategories = new Set(["mineral", "oil"])
 
 export let resourcePurities = [
-    {name: "Impure", factor: half},
-    {name: "Normal", factor: one},
-    {name: "Pure", factor: Rational.from_float(2)},
+    {key: "0", name: "Impure", factor: half},
+    {key: "1", name: "Normal", factor: one},
+    {key: "2", name: "Pure", factor: Rational.from_float(2)},
 ]
+
+export let DEFAULT_PURITY = resourcePurities[1]
 
 class FactorySpecification {
     constructor() {
@@ -40,6 +42,7 @@ class FactorySpecification {
         this.buildTargets = []
 
         // Map resource recipe to {miner, purity}
+        this.miners = new Map()
         this.minerSettings = new Map()
 
         this.belt = null
@@ -57,16 +60,23 @@ class FactorySpecification {
                 this.buildings.set(building.category, category)
             }
             category.push(building)
+            if (minerCategories.has(building.category)) {
+                this.miners.set(building.key, building)
+            }
         }
         this.belts = belts
         this.belt = belts.get("belt1")
-        for (let [recipeKey, recipe] of recipes) {
+        this.initMinerSettings()
+    }
+    initMinerSettings() {
+        this.minerSettings = new Map()
+        for (let [recipeKey, recipe] of this.recipes) {
             if (minerCategories.has(recipe.category)) {
                 let miners = this.buildings.get(recipe.category)
-                // Default to miner mk2.
-                let miner = miners[miners.length - 1]
+                // Default to miner mk1.
+                let miner = miners[0]
                 // Default to normal purity.
-                let purity = resourcePurities[1]
+                let purity = DEFAULT_PURITY
                 this.minerSettings.set(recipe, {miner, purity})
             }
         }
