@@ -107,6 +107,9 @@ export function displayItems(spec, totals) {
         .classed("right-align", true)
         .append("tt")
             .text(d => spec.format.alignCount(d.count))
+    row.filter(d => d.building === null)
+        .append("td")
+            .attr("colspan", 2)
     // power
     row.append("td")
         .classed("right-align pad", true)
