@@ -124,7 +124,7 @@ class FactorySpecification {
         }
         let count = this.getCount(recipe, rate)
         let average = building.power.mul(count)
-        let peak = average.ceil()
+        let peak = building.power.mul(count.ceil())
         return {average, peak}
     }
     addTarget(itemKey) {
