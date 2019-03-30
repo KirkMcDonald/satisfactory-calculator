@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 import { spec } from "./factory.js"
-import { Rational, zero } from "./rational.js"
+import { Rational, zero, one } from "./rational.js"
 import { Ingredient } from "./recipe.js"
 
 const iconSize = 48
@@ -73,14 +73,22 @@ function makeGraph(totals, targets) {
                 rate = totals.rates.get(recipe).mul(ing.amount)
             }
             for (let subRecipe of ing.item.recipes) {
-                let recipeRate = totals.rates.get(subRecipe)
-                if (recipeRate) {
-                    links.push({
+                if (totals.rates.has(subRecipe)) {
+                    let link = {
                         "source": nodeMap.get(subRecipe.name),
                         "target": node,
                         "value": rate.toFloat(),
                         "rate": rate,
-                    })
+                    }
+                    let belts = []
+                    let beltCountExact = spec.getBeltCount(rate)
+                    let beltCount = beltCountExact.toFloat()
+                    for (let j = one; j.less(beltCountExact); j = j.add(one)) {
+                        let i = j.toFloat()
+                        belts.push({link, i, beltCount})
+                    }
+                    link.belts = belts
+                    links.push(link)
                 }
             }
         }
@@ -121,6 +129,28 @@ function nodeText(d) {
     }
 }
 
+// This is basically an educated guess, but seems to match whatever Chrome and
+// Firefox do pretty well.
+function beltPath(d) {
+    let x0 = d.link.source.x1
+    let y0 = d.link.y0
+    let y0top = y0 - d.link.width / 2
+    let x1 = d.link.target.x0
+    let y1 = d.link.y1
+    let y1top = y1 - d.link.width / 2
+    let mid = (x1 - x0) / 2
+    let slope = (y1 - y0) / (x1 - x0)
+
+    let dy = d.link.width / d.beltCount
+    let y_offset = d.i*dy
+    let y0belt = y0top + y_offset
+    let y1belt = y1top + y_offset
+
+    let midAdjust = (d.link.width/2 - y_offset) * slope
+    let x_control = x0 + mid + midAdjust
+    return `M ${x0},${y0belt} C ${x_control},${y0belt},${x_control},${y1belt},${x1},${y1belt}`
+}
+
 export function renderTotals(totals, targets) {
     let data = makeGraph(totals, targets)
 
@@ -146,6 +176,7 @@ export function renderTotals(totals, targets) {
     if (largestValue.isZero()) {
         return
     }
+    let beltDensity = maxNodeHeight / spec.getBeltCount(largestValue).toFloat()
     // The width of the display is the number of ranks, times the width of each
     // rank, plus a small constant for the output node.
     let maxTextWidth = 0
@@ -234,6 +265,18 @@ export function renderTotals(totals, targets) {
         .attr("d", d3.sankeyLinkHorizontal())
         .attr("stroke", d => color(d.source.name))
         .attr("stroke-width", d => Math.max(1, d.width))
+    // Don't draw belts if we have less than three pixels per belt.
+    if (beltDensity >= 3) {
+        link.append("g")
+            .selectAll("path")
+            .data(d => d.belts)
+            .join("path")
+                .attr("fill", "none")
+                .attr("stroke-opacity", 0.3)
+                .attr("d", beltPath)
+                .attr("stroke", d => color(d.link.source.name))
+                .attr("stroke-width", 1)
+    }
     link.append("title")
         .text(d => `${d.source.name} \u2192 ${d.target.name}\n${spec.format.rate(d.rate)}`)
     link.append("text")
