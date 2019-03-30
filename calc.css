@@ -27,7 +27,7 @@ a {
     text-decoration: none;
     color: var(--accent);
 }
-a:active {
+a:active, a:hover {
     color: var(--bright);
 }
 input, select {
@@ -202,4 +202,8 @@ tr.display-row td.pad, th.pad {
 tr.display-row td {
     padding-top: 8px;
     padding-bottom: 8px;
+}
+/* about */
+.about-content {
+    max-width: 40em;
 }
