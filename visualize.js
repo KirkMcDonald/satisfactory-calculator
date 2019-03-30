@@ -193,7 +193,7 @@ export function renderTotals(totals, targets) {
 
     // Node rects
     let rects = svg.append("g")
-            //.attr("stroke", "#000000")
+        .classed("nodes", true)
         .selectAll("rect")
         .data(nodes)
         .join("g")
@@ -214,45 +214,33 @@ export function renderTotals(totals, targets) {
             .attr("height", iconSize)
             .attr("width", iconSize)
             .attr("xlink:href", d => "images/" + d.name + ".png")
+    rects.append("text")
+        .attr("x", d => d.x0 + iconSize + 2)
+        .attr("y", d => (d.y0 + d.y1) / 2)
+        .attr("dy", "0.35em")
+        .attr("text-anchor", "start")
+        .text(nodeText)
 
     // Link paths
     let link = svg.append("g")
-            .attr("fill", "none")
-            .attr("stroke-opacity", 0.3)
+        .classed("links", true)
         .selectAll("g")
         .data(links)
         .join("g")
             //.style("mix-blend-mode", "multiply")
-
     link.append("path")
+        .attr("fill", "none")
+        .attr("stroke-opacity", 0.3)
         .attr("d", d3.sankeyLinkHorizontal())
         .attr("stroke", d => color(d.source.name))
         .attr("stroke-width", d => Math.max(1, d.width))
-
     link.append("title")
         .text(d => `${d.source.name} \u2192 ${d.target.name}\n${spec.format.rate(d.rate)}`)
-
-    // Building count labels
-    svg.append("g")
-            .classed("countLabel", true)
-        .selectAll("text")
-        .data(nodes)
-        .join("text")
-            .attr("x", d => d.x0 + iconSize + 2)
-            .attr("y", d => (d.y0 + d.y1) / 2)
-            .attr("dy", "0.35em")
-            .attr("text-anchor", "start")
-            .text(nodeText)
-
-    // Link rate labels
-    svg.append("g")
-        .selectAll("text")
-        .data(links)
-        .join("text")
-            .attr("x", d => d.source.x1 + 6)
-            .attr("y", d => d.y0)
-            .attr("dy", "0.35em")
-            .attr("text-anchor", "start")
-            .text(d => spec.format.rate(d.rate) + "/" + spec.format.rateName)
+    link.append("text")
+        .attr("x", d => d.source.x1 + 6)
+        .attr("y", d => d.y0)
+        .attr("dy", "0.35em")
+        .attr("text-anchor", "start")
+        .text(d => spec.format.rate(d.rate) + "/" + spec.format.rateName)
 }
 
