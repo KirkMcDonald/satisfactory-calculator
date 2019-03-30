@@ -41,6 +41,8 @@ class FactorySpecification {
         this.buildings = null
         this.belts = null
 
+        this.itemTiers = []
+
         this.buildTargets = []
 
         // Map resource recipe to {miner, purity}
@@ -55,6 +57,20 @@ class FactorySpecification {
     }
     setData(items, recipes, buildings, belts) {
         this.items = items
+        let tierMap = new Map()
+        for (let [itemKey, item] of items) {
+            let tier = tierMap.get(item.tier)
+            if (tier === undefined) {
+                tier = []
+                tierMap.set(item.tier, tier)
+            }
+            tier.push(item)
+        }
+        this.itemTiers = []
+        for (let [tier, tierItems] of tierMap) {
+            this.itemTiers.push(tierItems)
+        }
+        this.itemTiers.sort((a, b) => a[0].tier - b[0].tier)
         this.recipes = recipes
         this.buildings = new Map()
         for (let building of buildings) {
@@ -140,7 +156,7 @@ class FactorySpecification {
             itemKey = DEFAULT_ITEM_KEY
         }
         let item = this.items.get(itemKey)
-        let target = new BuildTarget(this.buildTargets.length, itemKey, item, this.items)
+        let target = new BuildTarget(this.buildTargets.length, itemKey, item, this.itemTiers)
         this.buildTargets.push(target)
         d3.select("#targets").insert(() => target.element, "#plusButton")
         return target

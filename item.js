@@ -14,10 +14,10 @@ limitations under the License.*/
 import { Totals } from "./totals.js"
 
 export class Item {
-    constructor(key, index, name) {
+    constructor(key, name, tier) {
         this.key = key
-        this.index = index
         this.name = name
+        this.tier = tier
         this.recipes = []
         this.uses = []
     }
@@ -48,7 +48,7 @@ export class Item {
 export function getItems(data) {
     let items = new Map()
     for (let d of data.items) {
-        items.set(d.key_name, new Item(d.key_name, d.index, d.name))
+        items.set(d.key_name, new Item(d.key_name, d.name, d.tier))
     }
     return items
 }

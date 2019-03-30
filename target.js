@@ -23,8 +23,7 @@ function itemHandler(target) {
         let itemKey = this.value
         target.itemKey = itemKey
         target.item = spec.items.get(itemKey)
-        let wrapper = this.parentNode.parentNode.parentNode
-        wrapper.classList.remove("open")
+        target.dropdown.classList.remove("open")
         spec.updateSolution()
     }
 }
@@ -62,7 +61,7 @@ function toggleDropdown() {
 }
 
 export class BuildTarget {
-    constructor(index, itemKey, item, items) {
+    constructor(index, itemKey, item, tiers) {
         this.index = index
         this.itemKey = itemKey
         this.item = item
@@ -79,35 +78,35 @@ export class BuildTarget {
             .on("click", removeHandler(this))
         this.element = element.node()
 
-        let itemOptions = []
-        for (let [itemKey, item] of items) {
-            itemOptions.push({itemKey, item})
-        }
         let dropdown = element.append("span")
             .classed("dropdownWrapper", true)
+        this.dropdown = dropdown.node()
         dropdown.append("div")
             .classed("clicker", true)
             .on("click", toggleDropdown)
-        let itemSpan = dropdown.append("div")
+        let tierDiv = dropdown.append("div")
             .classed("dropdown itemDropdown", true)
-            .selectAll("span")
-            .data(itemOptions)
+            .selectAll("div")
+            .data(tiers)
+            .join("div")
+        let itemSpan = tierDiv.selectAll("span")
+            .data(d => d)
             .join("span")
         itemSpan.append("input")
             .on("change", itemHandler(this))
-            .attr("id", d => `target-${targetCount}-${d.itemKey}`)
-            .attr("name", d => `target-${targetCount}`)
+            .attr("id", d => `target-${targetCount}-${d.key}`)
+            .attr("name", `target-${targetCount}`)
             .attr("type", "radio")
-            .attr("value", d => d.itemKey)
-            .attr("checked", d => d.item === item ? "" : null)
+            .attr("value", d => d.key)
+            .attr("checked", d => d === item ? "" : null)
         itemSpan.append("label")
-            .attr("for", d => `target-${targetCount}-${d.itemKey}`)
+            .attr("for", d => `target-${targetCount}-${d.key}`)
             .append("img")
                 .classed("icon", true)
-                .attr("src", d => "images/" + d.item.name + ".png")
+                .attr("src", d => "images/" + d.name + ".png")
                 //.attr("width", 32)
                 //.attr("height", 32)
-                .attr("title", d => d.item.name)
+                .attr("title", d => d.name)
         dropdown.append("div")
             .classed("spacer", true)
 
