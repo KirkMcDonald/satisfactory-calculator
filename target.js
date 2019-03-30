@@ -23,6 +23,8 @@ function itemHandler(target) {
         let itemKey = this.value
         target.itemKey = itemKey
         target.item = spec.items.get(itemKey)
+        let wrapper = this.parentNode.parentNode.parentNode
+        wrapper.classList.remove("open")
         spec.updateSolution()
     }
 }
@@ -48,6 +50,17 @@ function changeRateHandler(target) {
     }
 }
 
+let targetCount = 0
+
+function toggleDropdown() {
+    let classes = this.parentNode.classList
+    if (classes.contains("open")) {
+        classes.remove("open")
+    } else {
+        classes.add("open")
+    }
+}
+
 export class BuildTarget {
     constructor(index, itemKey, item, items) {
         this.index = index
@@ -70,14 +83,35 @@ export class BuildTarget {
         for (let [itemKey, item] of items) {
             itemOptions.push({itemKey, item})
         }
-        element.append("select")
-            .on("change", itemHandler(this))
-            .selectAll("option")
+        let dropdown = element.append("span")
+            .classed("dropdownWrapper", true)
+        dropdown.append("div")
+            .classed("clicker", true)
+            .on("click", toggleDropdown)
+        let itemSpan = dropdown.append("div")
+            .classed("dropdown itemDropdown", true)
+            .selectAll("span")
             .data(itemOptions)
-            .join("option")
-                .attr("value", d => d.itemKey)
-                .attr("selected", d => d.item === item ? "" : null)
-                .text(d => d.item.name)
+            .join("span")
+        itemSpan.append("input")
+            .on("change", itemHandler(this))
+            .attr("id", d => `target-${targetCount}-${d.itemKey}`)
+            .attr("name", d => `target-${targetCount}`)
+            .attr("type", "radio")
+            .attr("value", d => d.itemKey)
+            .attr("checked", d => d.item === item ? "" : null)
+        itemSpan.append("label")
+            .attr("for", d => `target-${targetCount}-${d.itemKey}`)
+            .append("img")
+                .classed("icon", true)
+                .attr("src", d => "images/" + d.item.name + ".png")
+                //.attr("width", 32)
+                //.attr("height", 32)
+                .attr("title", d => d.item.name)
+        dropdown.append("div")
+            .classed("spacer", true)
+
+        targetCount++
 
         this.buildingLabel = element.append("label")
             .classed(SELECTED_INPUT, true)
