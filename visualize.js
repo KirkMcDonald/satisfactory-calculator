@@ -149,8 +149,9 @@ export function renderTotals(totals, targets) {
     // The width of the display is the number of ranks, times the width of each
     // rank, plus a small constant for the output node.
     let maxTextWidth = 0
+    let testSVG = d3.select("body").append("svg")
     for (let node of data.nodes) {
-        let text = d3.select("svg#graph").append("text")
+        let text = testSVG.append("text")
             .text(nodeText(node))
         let textWidth = text.node().getBBox().width
         text.remove()
@@ -158,6 +159,7 @@ export function renderTotals(totals, targets) {
             maxTextWidth = textWidth
         }
     }
+    testSVG.remove()
     let nodeWidth = iconSize + maxTextWidth + 4
     let width = maxRank * (nodeWidth + columnWidth) + nodeWidth
     // The height of the display is normalized by the height of the tallest box
