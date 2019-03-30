@@ -169,7 +169,7 @@ g.node rect {
     stroke: var(--foreground);
     stroke-width: 1px;
 }
-g text {
+text {
     stroke: none;
     fill: var(--foreground);
     font: 12px sans-serif;

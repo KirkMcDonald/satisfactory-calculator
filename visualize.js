@@ -17,10 +17,9 @@ import { Ingredient } from "./recipe.js"
 
 const iconSize = 48
 
-const nodeWidth = iconSize*2 + 4
 const nodePadding = 20
 
-const columnWidth = nodeWidth + 150
+const columnWidth = 150
 const maxNodeHeight = 175
 
 function makeGraph(totals, targets) {
@@ -110,7 +109,21 @@ function rankHeightEstimate(rank, valueFactor) {
     return total
 }
 
+function nodeText(d) {
+    if (d.count.isZero()) {
+        if (d.rate === null) {
+            return ""
+        } else {
+            return `\u00d7 ${spec.format.rate(d.rate)}/${spec.format.rateName}`
+        }
+    } else {
+        return "\u00d7 " + spec.format.count(d.count)
+    }
+}
+
 export function renderTotals(totals, targets) {
+    let data = makeGraph(totals, targets)
+
     let maxRank = 0
     let ranks = new Map()
     let largestValue = zero
@@ -135,7 +148,18 @@ export function renderTotals(totals, targets) {
     }
     // The width of the display is the number of ranks, times the width of each
     // rank, plus a small constant for the output node.
-    let width = maxRank * columnWidth + nodeWidth
+    let maxTextWidth = 0
+    for (let node of data.nodes) {
+        let text = d3.select("svg#graph").append("text")
+            .text(nodeText(node))
+        let textWidth = text.node().getBBox().width
+        text.remove()
+        if (textWidth > maxTextWidth) {
+            maxTextWidth = textWidth
+        }
+    }
+    let nodeWidth = iconSize + maxTextWidth + 4
+    let width = maxRank * (nodeWidth + columnWidth) + nodeWidth
     // The height of the display is normalized by the height of the tallest box
     // in the graph. We define it to be (approximately) maxNodeHeight pixels
     // high.
@@ -148,8 +172,6 @@ export function renderTotals(totals, targets) {
         }
     }
     let height = largestEstimate
-
-    let data = makeGraph(totals, targets)
 
     let svg = d3.select("svg#graph")
         .attr("viewBox", `0,0,${width+20},${height+20}`)
@@ -218,11 +240,7 @@ export function renderTotals(totals, targets) {
             .attr("y", d => (d.y0 + d.y1) / 2)
             .attr("dy", "0.35em")
             .attr("text-anchor", "start")
-            .text(
-                d => d.count.isZero() ?
-                    (d.rate === null ?
-                        "" : `\u00d7 ${spec.format.rate(d.rate)}/${spec.format.rateName}`)
-                    : "\u00d7 " + spec.format.count(d.count))
+            .text(nodeText)
 
     // Link rate labels
     svg.append("g")
