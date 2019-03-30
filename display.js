@@ -11,6 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
+import { toggleIgnoreHandler } from "./events.js"
 import { zero } from "./rational.js"
 
 class Header {
@@ -20,7 +21,7 @@ class Header {
     }
 }
 
-export function displayItems(spec, totals) {
+export function displayItems(spec, totals, ignore) {
     let headers = [
         new Header("items/" + spec.format.rateName, 2),
         new Header("belts", 2),
@@ -45,6 +46,8 @@ export function displayItems(spec, totals) {
         items.push({
             item: item,
             itemRate: itemRate,
+            recipe: recipe,
+            ignore: ignore.has(recipe),
             rate: rate,
             building: spec.getBuilding(recipe),
             count: spec.getCount(recipe, rate),
@@ -70,10 +73,12 @@ export function displayItems(spec, totals) {
     row.append("td")
         .append("img")
             .classed("icon", true)
+            .classed("ignore", d => d.ignore)
             .attr("src", d => "images/" + d.item.name + ".png")
             .attr("width", 32)
             .attr("height", 32)
             .attr("title", d => d.item.name)
+            .on("click", toggleIgnoreHandler)
     row.append("td")
         .classed("right-align", true)
         .append("tt")

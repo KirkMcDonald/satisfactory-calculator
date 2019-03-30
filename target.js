@@ -110,8 +110,7 @@ export class BuildTarget {
     getRate() {
         this.setRateLabel()
         let rate = zero
-        // TODO: Alternate recipes.
-        let recipe = this.item.recipes[0]
+        let recipe = spec.getRecipe(this.item)
         if (recipe.category === null && this.changedBuilding) {
             this.rateChanged()
         }

@@ -49,6 +49,8 @@ class FactorySpecification {
 
         this.belt = null
 
+        this.ignore = new Set()
+
         this.format = new Formatter()
     }
     setData(items, recipes, buildings, belts) {
@@ -82,6 +84,10 @@ class FactorySpecification {
                 this.minerSettings.set(recipe, {miner, purity})
             }
         }
+    }
+    getRecipe(item) {
+        // TODO: Alternate recipes.
+        return item.recipes[0]
     }
     getBuilding(recipe) {
         if (recipe.category === null) {
@@ -146,21 +152,29 @@ class FactorySpecification {
         }
         d3.select(target.element).remove()
     }
+    toggleIgnore(recipe) {
+        if (this.ignore.has(recipe)) {
+            this.ignore.delete(recipe)
+        } else {
+            this.ignore.add(recipe)
+        }
+    }
     solve() {
         let totals = new Totals()
         for (let target of this.buildTargets) {
-            let subtotals = target.item.produce(target.getRate())
+            let subtotals = target.item.produce(this, target.getRate(), this.ignore)
             totals.combine(subtotals)
         }
         return totals
     }
     updateSolution() {
         let totals = this.solve()
-        displayItems(this, totals)
-        renderTotals(totals, this.buildTargets)
+        displayItems(this, totals, this.ignore)
+        renderTotals(totals, this.buildTargets, this.ignore)
 
         window.location.hash = "#" + formatSettings()
     }
 }
 
 export let spec = new FactorySpecification()
+window.spec = spec

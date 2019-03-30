@@ -27,18 +27,20 @@ export class Item {
     addUse(recipe) {
         this.uses.push(recipe)
     }
-    produce(rate) {
+    produce(spec, rate, ignore) {
         let totals = new Totals()
-        // XXX
-        let recipe = this.recipes[0]
+        let recipe = spec.getRecipe(this)
         let gives = recipe.gives(this)
         rate = rate.div(gives)
         totals.add(recipe, rate)
+        totals.updateHeight(recipe, 0)
+        if (ignore.has(recipe)) {
+            return totals
+        }
         for (let ing of recipe.ingredients) {
-            let subtotals = ing.item.produce(rate.mul(ing.amount))
+            let subtotals = ing.item.produce(spec, rate.mul(ing.amount), ignore)
             totals.combine(subtotals)
         }
-        totals.updateHeight(recipe, 0)
         return totals
     }
 }

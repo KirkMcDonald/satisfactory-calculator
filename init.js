@@ -51,6 +51,14 @@ function loadData(settings) {
         } else {
             spec.addTarget()
         }
+        let ignoreSetting = settings.get("ignore")
+        if (ignoreSetting !== undefined && ignoreSetting !== "") {
+            let ignore = ignoreSetting.split(",")
+            for (let recipeKey of ignore) {
+                let recipe = spec.recipes.get(recipeKey)
+                spec.ignore.add(recipe)
+            }
+        }
         initDone = true
         spec.updateSolution()
     })

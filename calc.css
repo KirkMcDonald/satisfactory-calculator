@@ -61,6 +61,9 @@ img.icon {
     display: inline-block;
     vertical-align: middle;
 }
+.ignore {
+    opacity: 0.3;
+}
 /* build targets */
 .targetButton {
     height: 2em;
@@ -186,6 +189,9 @@ div.graph {
 g.node rect {
     stroke: var(--foreground);
     stroke-width: 1px;
+}
+g.overlay {
+    cursor: pointer;
 }
 text {
     stroke: none;

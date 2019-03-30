@@ -11,6 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
+import { toggleIgnoreHandler } from "./events.js"
 import { spec } from "./factory.js"
 import { Rational, zero, one } from "./rational.js"
 import { Ingredient } from "./recipe.js"
@@ -22,7 +23,7 @@ const nodePadding = 20
 const columnWidth = 150
 const maxNodeHeight = 175
 
-function makeGraph(totals, targets) {
+function makeGraph(totals, targets, ignore) {
     let outputs = []
     let rates = new Map()
     for (let target of targets) {
@@ -65,6 +66,9 @@ function makeGraph(totals, targets) {
     let links = []
     for (let node of nodes) {
         let recipe = node.recipe
+        if (ignore.has(recipe)) {
+            continue
+        }
         for (let ing of node.ingredients) {
             let rate
             if (node.name == "output") {
@@ -151,8 +155,8 @@ function beltPath(d) {
     return `M ${x0},${y0belt} C ${x_control},${y0belt},${x_control},${y1belt},${x1},${y1belt}`
 }
 
-export function renderTotals(totals, targets) {
-    let data = makeGraph(totals, targets)
+export function renderTotals(totals, targets, ignore) {
+    let data = makeGraph(totals, targets, ignore)
 
     let maxRank = 0
     let ranks = new Map()
@@ -240,6 +244,7 @@ export function renderTotals(totals, targets) {
         .attr("fill", d => d3.color(color(d.name)).darker())
     rects.filter(d => d.name != "output")
         .append("image")
+            .classed("ignore", d => ignore.has(d.recipe))
             .attr("x", d => d.x0 + 2)
             .attr("y", d => d.y0 + (d.y1 - d.y0) / 2 - (iconSize / 2))
             .attr("height", iconSize)
@@ -285,5 +290,34 @@ export function renderTotals(totals, targets) {
         .attr("dy", "0.35em")
         .attr("text-anchor", "start")
         .text(d => spec.format.rate(d.rate) + "/" + spec.format.rateName)
+
+    // Overlay transparent rect on top of each node, for click events.
+    let rectElements = svg.selectAll("g.node").nodes()
+    let overlayData = []
+    // Flash the graph tab to be visible, so that the graph is laid out and
+    // the BBox is not empty.
+    let graphTab = d3.select("#graph_tab")
+    let origDisplay = d3.style(graphTab.node(), "display")
+    graphTab.style("display", "block")
+    for (let i = 0; i < nodes.length; i++) {
+        let rect = rectElements[i].getBBox()
+        let recipe = nodes[i].recipe
+        if (recipe !== undefined) {
+            overlayData.push({rect, recipe})
+        }
+    }
+    graphTab.style("display", origDisplay)
+    svg.append("g")
+        .classed("overlay", true)
+        .selectAll("rect")
+        .data(overlayData)
+        .join("rect")
+            .attr("stroke", "none")
+            .attr("fill", "transparent")
+            .attr("x", d => d.rect.x)
+            .attr("y", d => d.rect.y)
+            .attr("width", d => d.rect.width)
+            .attr("height", d => d.rect.height)
+            .on("click", toggleIgnoreHandler)
 }
 

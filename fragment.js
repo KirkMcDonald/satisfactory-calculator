@@ -46,6 +46,14 @@ export function formatSettings() {
     }
     settings += targetStrings.join(",")
 
+    let ignore = []
+    for (let recipe of spec.ignore) {
+        ignore.push(recipe.key)
+    }
+    if (ignore.length > 0) {
+        settings += "&ignore=" + ignore.join(",")
+    }
+
     let minerStrings = []
     for (let [recipe, {miner, purity}] of spec.minerSettings) {
         let miners = spec.buildings.get(recipe.category)

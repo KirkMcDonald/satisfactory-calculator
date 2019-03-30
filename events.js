@@ -43,6 +43,13 @@ export function clickTab(tabName) {
     }
 }
 
+// shared events
+
+export function toggleIgnoreHandler(d) {
+    spec.toggleIgnore(d.recipe)
+    spec.updateSolution()
+}
+
 // setting events
 
 export function changeRatePrecision(event) {
