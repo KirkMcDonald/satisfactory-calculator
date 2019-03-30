@@ -117,6 +117,16 @@ class FactorySpecification {
     getBeltCount(rate) {
         return rate.div(this.belt.rate)
     }
+    getPowerUsage(recipe, rate) {
+        let building = this.getBuilding(recipe)
+        if (building === null) {
+            return {average: zero, peak: zero}
+        }
+        let count = this.getCount(recipe, rate)
+        let average = building.power.mul(count)
+        let peak = average.ceil()
+        return {average, peak}
+    }
     addTarget(itemKey) {
         if (itemKey === undefined) {
             itemKey = DEFAULT_ITEM_KEY
