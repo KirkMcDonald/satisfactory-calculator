@@ -80,7 +80,7 @@
     width: 64px;
 }
 .dropdownWrapper .dropdown input[type="radio"] + label:hover {
-    background-color: var(--bright);
+    background-color: var(--light);
 }
 .dropdownWrapper .dropdown input[type="radio"]:checked + label {
     display: inline-block;
