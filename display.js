@@ -29,8 +29,12 @@ export function displayItems(spec, totals) {
     let items = [null]
     for (let recipe of totals.topo) {
         let rate = totals.rates.get(recipe)
+        let item = recipe.product.item
+        let itemRate = rate.mul(recipe.gives(item))
+        let power = spec.getPowerUsage(recipe, rate)
         items.push({
-            item: recipe.product.item,
+            item: item,
+            itemRate: itemRate,
             rate: rate,
             building: spec.getBuilding(recipe),
             count: spec.getCount(recipe, rate),
@@ -61,7 +65,7 @@ export function displayItems(spec, totals) {
     row.append("td")
         .classed("right-align", true)
         .append("tt")
-            .text(d => spec.format.alignRate(d.rate))
+            .text(d => spec.format.alignRate(d.itemRate))
     // belts
     let beltCell = row.append("td")
         .classed("pad", true)
