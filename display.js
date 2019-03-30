@@ -109,9 +109,9 @@ export function displayItems(spec, totals) {
             .text(d => spec.format.alignCount(d.count))
     row.filter(d => d.building === null)
         .append("td")
-            .attr("colspan", 2)
+            .attr("colspan", 3)
     // power
-    row.append("td")
+    buildingRow.append("td")
         .classed("right-align pad", true)
         .append("tt")
             .text(d => spec.format.alignCount(d.average) + " MW")
