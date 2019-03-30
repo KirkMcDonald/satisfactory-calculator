@@ -11,6 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
+import { zero } from "./rational.js"
 
 class Header {
     constructor(text, colspan) {
@@ -24,20 +25,31 @@ export function displayItems(spec, totals) {
         new Header("items/" + spec.format.rateName, 2),
         new Header("belts", 2),
         new Header("buildings", 2),
+        new Header("power", 1),
     ]
+    let totalCols = 0
+    for (let header of headers) {
+        totalCols += header.colspan
+    }
     // null item to represent the header when we do the join.
     let items = [null]
+    let totalAveragePower = zero
+    let totalPeakPower = zero
     for (let recipe of totals.topo) {
         let rate = totals.rates.get(recipe)
         let item = recipe.product.item
         let itemRate = rate.mul(recipe.gives(item))
-        let power = spec.getPowerUsage(recipe, rate)
+        let {average, peak} = spec.getPowerUsage(recipe, rate)
+        totalAveragePower = totalAveragePower.add(average)
+        totalPeakPower = totalPeakPower.add(peak)
         items.push({
             item: item,
             itemRate: itemRate,
             rate: rate,
             building: spec.getBuilding(recipe),
             count: spec.getCount(recipe, rate),
+            average: average,
+            peak: peak,
         })
     }
 
@@ -95,4 +107,31 @@ export function displayItems(spec, totals) {
         .classed("right-align", true)
         .append("tt")
             .text(d => spec.format.alignCount(d.count))
+    // power
+    row.append("td")
+        .classed("right-align pad", true)
+        .append("tt")
+            .text(d => spec.format.alignCount(d.average) + " MW")
+
+    let avgRow = table.append("tr")
+    avgRow.append("td")
+        .classed("right-align", true)
+        .attr("colspan", totalCols - 1)
+        .append("b")
+            .text("total average power: ")
+    avgRow.append("td")
+        .classed("right-align", true)
+        .append("tt")
+            .text(spec.format.alignCount(totalAveragePower) + " MW")
+
+    let totRow = table.append("tr")
+    totRow.append("td")
+        .classed("right-align", true)
+        .attr("colspan", totalCols - 1)
+        .append("b")
+            .text("total peak power: ")
+    totRow.append("td")
+        .classed("right-align", true)
+        .append("tt")
+            .text(spec.format.alignCount(totalPeakPower) + " MW")
 }
