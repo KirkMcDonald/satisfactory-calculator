@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION } from "./align.js"
 import { DEFAULT_TAB, currentTab } from "./events.js"
-import { spec, DEFAULT_PURITY } from "./factory.js"
+import { spec, DEFAULT_PURITY, DEFAULT_BELT } from "./factory.js"
 
 export function formatSettings() {
     let settings = ""
@@ -28,6 +28,9 @@ export function formatSettings() {
     }
     if (spec.format.countPrecision !== DEFAULT_COUNT_PRECISION) {
         settings += "cp=" + spec.format.countPrecision + "&"
+    }
+    if (spec.belt.key !== DEFAULT_BELT) {
+        settings += "belt=" + spec.belt.key + "&"
     }
 
     settings += "items="

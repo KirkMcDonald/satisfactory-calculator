@@ -31,6 +31,8 @@ export let resourcePurities = [
 
 export let DEFAULT_PURITY = resourcePurities[1]
 
+export let DEFAULT_BELT = "belt1"
+
 class FactorySpecification {
     constructor() {
         // Game data definitions
@@ -65,7 +67,7 @@ class FactorySpecification {
             }
         }
         this.belts = belts
-        this.belt = belts.get("belt1")
+        this.belt = belts.get(DEFAULT_BELT)
         this.initMinerSettings()
     }
     initMinerSettings() {

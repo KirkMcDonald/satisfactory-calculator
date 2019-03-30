@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION, longRateNames } from "./align.js"
 import { DEFAULT_TAB, clickTab } from "./events.js"
-import { spec, resourcePurities } from "./factory.js"
+import { spec, resourcePurities, DEFAULT_BELT } from "./factory.js"
 
 // There are several things going on with this control flow. Settings should
 // work like this:
@@ -69,6 +69,8 @@ function renderRateOptions(settings) {
     rateOption.append("br")
 }
 
+// precisions
+
 function renderPrecisions(settings) {
     spec.format.ratePrecision = DEFAULT_RATE_PRECISION
     if (settings.has("rp")) {
@@ -81,6 +83,48 @@ function renderPrecisions(settings) {
     }
     d3.select("#cprec").attr("value", spec.format.countPrecision)
 }
+
+// belt
+
+function beltHandler(belt) {
+    spec.belt = belt
+    spec.updateSolution()
+}
+
+function renderBelts(settings) {
+    let beltKey = DEFAULT_BELT
+    if (settings.has("belt")) {
+        beltKey = settings.get("belt")
+    }
+    spec.belt = spec.belts.get(beltKey)
+
+    let belts = []
+    for (let [beltKey, belt] of spec.belts) {
+        belts.push(belt)
+    }
+    let form = d3.select("#belt_selector")
+    form.selectAll("*").remove()
+    let beltOption = form.selectAll("span")
+        .data(belts)
+        .join("span")
+    beltOption.append("input")
+        .attr("id", d => "belt." + d.key)
+        .attr("type", "radio")
+        .attr("name", "belt")
+        .attr("value", d => d.key)
+        .attr("checked", d => d === spec.belt ? "" : null)
+        .on("change", beltHandler)
+    beltOption.append("label")
+        .attr("for", d => "belt." + d.key)
+        .append("img")
+            .classed("icon", true)
+            .attr("src", d => "images/" + d.name + ".png")
+            .attr("width", 32)
+            .attr("height", 32)
+            .attr("title", d => d.name)
+}
+
+// miners
 
 function mineHandler(d) {
     spec.setMiner(d.recipe, d.miner, d.purity)
@@ -179,5 +223,6 @@ export function renderSettings(settings) {
     renderTab(settings)
     renderRateOptions(settings)
     renderPrecisions(settings)
+    renderBelts(settings)
     renderResources(settings)
 }
