@@ -234,8 +234,6 @@ export function renderTotals(totals, targets, ignore) {
         .join("g")
             .classed("node", true)
 
-    rects.append("title")
-        .text(d => d.name + (d.count.isZero() ? "" : `\n${d.building.name} \u00d7 ${spec.format.count(d.count)}`))
     rects.append("rect")
         .attr("x", d => d.x0)
         .attr("y", d => d.y0)
@@ -301,9 +299,10 @@ export function renderTotals(totals, targets, ignore) {
     graphTab.style("display", "block")
     for (let i = 0; i < nodes.length; i++) {
         let rect = rectElements[i].getBBox()
-        let recipe = nodes[i].recipe
+        let node = nodes[i]
+        let recipe = node.recipe
         if (recipe !== undefined) {
-            overlayData.push({rect, recipe})
+            overlayData.push({rect, node, recipe})
         }
     }
     graphTab.style("display", origDisplay)
@@ -319,5 +318,7 @@ export function renderTotals(totals, targets, ignore) {
             .attr("width", d => d.rect.width)
             .attr("height", d => d.rect.height)
             .on("click", toggleIgnoreHandler)
+            .append("title")
+                .text(d => d.node.name + (d.node.count.isZero() ? "" : `\n${d.node.building.name} \u00d7 ${spec.format.count(d.node.count)}`))
 }
 
