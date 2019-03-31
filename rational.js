@@ -157,12 +157,26 @@ export class Rational {
     reciprocate() {
         return new Rational(this.q, this.p)
     }
+    // exp must be a JS float with an integer in it.
+    pow(exp) {
+        return new Rational(this.p.pow(exp), this.q.pow(exp))
+    }
+
+    static from_decimal(s) {
+        let i = s.indexOf(".")
+        if (i === -1 || i === s.length - 1) {
+            return new Rational(bigInt(s), bigInt.one)
+        }
+        let integerPart = new Rational(bigInt(s.slice(0, i)), bigInt.one)
+        let numerator = bigInt(s.slice(i + 1))
+        let denominator = bigInt(10).pow(s.length - i - 1)
+        return integerPart.add(new Rational(numerator, denominator))
+    }
 
     static from_string(s) {
         var i = s.indexOf("/")
         if (i === -1) {
-            // XXX: This means input strings take a round-trip through a float.
-            return Rational.from_float(Number(s))
+            return Rational.from_decimal(s)
         }
         var j = s.indexOf("+")
         var q = bigInt(s.slice(i + 1))
@@ -175,9 +189,37 @@ export class Rational {
         return new Rational(p, q)
     }
 
-    // XXX: This function is a hack, which intentionally limits its precision
+    static from_integer(x) {
+        return Rational.from_floats(x, 1)
+    }
+
+    static from_float(arg) {
+        if (arg === 0 || !Number.isFinite(arg) || Number.isNaN(arg)) {
+            return zero
+        }
+        if (Number.isInteger(arg)) {
+            return Rational.from_integer(arg)
+        }
+        let x = Math.abs(arg)
+        let exp = Math.max(-1023, Math.floor(Math.log2(x)) + 1)
+        let floatPart = x * Math.pow(2, -exp)
+        for (let i = 0; i < 300 && floatPart !== Math.floor(floatPart); i++) {
+            floatPart *= 2
+            exp--
+        }
+        let numerator = bigInt(floatPart)
+        let denominator = bigInt.one
+        if (exp > 0) {
+            numerator = numerator.shiftLeft(exp)
+        } else {
+            denominator = denominator.shiftLeft(-exp)
+        }
+        return new Rational(numerator, denominator)
+    }
+
+    // This function is a hack, which intentionally limits its precision
     // in order to paper over floating-point inaccuracies.
-    static from_float(x) {
+    static from_float_approximate(x) {
         if (Number.isInteger(x)) {
             return Rational.from_floats(x, 1)
         }
@@ -188,7 +230,7 @@ export class Rational {
         if (divmod.remainder.equal(_one_third)) {
             return divmod.quotient.add(oneThird)
         } else if (divmod.remainder.equal(_two_thirds)) {
-        return divmod.quotient.add(twoThirds)
+            return divmod.quotient.add(twoThirds)
         }
         return r
     }
