@@ -14,6 +14,7 @@ limitations under the License.*/
 import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION } from "./align.js"
 import { DEFAULT_TAB, currentTab } from "./events.js"
 import { spec, DEFAULT_PURITY, DEFAULT_BELT } from "./factory.js"
+import { Rational } from "./rational.js"
 
 export function formatSettings() {
     let settings = ""
@@ -52,6 +53,15 @@ export function formatSettings() {
     }
     if (ignore.length > 0) {
         settings += "&ignore=" + ignore.join(",")
+    }
+
+    let overclock = []
+    for (let [recipe, factor] of spec.overclock) {
+        let s = factor.mul(Rational.from_float(100)).toString()
+        overclock.push(`${recipe.key}:${s}`)
+    }
+    if (overclock.length > 0) {
+        settings += "&overclock=" + overclock.join(",")
     }
 
     let minerStrings = []

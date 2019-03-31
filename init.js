@@ -17,6 +17,7 @@ import { clickTab } from "./events.js"
 import { spec } from "./factory.js"
 import { loadSettings } from "./fragment.js"
 import { getItems } from "./item.js"
+import { Rational } from "./rational.js"
 import { getRecipes } from "./recipe.js"
 import { renderSettings } from "./settings.js"
 
@@ -57,6 +58,16 @@ function loadData(settings) {
             for (let recipeKey of ignore) {
                 let recipe = spec.recipes.get(recipeKey)
                 spec.ignore.add(recipe)
+            }
+        }
+        let overclockSetting = settings.get("overclock")
+        if (overclockSetting !== undefined && overclockSetting !== "") {
+            let overclock = overclockSetting.split(",")
+            for (let pair of overclock) {
+                let [recipeKey, percentString] = pair.split(":")
+                let recipe = spec.recipes.get(recipeKey)
+                let percent = Rational.from_string(percentString).div(Rational.from_float(100))
+                spec.setOverclock(recipe, percent)
             }
         }
         initDone = true

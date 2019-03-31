@@ -209,6 +209,9 @@ tr.display-row td {
     padding-top: 8px;
     padding-bottom: 8px;
 }
+input.overclock {
+    width: 4em;
+}
 /* about */
 .about-content {
     max-width: 40em;

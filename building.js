@@ -22,11 +22,11 @@ class Building {
         this.max = max
     }
     getCount(spec, recipe, rate) {
-        let count = rate.mul(recipe.time)
-        return count
+        return rate.div(this.getRecipeRate(spec, recipe))
     }
     getRecipeRate(spec, recipe) {
-        return recipe.time.reciprocate()
+        let overclock = spec.getOverclock(recipe)
+        return recipe.time.reciprocate().mul(overclock)
     }
 }
 
@@ -35,12 +35,10 @@ class Miner extends Building {
         super(key, name, category, power, null)
         this.baseRate = baseRate
     }
-    getCount(spec, recipe, rate) {
-        return rate.div(this.getRecipeRate(spec, recipe))
-    }
     getRecipeRate(spec, recipe) {
         let purity = spec.getResourcePurity(recipe)
-        return this.baseRate.mul(purity.factor)
+        let overclock = spec.getOverclock(recipe)
+        return this.baseRate.mul(purity.factor).mul(overclock)
     }
 }
 

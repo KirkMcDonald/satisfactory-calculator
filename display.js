@@ -12,7 +12,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 import { toggleIgnoreHandler } from "./events.js"
-import { zero } from "./rational.js"
+import { spec } from "./factory.js"
+import { Rational, zero } from "./rational.js"
 
 class Header {
     constructor(text, colspan) {
@@ -21,11 +22,27 @@ class Header {
     }
 }
 
+function changeOverclock(d) {
+    let hundred = Rational.from_float(100)
+    let twoFifty = Rational.from_float(250)
+    let x = Rational.from_string(this.value).floor()
+    if (x.less(hundred)) {
+        x = hundred
+    }
+    if (twoFifty.less(x)) {
+        x = twoFifty
+    }
+    x = x.div(hundred)
+    spec.setOverclock(d.recipe, x)
+    spec.updateSolution()
+}
+
 export function displayItems(spec, totals, ignore) {
     let headers = [
         new Header("items/" + spec.format.rateName, 2),
         new Header("belts", 2),
         new Header("buildings", 2),
+        new Header("overclock", 1),
         new Header("power", 1),
     ]
     let totalCols = 0
@@ -40,7 +57,9 @@ export function displayItems(spec, totals, ignore) {
         let rate = totals.rates.get(recipe)
         let item = recipe.product.item
         let itemRate = rate.mul(recipe.gives(item))
-        let {average, peak} = spec.getPowerUsage(recipe, rate)
+        let overclock = spec.getOverclock(recipe)
+        let overclockString = overclock.mul(Rational.from_float(100)).toString()
+        let {average, peak} = spec.getPowerUsage(recipe, rate, totals.topo.length)
         totalAveragePower = totalAveragePower.add(average)
         totalPeakPower = totalPeakPower.add(peak)
         items.push({
@@ -51,6 +70,7 @@ export function displayItems(spec, totals, ignore) {
             rate: rate,
             building: spec.getBuilding(recipe),
             count: spec.getCount(recipe, rate),
+            overclock: overclockString,
             average: average,
             peak: peak,
         })
@@ -114,7 +134,19 @@ export function displayItems(spec, totals, ignore) {
             .text(d => spec.format.alignCount(d.count))
     row.filter(d => d.building === null)
         .append("td")
-            .attr("colspan", 3)
+            .attr("colspan", 4)
+    // overclock
+    let overclockCell = buildingRow.append("td")
+        .classed("pad", true)
+    overclockCell.append("input")
+        .classed("overclock", true)
+        .attr("type", "number")
+        .attr("value", d => d.overclock)
+        .attr("title", "")
+        .attr("min", 100)
+        .attr("max", 250)
+        .on("change", changeOverclock)
+    overclockCell.append(() => new Text("%"))
     // power
     buildingRow.append("td")
         .classed("right-align pad", true)

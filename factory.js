@@ -49,6 +49,9 @@ class FactorySpecification {
         this.miners = new Map()
         this.minerSettings = new Map()
 
+        // Map recipe to overclock factor
+        this.overclock = new Map()
+
         this.belt = null
 
         this.ignore = new Set()
@@ -116,6 +119,16 @@ class FactorySpecification {
             return this.buildings.get(recipe.category)[0]
         }
     }
+    getOverclock(recipe) {
+        return this.overclock.get(recipe) || one
+    }
+    setOverclock(recipe, overclock) {
+        if (overclock.equal(one)) {
+            this.overclock.delete(recipe)
+        } else {
+            this.overclock.set(recipe, overclock)
+        }
+    }
     // Returns the recipe-rate at which a single building can produce a recipe.
     // Returns null for recipes that do not have a building.
     getRecipeRate(recipe) {
@@ -141,7 +154,7 @@ class FactorySpecification {
     getBeltCount(rate) {
         return rate.div(this.belt.rate)
     }
-    getPowerUsage(recipe, rate) {
+    getPowerUsage(recipe, rate, itemCount) {
         let building = this.getBuilding(recipe)
         if (building === null) {
             return {average: zero, peak: zero}
@@ -149,6 +162,17 @@ class FactorySpecification {
         let count = this.getCount(recipe, rate)
         let average = building.power.mul(count)
         let peak = building.power.mul(count.ceil())
+        let overclock = this.overclock.get(recipe)
+        if (overclock !== undefined) {
+            // The result of this exponent will typically be irrational, so
+            // this approximation is a necessity. Because overclock is limited
+            // to the range [1.0, 2.5], any imprecision introduced by this
+            // approximation is minimal (and is probably less than is present
+            // in the game itself).
+            let overclockFactor = Rational.from_float(Math.pow(overclock.toFloat(), 1.6))
+            average = average.mul(overclockFactor)
+            peak = peak.mul(overclockFactor)
+        }
         return {average, peak}
     }
     addTarget(itemKey) {
