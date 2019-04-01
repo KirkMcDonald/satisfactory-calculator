@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 import { toggleIgnoreHandler } from "./events.js"
 import { spec } from "./factory.js"
-import { Rational, zero } from "./rational.js"
+import { Rational, zero, one } from "./rational.js"
 
 class Header {
     constructor(text, colspan) {
@@ -26,8 +26,8 @@ function changeOverclock(d) {
     let hundred = Rational.from_float(100)
     let twoFifty = Rational.from_float(250)
     let x = Rational.from_string(this.value).floor()
-    if (x.less(hundred)) {
-        x = hundred
+    if (x.less(one)) {
+        x = one
     }
     if (twoFifty.less(x)) {
         x = twoFifty
@@ -143,7 +143,7 @@ export function displayItems(spec, totals, ignore) {
         .attr("type", "number")
         .attr("value", d => d.overclock)
         .attr("title", "")
-        .attr("min", 100)
+        .attr("min", 1)
         .attr("max", 250)
         .on("change", changeOverclock)
     overclockCell.append(() => new Text("%"))
