@@ -223,12 +223,14 @@ class FactorySpecification {
         }
         return totals
     }
+    setHash() {
+        window.location.hash = "#" + formatSettings()
+    }
     updateSolution() {
         let totals = this.solve()
         displayItems(this, totals, this.ignore)
         renderTotals(totals, this.buildTargets, this.ignore)
-
-        window.location.hash = "#" + formatSettings()
+        this.setHash()
     }
 }
 

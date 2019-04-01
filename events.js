@@ -13,7 +13,6 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 import { spec } from "./factory.js"
 import { formatSettings } from "./fragment.js"
-import { initDone } from "./init.js"
 
 // build target events
 
@@ -38,9 +37,7 @@ export function clickTab(tabName) {
         .style("display", "block")
     d3.select("#" + tabName + "_button")
         .classed("active", true)
-    if (initDone) {
-        window.location.hash = "#" + formatSettings()
-    }
+    spec.setHash()
 }
 
 // shared events

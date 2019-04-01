@@ -15,6 +15,7 @@ import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION, longRate
 import { dropdown } from "./dropdown.js"
 import { DEFAULT_TAB, clickTab } from "./events.js"
 import { spec, resourcePurities, DEFAULT_BELT } from "./factory.js"
+import { Rational } from "./rational.js"
 
 // There are several things going on with this control flow. Settings should
 // work like this:
@@ -33,6 +34,65 @@ function renderTab(settings) {
         tabName = settings.get("tab")
     }
     clickTab(tabName)
+}
+
+// build targets
+
+function renderTargets(settings) {
+    spec.buildTargets = []
+    d3.select("#targets li.target").remove()
+
+    let targetSetting = settings.get("items")
+    if (targetSetting !== undefined && targetSetting !== "") {
+        let targets = targetSetting.split(",")
+        for (let targetString of targets) {
+            let parts = targetString.split(":")
+            let itemKey = parts[0]
+            let target = spec.addTarget(itemKey)
+            let type = parts[1]
+            if (type === "f") {
+                target.setBuildings(parts[2])
+            } else if (type === "r") {
+                target.setRate(parts[2])
+            } else {
+                throw new Error("unknown target type")
+            }
+        }
+    } else {
+        spec.addTarget()
+    }
+}
+
+// ignore
+
+function renderIgnore(settings) {
+    spec.ignore.clear()
+    // UI will be rendered later, as part of the solution.
+    let ignoreSetting = settings.get("ignore")
+    if (ignoreSetting !== undefined && ignoreSetting !== "") {
+        let ignore = ignoreSetting.split(",")
+        for (let recipeKey of ignore) {
+            let recipe = spec.recipes.get(recipeKey)
+            spec.ignore.add(recipe)
+        }
+    }
+}
+
+// overclock
+
+function renderOverclock(settings) {
+    spec.overclock.clear()
+    // UI will be rendered later, as part of the solution.
+    let overclockSetting = settings.get("overclock")
+    if (overclockSetting !== undefined && overclockSetting !== "") {
+        let overclock = overclockSetting.split(",")
+        for (let pair of overclock) {
+            let [recipeKey, percentString] = pair.split(":")
+            let recipe = spec.recipes.get(recipeKey)
+            let percent = Rational.from_string(percentString).div(Rational.from_float(100))
+            spec.setOverclock(recipe, percent)
+        }
+    }
 }
 
 // display rate
@@ -287,10 +347,13 @@ function renderResources(settings) {
 }
 
 export function renderSettings(settings) {
-    renderTab(settings)
+    renderTargets(settings)
+    renderIgnore(settings)
+    renderOverclock(settings)
     renderRateOptions(settings)
     renderPrecisions(settings)
     renderBelts(settings)
     renderAltRecipes(settings)
     renderResources(settings)
+    renderTab(settings)
 }
