@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION, longRateNames } from "./align.js"
-import { toggleDropdown } from "./dropdown.js"
+import { dropdown } from "./dropdown.js"
 import { DEFAULT_TAB, clickTab } from "./events.js"
 import { spec, resourcePurities, DEFAULT_BELT } from "./factory.js"
 
@@ -127,9 +127,8 @@ function renderBelts(settings) {
 
 // alternate recipes
 
-function changeAltRecipe(recipe, dropdown) {
+function changeAltRecipe(recipe) {
     spec.setRecipe(recipe)
-    dropdown.classList.remove("open")
     spec.updateSolution()
 }
 
@@ -166,31 +165,17 @@ function renderAltRecipes(settings) {
     let div = d3.select("#alt_recipe_settings")
     div.selectAll("*").remove()
 
-    let dropdownLocal = d3.local()
-
-    let dropdown = div.selectAll("div")
+    let dropdowns = div.selectAll("div")
         .data(items)
-        .join("div")
-            .classed("dropdownWrapper", true)
-            .each(function() { dropdownLocal.set(this, this) })
-    dropdown.append("div")
-        .classed("clicker", true)
-        .on("click", function() { toggleDropdown(dropdownLocal.get(this))() })
-    let entryDiv = dropdown.append("div")
-        .classed("dropdown", true)
-        .on("click", function() { toggleDropdown(dropdownLocal.get(this))() })
-        .selectAll("div")
-        .data(d => d.recipes)
-        .join("div")
-    entryDiv.append("input")
-        .on("change", function(d) { changeAltRecipe(d, dropdownLocal.get(this)) })
-        .attr("id", d => `altrecipe-${d.product.item.key}-${d.key}`)
-        .attr("name", d => `altrecipe-${d.product.item.key}`)
-        .attr("type", "radio")
-        .attr("value", d => d.key)
-        .attr("checked", d => spec.getRecipe(d.product.item) === d ? "" : null)
-    let recipeLabel = entryDiv.append("label")
-        .attr("for", d => `altrecipe-${d.product.item.key}-${d.key}`)
+        .enter().append("div")
+    let recipeLabel = dropdown(
+        dropdowns,
+        d => d.recipes,
+        d => `altrecipe-${d.product.item.key}`,
+        d => spec.getRecipe(d.product.item) === d,
+        changeAltRecipe,
+    )
+
     let productSpan = recipeLabel.append("span")
         .selectAll("span")
         .data(d => [d.product])
@@ -204,8 +189,6 @@ function renderAltRecipes(settings) {
         .data(d => d.ingredients)
         .join("span")
     renderIngredient(ingredientSpan)
-    dropdown.append("div")
-        .classed("spacer", true)
 }
 
 // miners
