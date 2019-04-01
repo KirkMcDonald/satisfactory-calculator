@@ -59,15 +59,6 @@ let labelFor = 0
 // Returns:
 //   Selection with the input's label.
 export function addInputs(selector, name, checked, callback) {
-    function id(d, i, nodes) {
-        let s
-        if (typeof name === "function") {
-            s = name.call(this, d, i, nodes)
-        } else {
-            s = name
-        }
-        return s + "-" + String(i)
-    }
     selector.append("input")
         .on("change", function(d, i, nodes) {
             toggleDropdown.call(this)
