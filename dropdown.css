@@ -1,10 +1,11 @@
 /* dropdowns */
+.dropdownWrapper {
+    display: inline-block;
+}
 .dropdownWrapper .dropdown {
     border: 2px solid var(--light);
     border-radius: 5px;
     background-color: var(--dark);
-    /*width: 36px;
-    height: 36px;*/
     overflow: hidden;
     display: inline-block;
     vertical-align: middle;
@@ -21,14 +22,6 @@
     cursor: default;
 }
 .dropdownWrapper .clicker {
-    /*height: 40px;
-    width: 40px;*/
-    /*height: 40px;
-    width: max-content;
-    position: absolute;
-    display: inline-block;
-    vertical-align: middle;
-    cursor: pointer;*/
     display: none;
 }
 .dropdownWrapper.open .clicker {
@@ -48,8 +41,8 @@
     display: none;
 }
 .dropdownWrapper.open .spacer {
-    height: 40px;
-    width: 40px;
+    border: 2px solid transparent;
+    margin: 2px;
     display: inline-block;
     vertical-align: middle;
 }
@@ -93,10 +86,4 @@
 .dropdownWrapper.open .dropdown input[type="radio"]:checked + label {
     background-color: var(--light);
     pointer-events: auto;
-}
-.dropdownWrapper.open .itemDropdown {
-    height: 300px;
-    width: 380px;
-    overflow-y: scroll;
-    transition: height 0.3s;
 }

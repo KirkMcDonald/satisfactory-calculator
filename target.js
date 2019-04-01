@@ -11,7 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
-import { toggleDropdown } from "./dropdown.js"
+import { makeDropdown, addInputs } from "./dropdown.js"
 import { spec } from "./factory.js"
 import { Rational, zero, one } from "./rational.js"
 
@@ -20,11 +20,9 @@ const SELECTED_INPUT = "selected"
 // events
 
 function itemHandler(target) {
-    return function() {
-        let itemKey = this.value
-        target.itemKey = itemKey
-        target.item = spec.items.get(itemKey)
-        target.dropdown.classList.remove("open")
+    return function(item) {
+        target.itemKey = item.key
+        target.item = item
         spec.updateSolution()
     }
 }
@@ -70,38 +68,26 @@ export class BuildTarget {
             .on("click", removeHandler(this))
         this.element = element.node()
 
-        let dropdown = element.append("span")
-            .classed("dropdownWrapper", true)
-        this.dropdown = dropdown.node()
-        dropdown.append("div")
-            .classed("clicker", true)
-            .on("click", toggleDropdown(this.dropdown))
-        let tierDiv = dropdown.append("div")
-            .classed("dropdown itemDropdown", true)
-            .on("click", toggleDropdown(this.dropdown))
-            .selectAll("div")
+        let dropdown = makeDropdown(element)
+        let itemSpan = dropdown.selectAll("div")
             .data(tiers)
             .join("div")
-        let itemSpan = tierDiv.selectAll("span")
-            .data(d => d)
-            .join("span")
-        itemSpan.append("input")
-            .on("change", itemHandler(this))
-            .attr("id", d => `target-${targetCount}-${d.key}`)
-            .attr("name", `target-${targetCount}`)
-            .attr("type", "radio")
-            .attr("value", d => d.key)
-            .attr("checked", d => d === item ? "" : null)
-        itemSpan.append("label")
-            .attr("for", d => `target-${targetCount}-${d.key}`)
-            .append("img")
-                .classed("icon", true)
-                .attr("src", d => d.iconPath())
-                //.attr("width", 32)
-                //.attr("height", 32)
-                .attr("title", d => d.name)
-        dropdown.append("div")
-            .classed("spacer", true)
+                .selectAll("span")
+                .data(d => d)
+                .join("span")
+        let itemLabel = addInputs(
+            itemSpan,
+            `target-${targetCount}`,
+            d => d === item,
+            itemHandler(this),
+        )
+
+        itemLabel.append("img")
+            .classed("icon", true)
+            .attr("src", d => d.iconPath())
+            //.attr("width", 32)
+            //.attr("height", 32)
+            .attr("title", d => d.name)
 
         targetCount++
 
