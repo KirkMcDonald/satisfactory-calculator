@@ -64,6 +64,14 @@ export function formatSettings() {
         settings += "&overclock=" + overclock.join(",")
     }
 
+    let alt = []
+    for (let [item, recipe] of spec.altRecipes) {
+        alt.push(recipe.key)
+    }
+    if (alt.length > 0) {
+        settings += "&alt=" + alt.join(",")
+    }
+
     let minerStrings = []
     for (let [recipe, {miner, purity}] of spec.minerSettings) {
         let miners = spec.buildings.get(recipe.category)

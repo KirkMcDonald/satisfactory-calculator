@@ -73,37 +73,47 @@ limitations under the License.-->
         <td colspan="2"><span>Display</span><hr></td>
         </tr>
 
-        <tr class="setting-row">
-        <td class="setting-label top">Display rates as:</td>
-        <td><form id="display_rate"></form></td>
-        </tr>
+            <tr class="setting-row">
+            <td class="setting-label top">Display rates as:</td>
+            <td><form id="display_rate"></form></td>
+            </tr>
 
-        <tr class="setting-row">
-        <td class="setting-label">Rate precision:</td>
-        <td><input id="rprec" class="prec" type="number" value="3" min="0" onchange="handlers.changeRatePrecision(event)"></td>
-        </tr>
+            <tr class="setting-row">
+            <td class="setting-label">Rate precision:</td>
+            <td><input id="rprec" class="prec" type="number" value="3" min="0" onchange="handlers.changeRatePrecision(event)"></td>
+            </tr>
 
-        <tr class="setting-row">
-        <td class="setting-label">Count precision:</td>
-        <td><input id="cprec" class="prec" type="number" value="1" min="0" onchange="handlers.changeCountPrecision(event)"></td>
-        </tr>
+            <tr class="setting-row">
+            <td class="setting-label">Count precision:</td>
+            <td><input id="cprec" class="prec" type="number" value="1" min="0" onchange="handlers.changeCountPrecision(event)"></td>
+            </tr>
 
         <tr class="setting-section">
         <td colspan="2"><span>Factory</span><hr></td>
         </tr>
 
-        <tr class="setting-row">
-        <td class="setting-label">Belt:</td>
-        <td><span id="belt_selector"></span></td>
+            <tr class="setting-row">
+            <td class="setting-label">Belt:</td>
+            <td><span id="belt_selector"></span></td>
+            </tr>
+
+        <tr class="setting-section">
+        <td colspan="2"><span>Recipes</span><hr></td>
         </tr>
+
+            <tr>
+            <td colspan="2"><div id="alt_recipe_settings"></div></td>
+            </tr>
 
         <tr class="setting-section">
         <td colspan="2"><span>Resources</span><hr></td>
         </tr>
 
-        <tr>
-        <!--<td class="setting-label"></td>-->
-        <td colspan="2"><div id="resource_settings"></div></td>
+            <tr>
+            <!--<td class="setting-label"></td>-->
+            <td colspan="2"><div id="resource_settings"></div></td>
+            </tr>
+
         </table>
     </div>
 

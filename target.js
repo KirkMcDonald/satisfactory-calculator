@@ -11,6 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
+import { toggleDropdown } from "./dropdown.js"
 import { spec } from "./factory.js"
 import { Rational, zero, one } from "./rational.js"
 
@@ -51,15 +52,6 @@ function changeRateHandler(target) {
 
 let targetCount = 0
 
-function toggleDropdown() {
-    let classes = this.parentNode.classList
-    if (classes.contains("open")) {
-        classes.remove("open")
-    } else {
-        classes.add("open")
-    }
-}
-
 export class BuildTarget {
     constructor(index, itemKey, item, tiers) {
         this.index = index
@@ -83,9 +75,10 @@ export class BuildTarget {
         this.dropdown = dropdown.node()
         dropdown.append("div")
             .classed("clicker", true)
-            .on("click", toggleDropdown)
+            .on("click", toggleDropdown(this.dropdown))
         let tierDiv = dropdown.append("div")
             .classed("dropdown itemDropdown", true)
+            .on("click", toggleDropdown(this.dropdown))
             .selectAll("div")
             .data(tiers)
             .join("div")

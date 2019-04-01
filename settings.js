@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION, longRateNames } from "./align.js"
+import { toggleDropdown } from "./dropdown.js"
 import { DEFAULT_TAB, clickTab } from "./events.js"
 import { spec, resourcePurities, DEFAULT_BELT } from "./factory.js"
 
@@ -124,6 +125,89 @@ function renderBelts(settings) {
             .attr("title", d => d.name)
 }
 
+// alternate recipes
+
+function changeAltRecipe(recipe, dropdown) {
+    spec.setRecipe(recipe)
+    dropdown.classList.remove("open")
+    spec.updateSolution()
+}
+
+function renderIngredient(ingSpan) {
+    ingSpan.classed("ingredient", true)
+        .attr("title", d => d.item.name)
+        .append("img")
+            .classed("icon", true)
+            .attr("src", d => d.item.iconPath())
+    ingSpan.append("span")
+        .classed("count", true)
+        .text(d => spec.format.count(d.amount))
+}
+
+function renderAltRecipes(settings) {
+    spec.altRecipes = new Map()
+    if (settings.has("alt")) {
+        let alt = settings.get("alt").split(",")
+        for (let recipeKey of alt) {
+            let recipe = spec.recipes.get(recipeKey)
+            spec.setRecipe(recipe)
+        }
+    }
+
+    let items = []
+    for (let tier of spec.itemTiers) {
+        for (let item of tier) {
+            if (item.recipes.length > 1) {
+                items.push(item)
+            }
+        }
+    }
+
+    let div = d3.select("#alt_recipe_settings")
+    div.selectAll("*").remove()
+
+    let dropdownLocal = d3.local()
+
+    let dropdown = div.selectAll("div")
+        .data(items)
+        .join("div")
+            .classed("dropdownWrapper", true)
+            .each(function() { dropdownLocal.set(this, this) })
+    dropdown.append("div")
+        .classed("clicker", true)
+        .on("click", function() { toggleDropdown(dropdownLocal.get(this))() })
+    let entryDiv = dropdown.append("div")
+        .classed("dropdown", true)
+        .on("click", function() { toggleDropdown(dropdownLocal.get(this))() })
+        .selectAll("div")
+        .data(d => d.recipes)
+        .join("div")
+    entryDiv.append("input")
+        .on("change", function(d) { changeAltRecipe(d, dropdownLocal.get(this)) })
+        .attr("id", d => `altrecipe-${d.product.item.key}-${d.key}`)
+        .attr("name", d => `altrecipe-${d.product.item.key}`)
+        .attr("type", "radio")
+        .attr("value", d => d.key)
+        .attr("checked", d => spec.getRecipe(d.product.item) === d ? "" : null)
+    let recipeLabel = entryDiv.append("label")
+        .attr("for", d => `altrecipe-${d.product.item.key}-${d.key}`)
+    let productSpan = recipeLabel.append("span")
+        .selectAll("span")
+        .data(d => [d.product])
+        .join("span")
+    renderIngredient(productSpan)
+    recipeLabel.append("span")
+        .classed("arrow", true)
+        .text("\u21d0")
+    let ingredientSpan = recipeLabel.append("span")
+        .selectAll("span")
+        .data(d => d.ingredients)
+        .join("span")
+    renderIngredient(ingredientSpan)
+    dropdown.append("div")
+        .classed("spacer", true)
+}
+
 // miners
 
 function mineHandler(d) {
@@ -224,5 +308,6 @@ export function renderSettings(settings) {
     renderRateOptions(settings)
     renderPrecisions(settings)
     renderBelts(settings)
+    renderAltRecipes(settings)
     renderResources(settings)
 }

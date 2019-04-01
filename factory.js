@@ -52,6 +52,9 @@ class FactorySpecification {
         // Map recipe to overclock factor
         this.overclock = new Map()
 
+        // Map item to recipe
+        this.altRecipes = new Map()
+
         this.belt = null
 
         this.ignore = new Set()
@@ -106,7 +109,20 @@ class FactorySpecification {
     }
     getRecipe(item) {
         // TODO: Alternate recipes.
-        return item.recipes[0]
+        let recipe = this.altRecipes.get(item)
+        if (recipe === undefined) {
+            return item.recipes[0]
+        } else {
+            return recipe
+        }
+    }
+    setRecipe(recipe) {
+        let item = recipe.product.item
+        if (recipe === item.recipes[0]) {
+            this.altRecipes.delete(item)
+        } else {
+            this.altRecipes.set(item, recipe)
+        }
     }
     getBuilding(recipe) {
         if (recipe.category === null) {
