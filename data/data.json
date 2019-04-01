@@ -366,6 +366,17 @@
             "product": ["iron-ingot", 1]
         },
         {
+            "name": "Alternate: Iron Ingot Alloy",
+            "key_name": "alt-iron-ingot",
+            "category": "smelting2",
+            "time": 4,
+            "ingredients": [
+                ["iron-ore", 1],
+                ["copper-ore", 1]
+            ],
+            "product": ["iron-ingot", 3]
+        },
+        {
             "name": "Copper Ingot",
             "key_name": "copper-ingot",
             "category": "smelting1",
@@ -385,6 +396,17 @@
                 ["coal", 3]
             ],
             "product": ["steel-ingot", 2]
+        },
+        {
+            "name": "Alternate: Steel Ingot",
+            "key_name": "alt-steel-ingot",
+            "category": "smelting2",
+            "time": 8,
+            "ingredients": [
+                ["iron-ingot", 3],
+                ["coal", 6]
+            ],
+            "product": ["steel-ingot", 6]
         },
         {
             "name": "Iron Plate",
@@ -417,6 +439,26 @@
             "product": ["wire", 3]
         },
         {
+            "name": "Alternate: Iron Wire",
+            "key_name": "alt-iron-wire",
+            "category": "crafting1",
+            "time": 8,
+            "ingredients": [
+                ["iron-ingot", 2]
+            ],
+            "product": ["wire", 9]
+        },
+        {
+            "name": "Alternate: Caterium Wire",
+            "key_name": "alt-caterium-wire",
+            "category": "crafting1",
+            "time": 8,
+            "ingredients": [
+                ["caterium-ingot", 1]
+            ],
+            "product": ["wire", 9]
+        },
+        {
             "name": "Cable",
             "key_name": "cable",
             "category": "crafting1",
@@ -425,6 +467,17 @@
                 ["wire", 2]
             ],
             "product": ["cable", 1]
+        },
+        {
+            "name": "Alternate: Rubber Cable",
+            "key_name": "alt-cable",
+            "category": "crafting2",
+            "time": 8,
+            "ingredients": [
+                ["wire", 3],
+                ["rubber", 2]
+            ],
+            "product": ["cable", 5]
         },
         {
             "name": "Biomass",
@@ -455,6 +508,16 @@
                 ["iron-rod", 1]
             ],
             "product": ["screw", 6]
+        },
+        {
+            "name": "Alternate: Screw",
+            "key_name": "alt-screw",
+            "category": "crafting1",
+            "time": 8,
+            "ingredients": [
+                ["iron-ingot", 2]
+            ],
+            "product": ["screw", 12]
         },
         {
             "name": "Biomass",
@@ -571,6 +634,17 @@
             "product": ["rotor", 1]
         },
         {
+            "name": "Alternate: Rotor",
+            "key_name": "alt-rotor",
+            "category": "crafting2",
+            "time": 20,
+            "ingredients": [
+                ["steel-pipe", 6],
+                ["wire", 20]
+            ],
+            "product": ["rotor", 3]
+        },
+        {
             "name": "Modular Frame",
             "key_name": "modular-frame",
             "category": "crafting2",
@@ -580,6 +654,17 @@
                 ["iron-rod", 6]
             ],
             "product": ["modular-frame", 1]
+        },
+        {
+            "name": "Alternate: Modular Frame",
+            "key_name": "alt-modular-frame",
+            "category": "crafting2",
+            "time": 30,
+            "ingredients": [
+                ["reinforced-iron-plate", 6],
+                ["steel-pipe", 6]
+            ],
+            "product": ["modular-frame", 3]
         },
         {
             "name": "Encased Industrial Beam",
@@ -615,6 +700,17 @@
             "product": ["stator", 1]
         },
         {
+            "name": "Alternate: Stator",
+            "key_name": "alt-stator",
+            "category": "crafting2",
+            "time": 20,
+            "ingredients": [
+                ["steel-pipe", 6],
+                ["quickwire", 25]
+            ],
+            "product": ["stator", 3]
+        },
+        {
             "name": "Motor",
             "key_name": "motor",
             "category": "crafting2",
@@ -635,6 +731,17 @@
                 ["plastic", 6]
             ],
             "product": ["circuit-board", 1]
+        },
+        {
+            "name": "Alternate: Circuit Board",
+            "key_name": "alt-circuit-board",
+            "category": "crafting2",
+            "time": 24,
+            "ingredients": [
+                ["rubber", 16],
+                ["wire", 24]
+            ],
+            "product": ["circuit-board", 3]
         },
         {
             "name": "Alternate: Quickwire Circuit Board",
@@ -717,6 +824,18 @@
             "product": ["computer", 1]
         },
         {
+            "name": "Alternate: Quickwire Computer",
+            "key_name": "alt-computer",
+            "category": "crafting3",
+            "time": 64,
+            "ingredients": [
+                ["circuit-board", 10],
+                ["quickwire", 112],
+                ["rubber", 48]
+            ],
+            "product": ["computer", 3]
+        },
+        {
             "name": "Caterium Ingot",
             "key_name": "caterium-ingot",
             "category": "smelting1",
@@ -735,6 +854,17 @@
                 ["caterium-ingot", 1]
             ],
             "product": ["quickwire", 4]
+        },
+        {
+            "name": "Alternate: Quickwire",
+            "key_name": "alt-quickwire",
+            "category": "crafting2",
+            "time": 8,
+            "ingredients": [
+                ["caterium-ingot", 1],
+                ["copper-ingot", 2]
+            ],
+            "product": ["quickwire", 12]
         },
         {
             "name": "Supercomputer",
