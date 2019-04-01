@@ -19,6 +19,9 @@ class Belt {
         this.name = name
         this.rate = rate
     }
+    iconPath() {
+        return "images/" + this.name + ".png"
+    }
 }
 
 export function getBelts(data) {

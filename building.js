@@ -28,6 +28,9 @@ class Building {
         let overclock = spec.getOverclock(recipe)
         return recipe.time.reciprocate().mul(overclock)
     }
+    iconPath() {
+        return "images/" + this.name + ".png"
+    }
 }
 
 class Miner extends Building {

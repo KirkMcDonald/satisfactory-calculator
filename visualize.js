@@ -247,7 +247,7 @@ export function renderTotals(totals, targets, ignore) {
             .attr("y", d => d.y0 + (d.y1 - d.y0) / 2 - (iconSize / 2))
             .attr("height", iconSize)
             .attr("width", iconSize)
-            .attr("xlink:href", d => "images/" + d.name + ".png")
+            .attr("xlink:href", d => d.recipe.iconPath())
     rects.append("text")
         .attr("x", d => d.x0 + iconSize + 2)
         .attr("y", d => (d.y0 + d.y1) / 2)

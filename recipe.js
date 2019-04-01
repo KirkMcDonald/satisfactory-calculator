@@ -39,6 +39,9 @@ class Recipe {
         }
         return null
     }
+    iconPath() {
+        return this.product.item.iconPath()
+    }
 }
 
 function makeRecipe(data, items, d) {

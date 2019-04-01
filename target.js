@@ -103,7 +103,7 @@ export class BuildTarget {
             .attr("for", d => `target-${targetCount}-${d.key}`)
             .append("img")
                 .classed("icon", true)
-                .attr("src", d => "images/" + d.name + ".png")
+                .attr("src", d => d.iconPath())
                 //.attr("width", 32)
                 //.attr("height", 32)
                 .attr("title", d => d.name)
