@@ -100,10 +100,12 @@ function makeGraph(totals, targets, ignore) {
     return {"nodes": nodes, "links": links}
 }
 
-function recipeValue(recipe, rate) {
+function recipeValue(recipe, rate, ignore) {
     let inputValue = zero
-    for (let ing of recipe.ingredients) {
-        inputValue = inputValue.add(rate.mul(ing.amount))
+    if (!ignore.has(recipe)) {
+        for (let ing of recipe.ingredients) {
+            inputValue = inputValue.add(rate.mul(ing.amount))
+        }
     }
     let outputValue = rate.mul(recipe.product.amount)
     if (inputValue.less(outputValue)) {
@@ -171,7 +173,7 @@ export function renderTotals(totals, targets, ignore) {
             maxRank = rank
         }
         let rate = totals.rates.get(recipe)
-        let value = recipeValue(recipe, rate)
+        let value = recipeValue(recipe, rate, ignore)
         if (largestValue.less(value)) {
             largestValue = value
         }
