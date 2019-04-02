@@ -168,7 +168,7 @@ export function displayItems(spec, totals, ignore) {
         .attr("src", spec.belt.iconPath())
         .attr("title", spec.belt.name)
     row.selectAll("tt.belt-count")
-        .text(d => spec.format.alignCount(spec.getBeltCount(d.rate)))
+        .text(d => spec.format.alignCount(spec.getBeltCount(d.itemRate)))
     let buildingRow = row.filter(d => d.building !== null)
     buildingRow.selectAll("img.building-icon")
         .attr("src", d => d.building.iconPath())
