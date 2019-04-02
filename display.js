@@ -37,6 +37,10 @@ function changeOverclock(d) {
     spec.updateSolution()
 }
 
+// Remember these values from update to update, to make it simpler to reuse
+// elements.
+let displayedItems = []
+
 export function displayItems(spec, totals, ignore) {
     let headers = [
         new Header("items/" + spec.format.rateName, 2),
@@ -49,11 +53,15 @@ export function displayItems(spec, totals, ignore) {
     for (let header of headers) {
         totalCols += header.colspan
     }
-    // null item to represent the header when we do the join.
-    let items = [null]
+    displayedItems = displayedItems.slice(0, totals.topo.length)
+    while (displayedItems.length < totals.topo.length) {
+        displayedItems.push({})
+    }
     let totalAveragePower = zero
     let totalPeakPower = zero
-    for (let recipe of totals.topo) {
+    for (let i = 0; i < totals.topo.length; i++) {
+        let recipe = totals.topo[i]
+        let display = displayedItems[i]
         let rate = totals.rates.get(recipe)
         let item = recipe.product.item
         let itemRate = rate.mul(recipe.gives(item))
@@ -62,116 +70,121 @@ export function displayItems(spec, totals, ignore) {
         let {average, peak} = spec.getPowerUsage(recipe, rate, totals.topo.length)
         totalAveragePower = totalAveragePower.add(average)
         totalPeakPower = totalPeakPower.add(peak)
-        items.push({
-            item: item,
-            itemRate: itemRate,
-            recipe: recipe,
-            ignore: ignore.has(recipe),
-            rate: rate,
-            building: spec.getBuilding(recipe),
-            count: spec.getCount(recipe, rate),
-            overclock: overclockString,
-            average: average,
-            peak: peak,
-        })
+        display.item = item
+        display.itemRate = itemRate
+        display.recipe = recipe
+        display.ignore = ignore.has(recipe)
+        display.rate = rate
+        display.building = spec.getBuilding(recipe)
+        display.count = spec.getCount(recipe, rate)
+        display.overclock = overclockString
+        display.average = average
+        display.peak = peak
     }
 
     let table = d3.select("table#totals")
-    table.selectAll("tr").remove()
-    table.append("tr")
-        .selectAll("th")
-        .data(headers)
-        .join("th")
-            .text(d => d.text)
-            .attr("colspan", d => d.colspan)
 
-    let row = table.selectAll("tr")
-        .data(items)
-        .enter().append("tr")
+    let headerRow = table.selectAll("thead tr").selectAll("th")
+        .data(headers)
+    headerRow.exit().remove()
+    headerRow.join("th")
+        .text(d => d.text)
+        .attr("colspan", d => d.colspan)
+
+    // create missing rows
+    let rows = table.selectAll("tbody").selectAll("tr")
+        .data(displayedItems)
+    rows.exit().remove()
+    let row = rows.enter()
+        .append("tr")
             .classed("display-row", true)
     // items/m
     row.append("td")
         .append("img")
-            .classed("icon", true)
-            .classed("ignore", d => d.ignore)
-            .attr("src", d => d.item.iconPath())
+            .classed("icon item-icon", true)
             .attr("width", 32)
             .attr("height", 32)
-            .attr("title", d => d.item.name)
             .on("click", toggleIgnoreHandler)
     row.append("td")
         .classed("right-align", true)
         .append("tt")
-            .text(d => spec.format.alignRate(d.itemRate))
+            .classed("item-rate", true)
     // belts
     let beltCell = row.append("td")
         .classed("pad", true)
     beltCell.append("img")
-        .classed("icon", true)
-        .attr("src", spec.belt.iconPath())
+        .classed("icon belt-icon", true)
         .attr("width", 32)
         .attr("height", 32)
-        .attr("title", spec.belt.name)
     beltCell.append(d => new Text(" \u00d7"))
     row.append("td")
         .classed("right-align", true)
         .append("tt")
-            .text(d => spec.format.alignCount(spec.getBeltCount(d.rate)))
+            .classed("belt-count", true)
     // buildings
-    let buildingRow = row.filter(d => d.building !== null)
-    let buildingCell = buildingRow.append("td")
-        .classed("pad", true)
+    let buildingCell = row.append("td")
+        .classed("pad building", true)
     buildingCell.append("img")
-        .classed("icon", true)
-        .attr("src", d => d.building.iconPath())
+        .classed("icon building-icon", true)
         .attr("width", 32)
         .attr("height", 32)
-        .attr("title", d => d.building.name)
     buildingCell.append(d => new Text(" \u00d7"))
-    buildingRow.append("td")
-        .classed("right-align", true)
+    row.append("td")
+        .classed("right-align building", true)
         .append("tt")
-            .text(d => spec.format.alignCount(d.count))
+            .classed("building-count", true)
+    /*
     row.filter(d => d.building === null)
         .append("td")
             .attr("colspan", 4)
+    */
     // overclock
-    let overclockCell = buildingRow.append("td")
-        .classed("pad", true)
+    let overclockCell = row.append("td")
+        .classed("pad building", true)
     overclockCell.append("input")
         .classed("overclock", true)
         .attr("type", "number")
-        .attr("value", d => d.overclock)
         .attr("title", "")
         .attr("min", 1)
         .attr("max", 250)
         .on("change", changeOverclock)
     overclockCell.append(() => new Text("%"))
     // power
-    buildingRow.append("td")
-        .classed("right-align pad", true)
+    row.append("td")
+        .classed("right-align pad building", true)
         .append("tt")
-            .text(d => spec.format.alignCount(d.average) + " MW")
+            .classed("power", true)
 
-    let avgRow = table.append("tr")
-    avgRow.append("td")
-        .classed("right-align", true)
-        .attr("colspan", totalCols - 1)
-        .append("b")
-            .text("total average power: ")
-    avgRow.append("td")
-        .classed("right-align", true)
-        .append("tt")
-            .text(spec.format.alignCount(totalAveragePower) + " MW")
+    // update rows
+    row = table.select("tbody").selectAll("tr")
+        .classed("nobuilding", d => d.building === null)
+    row.selectAll("img.item-icon")
+        .classed("ignore", d => d.ignore)
+        .attr("src", d => d.item.iconPath())
+        .attr("title", d => d.item.name)
+    row.selectAll("tt.item-rate")
+        .text(d => spec.format.alignRate(d.itemRate))
+    row.selectAll("img.belt-icon")
+        .attr("src", spec.belt.iconPath())
+        .attr("title", spec.belt.name)
+    row.selectAll("tt.belt-count")
+        .text(d => spec.format.alignCount(spec.getBeltCount(d.rate)))
+    let buildingRow = row.filter(d => d.building !== null)
+    buildingRow.selectAll("img.building-icon")
+        .attr("src", d => d.building.iconPath())
+        .attr("title", d => d.building.name)
+    buildingRow.selectAll("tt.building-count")
+        .text(d => spec.format.alignCount(d.count))
+    buildingRow.selectAll("input.overclock")
+        .attr("value", d => d.overclock)
+    buildingRow.selectAll("tt.power")
+        .text(d => spec.format.alignCount(d.average) + " MW")
 
-    let totRow = table.append("tr")
-    totRow.append("td")
-        .classed("right-align", true)
+    let totalPower = [totalAveragePower, totalPeakPower]
+    let footerRow = table.selectAll("tfoot tr")
+    footerRow.select("td.power-label")
         .attr("colspan", totalCols - 1)
-        .append("b")
-            .text("total peak power: ")
-    totRow.append("td")
-        .classed("right-align", true)
-        .append("tt")
-            .text(spec.format.alignCount(totalPeakPower) + " MW")
+    footerRow.select("tt")
+        .data(totalPower)
+        .text(d => spec.format.alignCount(d) + " MW")
 }

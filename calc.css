@@ -236,6 +236,9 @@ tr.display-row td {
 input.overclock {
     width: 4em;
 }
+tr.nobuilding td.building {
+    display: none;
+}
 /* about */
 .about-content {
     max-width: 40em;
