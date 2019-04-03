@@ -157,6 +157,8 @@ function beltPath(d) {
     return `M ${x0},${y0belt} C ${x_control},${y0belt},${x_control},${y1belt},${x1},${y1belt}`
 }
 
+let color = d3.scaleOrdinal(d3.schemeCategory10)
+
 export function renderTotals(totals, targets, ignore) {
     let data = makeGraph(totals, targets, ignore)
 
@@ -225,8 +227,6 @@ export function renderTotals(totals, targets, ignore) {
         .nodeAlign(d3.sankeyRight)
         .extent([[10, 10], [width + 10, height + 10]])
     let {nodes, links} = sankey(data)
-
-    let color = d3.scaleOrdinal(d3.schemeCategory10)
 
     // Node rects
     let rects = svg.append("g")
