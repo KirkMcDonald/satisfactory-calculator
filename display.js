@@ -147,7 +147,7 @@ export function displayItems(spec, totals, ignore) {
         .attr("title", "")
         .attr("min", 1)
         .attr("max", 250)
-        .on("change", changeOverclock)
+        .on("input", changeOverclock)
     overclockCell.append(() => new Text("%"))
     // power
     row.append("td")
