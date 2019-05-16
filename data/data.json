@@ -352,6 +352,78 @@
             "key_name": "flower-petals",
             "tier": -1,
             "stack_size": 200
+        },
+        {
+            "name": "Beacon",
+            "key_name": "beacon",
+            "tier": 0,
+            "stack_size": 100
+        },
+        {
+            "name": "Raw Quartz",
+            "key_name": "raw-quartz",
+            "tier": 4,
+            "stack_size": 100
+        },
+        {
+            "name": "Quartz Crystal",
+            "key_name": "quartz-crystal",
+            "tier": 4,
+            "stack_size": 100
+        },
+        {
+            "name": "Crystal Oscillator",
+            "key_name": "crystal-oscillator",
+            "tier": 4,
+            "stack_size": 100
+        },
+        {
+            "name": "Sulfur",
+            "key_name": "sulfur",
+            "tier": 4,
+            "stack_size": 100
+        },
+        {
+            "name": "Black Powder",
+            "key_name": "black-powder",
+            "tier": 4,
+            "stack_size": 100
+        },
+        {
+            "name": "Nobelisk",
+            "key_name": "nobelisk",
+            "tier": 4,
+            "stack_size": 100
+        },
+        {
+            "name": "Alien Organs",
+            "key_name": "alien-organs",
+            "tier": -1,
+            "stack_size": 200
+        },
+        {
+            "name": "Cartridge",
+            "key_name": "cartridge",
+            "tier": 5,
+            "stack_size": 50
+        },
+        {
+            "name": "Compacted Coal",
+            "key_name": "compacted-coal",
+            "tier": 4,
+            "stack_size": 100
+        },
+        {
+            "name": "Turbofuel",
+            "key_name": "turbofuel",
+            "tier": 6,
+            "stack_size": 100
+        },
+        {
+            "name": "Silica",
+            "key_name": "silica",
+            "tier": -1,
+            "stack_size": 100
         }
     ],
     "recipes": [
@@ -405,6 +477,17 @@
             "ingredients": [
                 ["iron-ingot", 3],
                 ["coal", 6]
+            ],
+            "product": ["steel-ingot", 6]
+        },
+        {
+            "name": "Alternate: Enriched Steel Ingot",
+            "key_name": "alt-enriched-steel-ingot",
+            "category": "smelting2",
+            "time": 8,
+            "ingredients": [
+                ["iron-ore", 6],
+                ["compacted-coal", 3]
             ],
             "product": ["steel-ingot", 6]
         },
@@ -477,7 +560,7 @@
                 ["wire", 3],
                 ["rubber", 2]
             ],
-            "product": ["cable", 5]
+            "product": ["cable", 10]
         },
         {
             "name": "Biomass",
@@ -518,6 +601,16 @@
                 ["iron-ingot", 2]
             ],
             "product": ["screw", 12]
+        },
+        {
+            "name": "Alternate: Steel Screw",
+            "key_name": "alt-steel-screw",
+            "category": "crafting1",
+            "time": 12,
+            "ingredients": [
+                ["steel-beam", 1]
+            ],
+            "product": ["screw", 36]
         },
         {
             "name": "Biomass",
@@ -706,7 +799,7 @@
             "time": 20,
             "ingredients": [
                 ["steel-pipe", 6],
-                ["quickwire", 25]
+                ["quickwire", 20]
             ],
             "product": ["stator", 3]
         },
@@ -720,6 +813,18 @@
                 ["stator", 2]
             ],
             "product": ["motor", 1]
+        },
+        {
+            "name": "Alternate: Motor",
+            "key_name": "alt-motor",
+            "category": "crafting3",
+            "time": 24,
+            "ingredients": [
+                ["rotor", 2],
+                ["stator", 2],
+                ["crystal-oscillator", 1]
+            ],
+            "product": ["motor", 3]
         },
         {
             "name": "Circuit Board",
@@ -750,7 +855,7 @@
             "time": 24,
             "ingredients": [
                 ["plastic", 12],
-                ["quickwire", 32]
+                ["quickwire", 30]
             ],
             "product": ["circuit-board", 3]
         },
@@ -763,6 +868,17 @@
                 ["crude-oil", 4]
             ],
             "product": ["plastic", 3]
+        },
+        {
+            "name": "Alternate: Plastic",
+            "key_name": "alt-plastic",
+            "category": "crafting2",
+            "time": 16,
+            "ingredients": [
+                ["rubber", 8],
+                ["fuel", 5]
+            ],
+            "product": ["plastic", 9]
         },
         {
             "name": "Fuel",
@@ -830,10 +946,21 @@
             "time": 64,
             "ingredients": [
                 ["circuit-board", 10],
-                ["quickwire", 112],
+                ["quickwire", 80],
                 ["rubber", 48]
             ],
             "product": ["computer", 3]
+        },
+        {
+            "name": "Alternate: Crystal Computer",
+            "key_name": "alt-crystal-computer",
+            "category": "crafting2",
+            "time": 24,
+            "ingredients": [
+                ["circuit-board", 2],
+                ["crystal-oscillator", 1]
+            ],
+            "product": ["computer", 1]
         },
         {
             "name": "Caterium Ingot",
@@ -909,7 +1036,7 @@
             "time": 4,
             "ingredients": [
                 ["mycelia", 1],
-                ["leaves", 2]
+                ["biomass", 5]
             ],
             "product": ["fabric", 1]
         },
@@ -924,6 +1051,185 @@
                 ["fabric", 2]
             ],
             "product": ["filter", 1]
+        },
+        {
+            "name": "Beacon",
+            "key_name": "beacon",
+            "category": "crafting3",
+            "time": 8,
+            "ingredients": [
+                ["iron-plate", 3],
+                ["iron-rod", 1],
+                ["wire", 15],
+                ["cable", 2]
+            ],
+            "product": ["beacon", 1]
+        },
+        {
+            "name": "Alternate: Beacon",
+            "key_name": "alt-beacon",
+            "category": "crafting3",
+            "time": 32,
+            "ingredients": [
+                ["steel-beam", 1],
+                ["steel-pipe", 4],
+                ["crystal-oscillator", 1]
+            ],
+            "product": ["beacon", 5]
+        },
+        {
+            "name": "Quartz Crystal",
+            "key_name": "quartz-crystal",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["raw-quartz", 2]
+            ],
+            "product": ["quartz-crystal", 1]
+        },
+        {
+            "name": "Crystal Oscillator",
+            "key_name": "crystal-oscillator",
+            "category": "crafting3",
+            "time": 32,
+            "ingredients": [
+                ["quartz-crystal", 10],
+                ["cable", 14],
+                ["reinforced-iron-plate", 4]
+            ],
+            "product": ["crystal-oscillator", 1]
+        },
+        {
+            "name": "Alternate: Crystal Oscillator",
+            "key_name": "alt-crystal-oscillator",
+            "category": "crafting3",
+            "time": 64,
+            "ingredients": [
+                ["quartz-crystal", 20],
+                ["rubber", 24],
+                ["ai-limiter", 1]
+            ],
+            "product": ["crystal-oscillator", 3]
+        },
+        {
+            "name": "Black Powder",
+            "key_name": "black-powder",
+            "category": "crafting2",
+            "time": 8,
+            "ingredients": [
+                ["coal", 1],
+                ["sulfur", 2]
+            ],
+            "product": ["black-powder", 1]
+        },
+        {
+            "name": "Alternate: Black Powder",
+            "key_name": "alt-black-powder",
+            "category": "crafting2",
+            "time": 16,
+            "ingredients": [
+                ["sulfur", 2],
+                ["compacted-coal", 1]
+            ],
+            "product": ["black-powder", 4]
+        },
+        {
+            "name": "Nobelisk",
+            "key_name": "nobelisk",
+            "category": "crafting3",
+            "time": 20,
+            "ingredients": [
+                ["black-powder", 5],
+                ["steel-pipe", 5],
+                ["beacon", 1]
+            ],
+            "product": ["nobelisk", 1]
+        },
+        {
+            "name": "Alternate: Nobelisk",
+            "key_name": "alt-nobelisk",
+            "category": "crafting3",
+            "time": 40,
+            "ingredients": [
+                ["black-powder", 10],
+                ["steel-pipe", 10],
+                ["crystal-oscillator", 1]
+            ],
+            "product": ["nobelisk", 3]
+        },
+        {
+            "name": "Biomass",
+            "key_name": "biomass-from-alien-organs",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["alien-organs", 1]
+            ],
+            "product": ["biomass", 100]
+        },
+        {
+            "name": "Cartridge",
+            "key_name": "cartridge",
+            "category": "crafting2",
+            "time": 20,
+            "ingredients": [
+                ["nobelisk", 1],
+                ["steel-pipe", 4]
+            ],
+            "product": ["cartridge", 4]
+        },
+        {
+            "name": "Alternate: Compacted Coal",
+            "key_name": "alt-coal",
+            "category": "crafting2",
+            "time": 6,
+            "ingredients": [
+                ["coal", 3],
+                ["sulfur", 3]
+            ],
+            "product": ["compacted-coal", 3]
+        },
+        {
+            "name": "Alternate: Wood Coal",
+            "key_name": "alt-wood-coal",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["wood", 3]
+            ],
+            "product": ["coal", 10]
+        },
+        {
+            "name": "Alternate: Biomass Coal",
+            "key_name": "alt-biomass-coal",
+            "category": "crafting1",
+            "time": 8,
+            "ingredients": [
+                ["biomass", 5]
+            ],
+            "product": ["coal", 6]
+        },
+        {
+            "name": "Turbofuel",
+            "key_name": "turbofuel",
+            "category": "crafting2",
+            "time": 16,
+            "ingredients": [
+                ["fuel", 5],
+                ["compacted-coal", 4]
+            ],
+            "product": ["turbofuel", 4]
+        },
+        {
+            "name": "Alternate: Concrete",
+            "key_name": "alt-concrete",
+            "category": "crafting2",
+            "time": 8,
+            "ingredients": [
+                ["silica", 1],
+                ["limestone", 4]
+            ],
+            "product": ["concrete", 3]
         }
     ],
     "resources": [
@@ -945,6 +1251,14 @@
         },
         {
             "key_name": "caterium-ore",
+            "category": "mineral"
+        },
+        {
+            "key_name": "sulfur",
+            "category": "mineral"
+        },
+        {
+            "key_name": "raw-quartz",
             "category": "mineral"
         },
         {
