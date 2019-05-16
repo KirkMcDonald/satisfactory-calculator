@@ -422,7 +422,7 @@
         {
             "name": "Silica",
             "key_name": "silica",
-            "tier": -1,
+            "tier": 4,
             "stack_size": 100
         }
     ],
@@ -1019,6 +1019,18 @@
             "product": ["high-speed-connector", 1]
         },
         {
+            "name": "Alternate: High-Speed Connector",
+            "key_name": "alt-high-speed-connector",
+            "category": "crafting3",
+            "time": 48,
+            "ingredients": [
+                ["quickwire", 66],
+                ["silica", 48],
+                ["rubber", 18]
+            ],
+            "product": ["high-speed-connector", 3]
+        },
+        {
             "name": "A.I. Limiter",
             "key_name": "ai-limiter",
             "category": "crafting2",
@@ -1230,6 +1242,17 @@
                 ["limestone", 4]
             ],
             "product": ["concrete", 3]
+        },
+        {
+            "name": "Alternate: Silica",
+            "key_name": "alt-silica",
+            "category": "crafting2",
+            "time": 8,
+            "ingredients": [
+                ["raw-quartz", 4],
+                ["limestone", 2]
+            ],
+            "product": ["silica", 9]
         }
     ],
     "resources": [
