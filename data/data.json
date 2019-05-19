@@ -968,7 +968,7 @@
             "category": "smelting1",
             "time": 4,
             "ingredients": [
-                ["caterium-ore", 4]
+                ["caterium-ore", 3]
             ],
             "product": ["caterium-ingot", 1]
         },
