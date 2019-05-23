@@ -1230,7 +1230,7 @@
                 ["fuel", 5],
                 ["compacted-coal", 4]
             ],
-            "product": ["turbofuel", 4]
+            "product": ["turbofuel", 5]
         },
         {
             "name": "Alternate: Concrete",
