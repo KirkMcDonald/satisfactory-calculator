@@ -18,7 +18,12 @@
         {
             "name": "Conveyor Belt Mk.4",
             "key_name": "belt4",
-            "rate": 450
+            "rate": 480
+        },
+        {
+            "name": "Conveyor Belt Mk.5",
+            "key_name": "belt5",
+            "rate": 780
         }
     ],
     "buildings": [
@@ -79,6 +84,13 @@
             "category": "mineral",
             "base_rate": 120,
             "power": 12
+        },
+        {
+            "name": "Miner MK3",
+            "key_name": "miner-mk3",
+            "category": "mineral",
+            "base_rate": 240,
+            "power": 30
         },
         {
             "name": "Oil Pump",
@@ -261,7 +273,7 @@
             "name": "Circuit Board",
             "key_name": "circuit-board",
             "tier": 5,
-            "stack_size": 100
+            "stack_size": 200
         },
         {
             "name": "Plastic",
@@ -423,6 +435,78 @@
             "name": "Silica",
             "key_name": "silica",
             "tier": 4,
+            "stack_size": 100
+        },
+        {
+            "name": "Bauxite",
+            "key_name": "bauxite",
+            "tier": 7,
+            "stack_size": 100
+        },
+        {
+            "name": "Aluminum Ingot",
+            "key_name": "aluminum-ingot",
+            "tier": 7,
+            "stack_size": 100
+        },
+        {
+            "name": "Alclad Aluminum Sheet",
+            "key_name": "alclad-aluminum-sheet",
+            "tier": 7,
+            "stack_size": 100
+        },
+        {
+            "name": "Heat Sink",
+            "key_name": "heat-sink",
+            "tier": 7,
+            "stack_size": 100
+        },
+        {
+            "name": "Radio Control Unit",
+            "key_name": "radio-control-unit",
+            "tier": 7,
+            "stack_size": 100
+        },
+        {
+            "name": "Turbo Motor",
+            "key_name": "turbo-motor",
+            "tier": 7,
+            "stack_size": 100
+        },
+        {
+            "name": "Battery",
+            "key_name": "battery",
+            "tier": 7,
+            "stack_size": 100
+        },
+        {
+            "name": "Uranium",
+            "key_name": "uranium",
+            "tier": 7,
+            "stack_size": 100
+        },
+        {
+            "name": "Uranium Cell",
+            "key_name": "uranium-cell",
+            "tier": 7,
+            "stack_size": 100
+        },
+        {
+            "name": "Electromagnetic Control Rod",
+            "key_name": "em-control-rod",
+            "tier": 7,
+            "stack_size": 100
+        },
+        {
+            "name": "Nuclear Fuel Rod",
+            "key_name": "nuclear-fuel-rod",
+            "tier": 7,
+            "stack_size": 100
+        },
+        {
+            "name": "Iodine Infused Filter",
+            "key_name": "iodine-infused-filter",
+            "tier": 7,
             "stack_size": 100
         }
     ],
@@ -1244,6 +1328,16 @@
             "product": ["concrete", 3]
         },
         {
+            "name": "Silica",
+            "key_name": "silica",
+            "category": "crafting1",
+            "time": 4,
+            "ingredients": [
+                ["raw-quartz", 2]
+            ],
+            "product": ["silica", 3]
+        },
+        {
             "name": "Alternate: Silica",
             "key_name": "alt-silica",
             "category": "crafting2",
@@ -1253,6 +1347,124 @@
                 ["limestone", 2]
             ],
             "product": ["silica", 9]
+        },
+        {
+            "name": "Aluminum Ingot",
+            "key_name": "aluminum-ingot",
+            "category": "smelting2",
+            "time": 4,
+            "ingredients": [
+                ["bauxite", 7],
+                ["silica", 6]
+            ],
+            "product": ["aluminum-ingot", 2]
+        },
+        {
+            "name": "Alclad Aluminum Sheet",
+            "key_name": "alclad-aluminum-sheet",
+            "category": "crafting2",
+            "time": 12,
+            "ingredients": [
+                ["aluminum-ingot", 3],
+                ["copper-ingot", 2]
+            ],
+            "product": ["alclad-aluminum-sheet", 3]
+        },
+        {
+            "name": "Heat Sink",
+            "key_name": "heat-sink",
+            "category": "crafting2",
+            "time": 12,
+            "ingredients": [
+                ["aluminum-ingot", 4],
+                ["rubber", 10]
+            ],
+            "product": ["heat-sink", 1]
+        },
+        {
+            "name": "Radio Control Unit",
+            "key_name": "radio-control-unit",
+            "category": "crafting3",
+            "time": 24,
+            "ingredients": [
+                ["heat-sink", 4],
+                ["rubber", 24],
+                ["crystal-oscillator", 1],
+                ["computer", 1]
+            ],
+            "product": ["radio-control-unit", 1]
+        },
+        {
+            "name": "Turbo Motor",
+            "key_name": "turbo-motor",
+            "category": "crafting3",
+            "time": 32,
+            "ingredients": [
+                ["heat-sink", 4],
+                ["radio-control-unit", 2],
+                ["motor", 4],
+                ["rubber", 40]
+            ],
+            "product": ["turbo-motor", 1]
+        },
+        {
+            "name": "Battery",
+            "key_name": "battery",
+            "category": "crafting3",
+            "time": 32,
+            "ingredients": [
+                ["alclad-aluminum-sheet", 8],
+                ["wire", 24],
+                ["sulfur", 20],
+                ["plastic", 9]
+            ],
+            "product": ["battery", 3]
+        },
+        {
+            "name": "Uranium Cell",
+            "key_name": "uranium-cell",
+            "category": "crafting2",
+            "time": 60,
+            "ingredients": [
+                ["uranium", 45],
+                ["concrete", 9]
+            ],
+            "product": ["uranium-cell", 10]
+        },
+        {
+            "name": "Electromagnetic Control Rod",
+            "key_name": "em-control-rod",
+            "category": "crafting2",
+            "time": 30,
+            "ingredients": [
+                ["stator", 3],
+                ["ai-limiter", 2]
+            ],
+            "product": ["em-control-rod", 1]
+        },
+        {
+            "name": "Nuclear Fuel Rod",
+            "key_name": "nuclear-fuel-rod",
+            "category": "crafting3",
+            "time": 150,
+            "ingredients": [
+                ["uranium-cell", 25],
+                ["encased-industrial-beam", 3],
+                ["em-control-rod", 5]
+            ],
+            "product": ["nuclear-fuel-rod", 1]
+        },
+        {
+            "name": "Iodine Infused Filter",
+            "key_name": "iodine-infused-filter",
+            "category": "crafting3",
+            "time": 16,
+            "ingredients": [
+                ["filter", 1],
+                ["quickwire", 8],
+                ["rubber", 2]
+            ],
+            "product": ["iodine-infused-filter", 1]
         }
     ],
     "resources": [
@@ -1287,6 +1499,14 @@
         {
             "key_name": "crude-oil",
             "category": "oil"
+        },
+        {
+            "key_name": "bauxite",
+            "category": "mineral"
+        },
+        {
+            "key_name": "uranium",
+            "category": "mineral"
         }
     ]
 }
