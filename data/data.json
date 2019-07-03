@@ -1376,10 +1376,21 @@
             "category": "crafting2",
             "time": 12,
             "ingredients": [
-                ["aluminum-ingot", 4],
+                ["alclad-aluminum-sheet", 4],
                 ["rubber", 10]
             ],
             "product": ["heat-sink", 1]
+        },
+        {
+            "name": "Alternate: Heat Sink",
+            "key_name": "alt-heat-sink",
+            "category": "crafting2",
+            "time": 24,
+            "ingredients": [
+                ["alclad-aluminum-sheet", 8],
+                ["wire", 36]
+            ],
+            "product": ["heat-sink", 3]
         },
         {
             "name": "Radio Control Unit",
@@ -1395,6 +1406,18 @@
             "product": ["radio-control-unit", 1]
         },
         {
+            "name": "Alternate: Radio Control Unit",
+            "key_name": "alt-radio-control-unit",
+            "category": "crafting3",
+            "time": 48,
+            "ingredients": [
+                ["heat-sink", 10],
+                ["supercomputer", 1],
+                ["quartz-crystal", 30]
+            ],
+            "product": ["radio-control-unit", 3]
+        },
+        {
             "name": "Turbo Motor",
             "key_name": "turbo-motor",
             "category": "crafting3",
@@ -1406,6 +1429,19 @@
                 ["rubber", 40]
             ],
             "product": ["turbo-motor", 1]
+        },
+        {
+            "name": "Alternate: Turbo Motor",
+            "key_name": "alt-turbo-motor",
+            "category": "crafting3",
+            "time": 64,
+            "ingredients": [
+                ["motor", 8],
+                ["radio-control-unit", 4],
+                ["ai-limiter", 8],
+                ["stator", 8]
+            ],
+            "product": ["turbo-motor", 3]
         },
         {
             "name": "Battery",
@@ -1432,6 +1468,19 @@
             "product": ["uranium-cell", 10]
         },
         {
+            "name": "Alternate: Uranium Cell",
+            "key_name": "alt-uranium-cell",
+            "category": "crafting3",
+            "time": 120,
+            "ingredients": [
+                ["uranium", 45],
+                ["sulfur", 45],
+                ["silica", 45],
+                ["quickwire", 60]
+            ],
+            "product": ["uranium-cell", 35]
+        },
+        {
             "name": "Electromagnetic Control Rod",
             "key_name": "em-control-rod",
             "category": "crafting2",
@@ -1441,6 +1490,17 @@
                 ["ai-limiter", 2]
             ],
             "product": ["em-control-rod", 1]
+        },
+        {
+            "name": "Alternate: Electromagnetic Control Rod",
+            "key_name": "alt-em-control-rod",
+            "category": "crafting2",
+            "time": 60,
+            "ingredients": [
+                ["stator", 6],
+                ["high-speed-connector", 3]
+            ],
+            "product": ["em-control-rod", 3]
         },
         {
             "name": "Nuclear Fuel Rod",
@@ -1453,6 +1513,19 @@
                 ["em-control-rod", 5]
             ],
             "product": ["nuclear-fuel-rod", 1]
+        },
+        {
+            "name": "Alternate: Nuclear Fuel Rod",
+            "key_name": "alt-nuclear-fuel-rod",
+            "category": "crafting3",
+            "time": 300,
+            "ingredients": [
+                ["uranium-cell", 50],
+                ["em-control-rod", 10],
+                ["crystal-oscillator", 3],
+                ["beacon", 6]
+            ],
+            "product": ["nuclear-fuel-rod", 3]
         },
         {
             "name": "Iodine Infused Filter",
