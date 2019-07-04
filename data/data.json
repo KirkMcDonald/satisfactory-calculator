@@ -919,7 +919,7 @@
                 ["wire", 12],
                 ["plastic", 6]
             ],
-            "product": ["circuit-board", 1]
+            "product": ["circuit-board", 2]
         },
         {
             "name": "Alternate: Circuit Board",
@@ -930,7 +930,7 @@
                 ["rubber", 16],
                 ["wire", 24]
             ],
-            "product": ["circuit-board", 3]
+            "product": ["circuit-board", 6]
         },
         {
             "name": "Alternate: Quickwire Circuit Board",
@@ -941,7 +941,7 @@
                 ["plastic", 12],
                 ["quickwire", 30]
             ],
-            "product": ["circuit-board", 3]
+            "product": ["circuit-board", 6]
         },
         {
             "name": "Plastic",
