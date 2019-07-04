@@ -1016,7 +1016,7 @@
             "category": "crafting3",
             "time": 32,
             "ingredients": [
-                ["circuit-board", 5],
+                ["circuit-board", 10],
                 ["cable", 12],
                 ["plastic", 18],
                 ["screw", 60]
@@ -1029,7 +1029,7 @@
             "category": "crafting3",
             "time": 64,
             "ingredients": [
-                ["circuit-board", 10],
+                ["circuit-board", 20],
                 ["quickwire", 80],
                 ["rubber", 48]
             ],
@@ -1041,7 +1041,7 @@
             "category": "crafting2",
             "time": 24,
             "ingredients": [
-                ["circuit-board", 2],
+                ["circuit-board", 4],
                 ["crystal-oscillator", 1]
             ],
             "product": ["computer", 1]
@@ -1120,7 +1120,7 @@
             "category": "crafting2",
             "time": 12,
             "ingredients": [
-                ["circuit-board", 1],
+                ["circuit-board", 2],
                 ["quickwire", 18]
             ],
             "product": ["ai-limiter", 1]
