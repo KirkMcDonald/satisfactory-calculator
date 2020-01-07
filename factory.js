@@ -172,7 +172,7 @@ class FactorySpecification {
     }
     getPowerUsage(recipe, rate, itemCount) {
         let building = this.getBuilding(recipe)
-        if (building === null) {
+        if (building === null || this.ignore.has(recipe)) {
             return {average: zero, peak: zero}
         }
         let count = this.getCount(recipe, rate)
@@ -182,7 +182,7 @@ class FactorySpecification {
         if (overclock !== undefined) {
             // The result of this exponent will typically be irrational, so
             // this approximation is a necessity. Because overclock is limited
-            // to the range [1.0, 2.5], any imprecision introduced by this
+            // to the range [0.01, 2.50], any imprecision introduced by this
             // approximation is minimal (and is probably less than is present
             // in the game itself).
             let overclockFactor = Rational.from_float(Math.pow(overclock.toFloat(), 1.6))
