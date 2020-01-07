@@ -172,7 +172,7 @@ class FactorySpecification {
     }
     getPowerUsage(recipe, rate, itemCount) {
         let building = this.getBuilding(recipe)
-        if (building === null) {
+        if (building === null || this.ignore.has(recipe)) {
             return {average: zero, peak: zero}
         }
         let count = this.getCount(recipe, rate)
