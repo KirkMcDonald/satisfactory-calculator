@@ -44,6 +44,7 @@ function makeGraph(totals, targets, ignore) {
         "building": null,
         "count": zero,
         "rate": null,
+        "ignore": false,
     }]
     let nodeMap = new Map()
     nodeMap.set("output", nodes[0])
@@ -58,6 +59,7 @@ function makeGraph(totals, targets, ignore) {
             "building": building,
             "count": count,
             "rate": rate,
+            "ignore": ignore.has(recipe),
         }
         nodes.push(node)
         nodeMap.set(recipe.name, node)
@@ -65,8 +67,7 @@ function makeGraph(totals, targets, ignore) {
 
     let links = []
     for (let node of nodes) {
-        let recipe = node.recipe
-        if (ignore.has(recipe)) {
+        if (node.ignore) {
             continue
         }
         for (let ing of node.ingredients) {
@@ -74,7 +75,7 @@ function makeGraph(totals, targets, ignore) {
             if (node.name == "output") {
                 rate = ing.amount
             } else {
-                rate = totals.rates.get(recipe).mul(ing.amount)
+                rate = totals.rates.get(node.recipe).mul(ing.amount)
             }
             for (let subRecipe of ing.item.recipes) {
                 if (totals.rates.has(subRecipe)) {
@@ -124,6 +125,10 @@ function rankHeightEstimate(rank, valueFactor) {
 }
 
 function nodeText(d) {
+    if (d.ignore) {
+        return ""
+    }
+
     if (d.count.isZero()) {
         if (d.rate === null) {
             return ""
@@ -321,6 +326,6 @@ export function renderTotals(totals, targets, ignore) {
             .attr("height", d => d.rect.height)
             .on("click", toggleIgnoreHandler)
             .append("title")
-                .text(d => d.node.name + (d.node.count.isZero() ? "" : `\n${d.node.building.name} \u00d7 ${spec.format.count(d.node.count)}`))
+                .text(d => d.node.name + (d.node.count.isZero() || ignore.has(d.recipe) ? "" : `\n${d.node.building.name} \u00d7 ${spec.format.count(d.node.count)}`))
 }
 

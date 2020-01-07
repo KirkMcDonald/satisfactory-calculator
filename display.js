@@ -179,6 +179,8 @@ export function displayItems(spec, totals, ignore) {
         .attr("value", d => d.overclock)
     buildingRow.selectAll("tt.power")
         .text(d => spec.format.alignCount(d.average) + " MW")
+    buildingRow.selectAll(".building")
+        .classed("hide", d => d.ignore)
 
     let totalPower = [totalAveragePower, totalPeakPower]
     let footerRow = table.selectAll("tfoot tr")
