@@ -46,7 +46,7 @@ export function displayItems(spec, totals, ignore) {
         new Header("items/" + spec.format.rateName, 2),
         new Header("belts", 2),
         new Header("buildings", 2),
-        new Header("overclock", 1),
+        new Header("overclock", 3),
         new Header("power", 1),
     ]
     let totalCols = 0
@@ -78,6 +78,7 @@ export function displayItems(spec, totals, ignore) {
         display.building = spec.getBuilding(recipe)
         display.count = spec.getCount(recipe, rate)
         display.overclock = overclockString
+        display.powerShardCount = Math.ceil(Math.max(overclock.toFloat() - 1, 0) / 0.5)
         display.average = average
         display.peak = peak
     }
@@ -149,6 +150,19 @@ export function displayItems(spec, totals, ignore) {
         .attr("max", 250)
         .on("input", changeOverclock)
     overclockCell.append(() => new Text("%"))
+
+    let powerShardCell = row.append("td")
+        .classed("pad building", true)
+    powerShardCell.append("img")
+        .classed("icon power-shard-icon", true)
+        .attr("width", 32)
+        .attr("height", 32)
+    powerShardCell.append(d => new Text(" \u00d7"))
+    row.append("td")
+        .classed("right-align building", true)
+        .append("tt")
+            .classed("power-shard-count", true)
+
     // power
     row.append("td")
         .classed("right-align pad building", true)
@@ -177,6 +191,12 @@ export function displayItems(spec, totals, ignore) {
         .text(d => spec.format.alignCount(d.count))
     buildingRow.selectAll("input.overclock")
         .attr("value", d => d.overclock)
+    let powerShard = spec.items.get("power-shard")
+    buildingRow.selectAll("img.power-shard-icon")
+        .attr("src", powerShard.iconPath())
+        .attr("title", powerShard.name)
+    buildingRow.selectAll("tt.power-shard-count")
+        .text(d => d.powerShardCount)
     buildingRow.selectAll("tt.power")
         .text(d => spec.format.alignCount(d.average) + " MW")
 

@@ -222,6 +222,12 @@
             "stack_size": 100
         },
         {
+            "name": "Power Shard",
+            "key_name": "power-shard",
+            "tier": 2,
+            "stack_size": 100
+        },
+        {
             "name": "Steel Beam",
             "key_name": "steel-beam",
             "tier": 4,
