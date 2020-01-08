@@ -64,6 +64,9 @@ img.icon {
 .ignore {
     opacity: 0.3;
 }
+.hide {
+    visibility: hidden;
+}
 /* build targets */
 .targetButton {
     height: 2em;

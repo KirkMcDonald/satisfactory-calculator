@@ -42,23 +42,13 @@ function changeOverclock(d) {
 let displayedItems = []
 
 export function displayItems(spec, totals, ignore) {
-    let headers = [
-        new Header("items/" + spec.format.rateName, 2),
-        new Header("belts", 2),
-        new Header("buildings", 2),
-        new Header("overclock", 1),
-        new Header("power", 1),
-    ]
-    let totalCols = 0
-    for (let header of headers) {
-        totalCols += header.colspan
-    }
     displayedItems = displayedItems.slice(0, totals.topo.length)
     while (displayedItems.length < totals.topo.length) {
         displayedItems.push({})
     }
     let totalAveragePower = zero
     let totalPeakPower = zero
+    let powerShardsUsed = 0
     for (let i = 0; i < totals.topo.length; i++) {
         let recipe = totals.topo[i]
         let display = displayedItems[i]
@@ -78,8 +68,22 @@ export function displayItems(spec, totals, ignore) {
         display.building = spec.getBuilding(recipe)
         display.count = spec.getCount(recipe, rate)
         display.overclock = overclockString
+        display.powerShardCount = Math.ceil(Math.max(overclock.toFloat() - 1, 0) / 0.5)
+        powerShardsUsed += display.powerShardCount
         display.average = average
         display.peak = peak
+    }
+
+    let headers = [
+        new Header("items/" + spec.format.rateName, 2),
+        new Header("belts", 2),
+        new Header("buildings", 2),
+        new Header("overclock", powerShardsUsed ? 3 : 1),
+        new Header("power", 1),
+    ]
+    let totalCols = 0
+    for (let header of headers) {
+        totalCols += header.colspan
     }
 
     let table = d3.select("table#totals")
@@ -140,7 +144,7 @@ export function displayItems(spec, totals, ignore) {
     */
     // overclock
     let overclockCell = row.append("td")
-        .classed("pad building", true)
+        .classed("pad building overclock", true)
     overclockCell.append("input")
         .classed("overclock", true)
         .attr("type", "number")
@@ -149,6 +153,7 @@ export function displayItems(spec, totals, ignore) {
         .attr("max", 250)
         .on("input", changeOverclock)
     overclockCell.append(() => new Text("%"))
+
     // power
     row.append("td")
         .classed("right-align pad building", true)
@@ -177,14 +182,61 @@ export function displayItems(spec, totals, ignore) {
         .text(d => spec.format.alignCount(d.count))
     buildingRow.selectAll("input.overclock")
         .attr("value", d => d.overclock)
+
+    // If power shards are used at all...
+    if (powerShardsUsed) {
+
+        // ...if the table's power shard column is "collapsed"...
+        if (table.classed("power-shard-collapsed")) {
+            let powerShard = spec.items.get("power-shard")
+
+            // ...insert a power shard cell after each overclock cell:
+            let powerShardCell = buildingRow.insert("td", "td.overclock + *")
+                .classed("pad building power-shard power-shard-icon", true)
+            powerShardCell.append("img")
+                .classed("icon", true)
+                .attr("src", powerShard.iconPath())
+                .attr("title", powerShard.name)
+                .attr("width", 32)
+                .attr("height", 32)
+            powerShardCell.append(d => new Text(" \u00d7"))
+
+            buildingRow.insert("td", "td.power-shard-icon + *")
+                .classed("right-align building power-shard", true)
+                .append("tt")
+                    .classed("power-shard-count", true)
+
+            // ...mark the table's power shard column "uncollapsed":
+            table.classed("power-shard-collapsed", false)
+        }
+
+        // ...update the counts of each power shard cell, and hide any power
+        // shard cell with a count of 0:
+        buildingRow.selectAll("tt.power-shard-count").text(d => d.powerShardCount)
+        buildingRow.selectAll(".power-shard").classed("hide", d => d.powerShardCount == 0)
+    }
+    
+    // Otherwise, remove all power shard cells, and mark the table's power
+    // shard column "collapsed":
+    else {
+        buildingRow.selectAll(".power-shard").remove()
+        table.classed("power-shard-collapsed", true)
+    }
+
     buildingRow.selectAll("tt.power")
         .text(d => spec.format.alignCount(d.average) + " MW")
 
     let totalPower = [totalAveragePower, totalPeakPower]
-    let footerRow = table.selectAll("tfoot tr")
-    footerRow.select("td.power-label")
+    let footerPowerRow = table.selectAll("tfoot tr.power")
+    footerPowerRow.select("td.label")
         .attr("colspan", totalCols - 1)
-    footerRow.select("tt")
+    footerPowerRow.select("tt")
         .data(totalPower)
         .text(d => spec.format.alignCount(d) + " MW")
+
+    let footerPowerShardRow = table.select("tfoot tr.power-shard")
+    footerPowerShardRow.select("td.label")
+        .attr("colspan", totalCols - 1)
+    footerPowerShardRow.select("tt")
+        .text(powerShardsUsed)
 }
