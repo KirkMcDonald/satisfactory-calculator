@@ -123,16 +123,18 @@ function rankHeightEstimate(rank, valueFactor) {
     return total
 }
 
-function nodeText(d) {
-    if (d.count.isZero()) {
-        if (d.rate === null) {
-            return ""
-        } else {
-            return `\u00d7 ${spec.format.rate(d.rate)}/${spec.format.rateName}`
-        }
-    } else {
-        return "\u00d7 " + spec.format.count(d.count)
-    }
+function getRateString(d) {
+    return d.rate === null ? "" : `\u00d7 ${spec.format.rate(d.rate)}/${spec.format.rateName}`
+}
+
+function getMachineCountString(d) {
+    console.assert(!d.count.isZero(), "Items that aren't produced through machines can't have a machine count!")
+    return `\u00d7 ${spec.format.count(d.count)}`
+}
+
+function getOverclockString(d) {
+    console.assert(!d.count.isZero(), "Items that aren't produced through machines (machine count == 0) can't have an overclock value!")
+    return `${spec.getOverclock(d.recipe).mul(Rational.from_float(100)).toString()}%`
 }
 
 // This is basically an educated guess, but seems to match whatever Chrome and
@@ -191,7 +193,12 @@ export function renderTotals(totals, targets, ignore) {
     let testSVG = d3.select("body").append("svg")
     for (let node of data.nodes) {
         let text = testSVG.append("text")
-            .text(nodeText(node))
+        if (node.count.isZero()) {
+            text = text.text(getRateString(node))
+        } else {
+            text.append("tspan").attr("x", 0).text(getMachineCountString(node))
+            text.append("tspan").attr("x", 0).text(getOverclockString(node))
+        }
         let textWidth = text.node().getBBox().width
         text.remove()
         if (textWidth > maxTextWidth) {
@@ -250,12 +257,30 @@ export function renderTotals(totals, targets, ignore) {
             .attr("height", iconSize)
             .attr("width", iconSize)
             .attr("xlink:href", d => d.recipe.iconPath())
-    rects.append("text")
+
+    // For nodes without an associated machine, display the rate on a single line:
+    rects.filter(d => d.count.isZero())
+        .append("text")
+            .attr("x", d => d.x0 + iconSize + 2)
+            .attr("y", d => (d.y0 + d.y1) / 2)
+            .attr("dy", "0.35em")
+            .attr("text-anchor", "start")
+            .text(getRateString)
+
+    // For nodes with an associated machine, display the machine count on one
+    // line, and the overclock rate on the next line:
+    let twoLineText = rects.filter(d => !d.count.isZero())
+        .append("text")
+            .attr("x", d => d.x0 + iconSize + 2)
+            .attr("y", d => (d.y0 + d.y1) / 2)
+            .attr("dy", "-0.15em") // (0.35em minus half a line's height (0.5em), maintaining vertical alignment)
+            .attr("text-anchor", "start")
+    twoLineText.append("tspan")
+        .text(getMachineCountString)
+    twoLineText.append("tspan") // ("x" and "dy" are used to render the text on the next line)
         .attr("x", d => d.x0 + iconSize + 2)
-        .attr("y", d => (d.y0 + d.y1) / 2)
-        .attr("dy", "0.35em")
-        .attr("text-anchor", "start")
-        .text(nodeText)
+        .attr("dy", "1em")
+        .text(getOverclockString)
 
     // Link paths
     let link = svg.append("g")
@@ -321,6 +346,6 @@ export function renderTotals(totals, targets, ignore) {
             .attr("height", d => d.rect.height)
             .on("click", toggleIgnoreHandler)
             .append("title")
-                .text(d => d.node.name + (d.node.count.isZero() ? "" : `\n${d.node.building.name} \u00d7 ${spec.format.count(d.node.count)}`))
+                .text(d => d.node.name + (d.node.count.isZero() ? "" : `\n${d.node.building.name} ${getMachineCountString(d.node)}\n${getOverclockString(d.node)}`))
 }
 
