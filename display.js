@@ -48,7 +48,7 @@ export function displayItems(spec, totals, ignore) {
     }
     let totalAveragePower = zero
     let totalPeakPower = zero
-    let powerShardsUsed = false
+    let powerShardsUsed = 0
     for (let i = 0; i < totals.topo.length; i++) {
         let recipe = totals.topo[i]
         let display = displayedItems[i]
@@ -69,9 +69,7 @@ export function displayItems(spec, totals, ignore) {
         display.count = spec.getCount(recipe, rate)
         display.overclock = overclockString
         display.powerShardCount = Math.ceil(Math.max(overclock.toFloat() - 1, 0) / 0.5)
-        if (display.powerShardCount) {
-            powerShardsUsed = true
-        }
+        powerShardsUsed += display.powerShardCount
         display.average = average
         display.peak = peak
     }
@@ -229,10 +227,16 @@ export function displayItems(spec, totals, ignore) {
         .text(d => spec.format.alignCount(d.average) + " MW")
 
     let totalPower = [totalAveragePower, totalPeakPower]
-    let footerRow = table.selectAll("tfoot tr")
-    footerRow.select("td.power-label")
+    let footerPowerRow = table.selectAll("tfoot tr.power")
+    footerPowerRow.select("td.label")
         .attr("colspan", totalCols - 1)
-    footerRow.select("tt")
+    footerPowerRow.select("tt")
         .data(totalPower)
         .text(d => spec.format.alignCount(d) + " MW")
+
+    let footerPowerShardRow = table.select("tfoot tr.power-shard")
+    footerPowerShardRow.select("td.label")
+        .attr("colspan", totalCols - 1)
+    footerPowerShardRow.select("tt")
+        .text(powerShardsUsed)
 }
