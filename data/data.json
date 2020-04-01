@@ -670,21 +670,21 @@
             "name": "Screw",
             "key_name": "screw",
             "category": "crafting1",
-            "time": 4,
+            "time": 6,
             "ingredients": [
                 ["iron-rod", 1]
             ],
-            "product": ["screw", 6]
+            "product": ["screw", 4]
         },
         {
             "name": "Alternate: Screw",
             "key_name": "alt-screw",
             "category": "crafting1",
-            "time": 8,
+            "time": 24,
             "ingredients": [
-                ["iron-ingot", 2]
+                ["iron-ingot", 5]
             ],
-            "product": ["screw", 12]
+            "product": ["screw", 20]
         },
         {
             "name": "Alternate: Steel Screw",
@@ -694,7 +694,7 @@
             "ingredients": [
                 ["steel-beam", 1]
             ],
-            "product": ["screw", 36]
+            "product": ["screw", 52]
         },
         {
             "name": "Biomass",
