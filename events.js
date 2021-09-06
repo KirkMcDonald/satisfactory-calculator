@@ -1,4 +1,4 @@
-/*Copyright 2019 Kirk McDonald
+/*Copyright 2019-2021 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -42,8 +42,8 @@ export function clickTab(tabName) {
 
 // shared events
 
-export function toggleIgnoreHandler(d) {
-    spec.toggleIgnore(d.recipe)
+export function toggleIgnoreHandler(event, d) {
+    spec.toggleIgnore(d.item)
     spec.updateSolution()
 }
 

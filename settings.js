@@ -1,4 +1,4 @@
-/*Copyright 2019 Kirk McDonald
+/*Copyright 2019-2021 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@ import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION, longRate
 import { dropdown } from "./dropdown.js"
 import { DEFAULT_TAB, clickTab } from "./events.js"
 import { spec, resourcePurities, DEFAULT_BELT } from "./factory.js"
+import { getRecipeGroups } from "./groups.js"
 import { Rational } from "./rational.js"
 
 // There are several things going on with this control flow. Settings should
@@ -71,9 +72,9 @@ function renderIgnore(settings) {
     let ignoreSetting = settings.get("ignore")
     if (ignoreSetting !== undefined && ignoreSetting !== "") {
         let ignore = ignoreSetting.split(",")
-        for (let recipeKey of ignore) {
-            let recipe = spec.recipes.get(recipeKey)
-            spec.ignore.add(recipe)
+        for (let itemKey of ignore) {
+            let item = spec.items.get(itemKey)
+            spec.ignore.add(item)
         }
     }
 }
@@ -147,7 +148,7 @@ function renderPrecisions(settings) {
 
 // belt
 
-function beltHandler(belt) {
+function beltHandler(event, belt) {
     spec.belt = belt
     spec.updateSolution()
 }
@@ -177,78 +178,54 @@ function renderBelts(settings) {
         .on("change", beltHandler)
     beltOption.append("label")
         .attr("for", d => "belt." + d.key)
-        .append("img")
-            .classed("icon", true)
-            .attr("src", d => d.iconPath())
-            .attr("width", 32)
-            .attr("height", 32)
-            .attr("title", d => d.name)
+        .append(d => d.icon.make(32))
 }
 
-// alternate recipes
+// recipe disabling
 
-function changeAltRecipe(recipe) {
-    spec.setRecipe(recipe)
-    spec.updateSolution()
-}
-
-function renderIngredient(ingSpan) {
-    ingSpan.classed("ingredient", true)
-        .attr("title", d => d.item.name)
-        .append("img")
-            .classed("icon", true)
-            .attr("src", d => d.item.iconPath())
-    ingSpan.append("span")
-        .classed("count", true)
-        .text(d => spec.format.count(d.amount))
-}
-
-function renderAltRecipes(settings) {
-    spec.altRecipes = new Map()
-    if (settings.has("alt")) {
-        let alt = settings.get("alt").split(",")
-        for (let recipeKey of alt) {
-            let recipe = spec.recipes.get(recipeKey)
-            spec.setRecipe(recipe)
-        }
-    }
-
-    let items = []
-    for (let tier of spec.itemTiers) {
-        for (let item of tier) {
-            if (item.recipes.length > 1) {
-                items.push(item)
+function renderRecipes(settings) {
+    if (settings.has("disable")) {
+        let keys = settings.get("disable").split(",")
+        for (let k of keys) {
+            let recipe = spec.recipes.get(k)
+            if (recipe) {
+                spec.setDisable(recipe)
             }
         }
+    } else {
+        spec.setDefaultDisable()
     }
 
-    let div = d3.select("#alt_recipe_settings")
+    let allGroups = getRecipeGroups(new Set(spec.recipes.values()))
+    let groups = []
+    for (let group of allGroups) {
+        if (group.size > 1) {
+            groups.push(Array.from(group))
+        }
+    }
+
+    let div = d3.select("#recipe_toggles")
     div.selectAll("*").remove()
-
-    let dropdowns = div.selectAll("div")
-        .data(items)
-        .enter().append("div")
-    let recipeLabel = dropdown(
-        dropdowns,
-        d => d.recipes,
-        d => `altrecipe-${d.product.item.key}`,
-        d => spec.getRecipe(d.product.item) === d,
-        changeAltRecipe,
-    )
-
-    let productSpan = recipeLabel.append("span")
-        .selectAll("span")
-        .data(d => [d.product])
-        .join("span")
-    renderIngredient(productSpan)
-    recipeLabel.append("span")
-        .classed("arrow", true)
-        .text("\u21d0")
-    let ingredientSpan = recipeLabel.append("span")
-        .selectAll("span")
-        .data(d => d.ingredients)
-        .join("span")
-    renderIngredient(ingredientSpan)
+    div.selectAll("div")
+        .data(groups)
+        .join("div")
+            .classed("toggle-row", true)
+            .selectAll("div")
+            .data(d => d)
+            .join("div")
+                .classed("toggle", true)
+                .classed("selected", d => !spec.disable.has(d))
+                .on("click", function(event, d) {
+                    let disabled = spec.disable.has(d)
+                    d3.select(this).classed("selected", disabled)
+                    if (disabled) {
+                        spec.setEnable(d)
+                    } else {
+                        spec.setDisable(d)
+                    }
+                    spec.updateSolution()
+                })
+                .append(d => d.icon.make(48))
 }
 
 // miners
@@ -271,7 +248,7 @@ function renderResources(settings) {
         }
     }
 
-    let div = d3.select("#resource_settings")
+    let div = d3.select("#miner_settings")
     div.selectAll("*").remove()
     let resources = []
     for (let [recipe, {miner, purity}] of spec.minerSettings) {
@@ -299,22 +276,12 @@ function renderResources(settings) {
             .classed("resource", true)
     let header = resourceTable.append("tr")
     header.append("th")
-        .append("img")
-            .classed("icon", true)
-            .attr("src", d => d.recipe.iconPath())
-            .attr("width", 32)
-            .attr("height", 32)
-            .attr("title", d => d.recipe.name)
+        .append(d => d.recipe.icon.make(32))
     header.selectAll("th")
         .filter((d, i) => i > 0)
         .data(d => d.minerDefs)
         .join("th")
-            .append("img")
-                .classed("icon", true)
-                .attr("src", d => d.iconPath())
-                .attr("width", 32)
-                .attr("height", 32)
-                .attr("title", d => d.name)
+            .append(d => d.icon.make(32))
     let purityRow = resourceTable.selectAll("tr")
         .filter((d, i) => i > 0)
         .data(d => d.purities)
@@ -346,6 +313,154 @@ function renderResources(settings) {
                 .attr("ry", 4)
 }
 
+// resource priority
+
+function renderResourcePriorities(settings) {
+    if (settings.has("priority")) {
+        let tiers = []
+        let keys = settings.get("priority").split(";")
+        for (let s of keys) {
+            tiers.push(s.split(","))
+        }
+        spec.setPriorities(tiers)
+    } else {
+        spec.setDefaultPriority()
+    }
+    let dragitem = null
+    let dragElement = null
+
+    let div = d3.select("#resource_settings")
+    div.selectAll("*").remove()
+
+    function dropTargetBoilerplate(s, drop) {
+        s.on("dragover", function(event, d) {
+            event.preventDefault()
+        })
+        s.on("dragenter", function(event, d) {
+            this.classList.add("highlight")
+        })
+        s.on("dragleave", function(event, d) {
+            if (event.target === this) {
+                this.classList.remove("highlight")
+            }
+        })
+        s.on("drop", function(event, d) {
+            if (dragitem === null) {
+                return
+            }
+            event.preventDefault()
+            this.classList.remove("highlight")
+            drop.call(this, event, d)
+            dragitem = null
+            dragElement = null
+            spec.updateSolution()
+        })
+    }
+
+    function removeTier(tier) {
+        let oldMiddle = tier.previousSibling
+        if (oldMiddle.classList.contains("middle")) {
+            d3.select(oldMiddle).remove()
+        } else {
+            d3.select(tier.nextSibling).remove()
+        }
+        d3.select(tier).remove()
+    }
+
+    function makeTier(p) {
+        let tier = d3.create("div")
+            .datum(p)
+            .classed("resource-tier", true)
+        dropTargetBoilerplate(tier, function(event, d) {
+            if (dragElement.parentNode !== this) {
+                let remove = spec.setPriority(dragitem, d)
+                let oldTier = dragElement.parentNode
+                this.appendChild(dragElement)
+                if (remove) {
+                    removeTier(oldTier)
+                }
+            }
+        })
+        let resource = tier.selectAll("div")
+            .data(d => d.getRecipeArray())
+            .join("div")
+        resource.classed("resource", true)
+            //.attr("draggable", "true")
+            .on("dragstart", function(event, d) {
+                div.classed("dragging", true)
+                dragitem = d
+                dragElement = this
+            })
+            .on("dragend", function(event, d) {
+                div.classed("dragging", false)
+            })
+        resource.append(d => d.icon.make(48))
+        return tier.node()
+    }
+
+    function makeMiddle(p) {
+        let middle = d3.create("div")
+            .datum(p)
+            .classed("middle", true)
+        dropTargetBoilerplate(middle, function(event, d) {
+            let p = spec.addPriorityBefore(d)
+            let oldTier = dragElement.parentNode
+            div.node().insertBefore(makeMiddle(p), this)
+            let newTier = makeTier(p)
+            div.node().insertBefore(newTier, this)
+            let remove = spec.setPriority(dragitem, p)
+            newTier.appendChild(dragElement)
+            if (remove) {
+                removeTier(oldTier)
+            }
+        })
+        return middle.node()
+    }
+
+    let less = div.append("div")
+        .classed("resource-tier bookend", true)
+    dropTargetBoilerplate(less, function(event, d) {
+        let first = spec.priority[0]
+        let firstTier = this.nextSibling
+        let p = spec.addPriorityBefore(first)
+        let oldTier = dragElement.parentNode
+        let newTier = makeTier(p)
+        div.node().insertBefore(newTier, firstTier)
+        div.node().insertBefore(makeMiddle(first), firstTier)
+        let remove = spec.setPriority(dragitem, p)
+        newTier.appendChild(dragElement)
+        if (remove) {
+            removeTier(oldTier)
+        }
+    })
+    less.append("span")
+        .text("less valuable")
+    let first = true
+    for (let p of spec.priority) {
+        if (!first) {
+            div.append(() => makeMiddle(p))
+        }
+        first = false
+        div.append(() => makeTier(p))
+    }
+    let more = div.append("div")
+        .classed("resource-tier bookend", true)
+    dropTargetBoilerplate(more, function(event, d) {
+        let p = spec.addPriorityBefore(null)
+        let oldTier = dragElement.parentNode
+        div.node().insertBefore(makeMiddle(p), this)
+        let newTier = makeTier(p)
+        div.node().insertBefore(newTier, this)
+        let remove = spec.setPriority(dragitem, p)
+        newTier.appendChild(dragElement)
+        if (remove) {
+            removeTier(oldTier)
+        }
+    })
+    more.append("span")
+        .text("more valuable")
+}
+
 export function renderSettings(settings) {
     renderTargets(settings)
     renderIgnore(settings)
@@ -353,7 +468,8 @@ export function renderSettings(settings) {
     renderRateOptions(settings)
     renderPrecisions(settings)
     renderBelts(settings)
-    renderAltRecipes(settings)
+    renderRecipes(settings)
     renderResources(settings)
+    renderResourcePriorities(settings)
     renderTab(settings)
 }

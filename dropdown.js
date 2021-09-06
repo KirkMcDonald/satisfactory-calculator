@@ -1,4 +1,4 @@
-/*Copyright 2019 Kirk McDonald
+/*Copyright 2019-2021 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -60,9 +60,9 @@ let labelFor = 0
 //   Selection with the input's label.
 export function addInputs(selector, name, checked, callback) {
     selector.append("input")
-        .on("change", function(d, i, nodes) {
+        .on("change", function(event, d) {
             toggleDropdown.call(this)
-            callback.call(this, d, i, nodes)
+            callback.call(this, d)
         })
         .attr("id", () => "input-" + inputId++)
         .attr("name", name)

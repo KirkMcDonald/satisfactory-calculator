@@ -1,4 +1,4 @@
-/*Copyright 2019 Kirk McDonald
+/*Copyright 2019-2021 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -12,11 +12,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 import { Formatter } from "./align.js"
+import { renderDebug } from "./debug.js"
 import { displayItems } from "./display.js"
 import { formatSettings } from "./fragment.js"
 import { Rational, zero, half, one } from "./rational.js"
+import { DisabledRecipe } from "./recipe.js"
+import { solve } from "./solve.js"
 import { BuildTarget } from "./target.js"
-import { Totals } from "./totals.js"
 import { renderTotals } from "./visualize.js"
 
 const DEFAULT_ITEM_KEY = "supercomputer"
@@ -32,6 +34,42 @@ export let resourcePurities = [
 export let DEFAULT_PURITY = resourcePurities[1]
 
 export let DEFAULT_BELT = "belt1"
+
+// higher in list == harder to acquire
+// Broadly speaking, corresponds to tech tree.
+// Much of this order is arbitrary; don't read too much into it.
+// This strictly relates to acquisition as a resource directly from the world.
+// If an item can be acquired from crafting via lower-priority items, then the
+// solution will prefer the craft over harvesting the resource.
+const DEFAULT_PRIORITY = [
+    ["Iron Ore", "Copper Ore", "Limestone"],
+    ["Coal", "Water"],
+    ["Caterium Ore", "Sulfur", "Raw Quartz"],
+    ["Crude Oil"],
+    ["Bauxite"],
+    ["Uranium"],
+]
+
+class PriorityLevel {
+    constructor() {
+        this.recipes = new Set()
+    }
+    getRecipeArray() {
+        return Array.from(this.recipes)
+    }
+    add(recipe) {
+        this.recipes.add(recipe)
+    }
+    remove(recipe) {
+        this.recipes.delete(recipe)
+    }
+    has(recipe) {
+        return this.recipes.has(recipe)
+    }
+    isEmpty() {
+        return this.recipes.size == 0
+    }
+}
 
 class FactorySpecification {
     constructor() {
@@ -52,18 +90,25 @@ class FactorySpecification {
         // Map recipe to overclock factor
         this.overclock = new Map()
 
-        // Map item to recipe
-        this.altRecipes = new Map()
-
         this.belt = null
 
         this.ignore = new Set()
+        this.disable = new Set()
+        this.defaultDisable = new Set()
+
+        this.priority = []
 
         this.format = new Formatter()
+
+        this.lastPartial = null
+        this.lastTableau = null
+        this.lastMetadata = null
+        this.lastSolution = null
     }
     setData(items, recipes, buildings, belts) {
         this.items = items
         let tierMap = new Map()
+        this.defaultDisable = new Set()
         for (let [itemKey, item] of items) {
             let tier = tierMap.get(item.tier)
             if (tier === undefined) {
@@ -71,6 +116,34 @@ class FactorySpecification {
                 tierMap.set(item.tier, tier)
             }
             tier.push(item)
+            // By default, disable all recipes but one for (most) items that
+            // have multiple recipes.
+            if (item.recipes.length > 1) {
+                let chosen = null
+                let skip = false
+                for (let recipe of item.recipes) {
+                    if (recipe.isResource()) {
+                        chosen = recipe
+                    }
+                    // If any of this item's recipes produce multiple items,
+                    // then don't disable any of these recipes, and let the
+                    // linear program sort it out.
+                    if (recipe.products.length > 1) {
+                        skip = true
+                    }
+                }
+                if (skip) {
+                    continue
+                }
+                if (chosen === null) {
+                    chosen = item.recipes[0]
+                }
+                for (let recipe of item.recipes) {
+                    if (recipe !== chosen) {
+                        this.defaultDisable.add(recipe)
+                    }
+                }
+            }
         }
         this.itemTiers = []
         for (let [tier, tierItems] of tierMap) {
@@ -78,6 +151,12 @@ class FactorySpecification {
         }
         this.itemTiers.sort((a, b) => a[0].tier - b[0].tier)
         this.recipes = recipes
+        this.resourceNameMap = new Map()
+        for (let [key, recipe] of recipes) {
+            if (recipe.isResource()) {
+                this.resourceNameMap.set(recipe.name, recipe)
+            }
+        }
         this.buildings = new Map()
         for (let building of buildings) {
             let category = this.buildings.get(building.category)
@@ -94,6 +173,112 @@ class FactorySpecification {
         this.belt = belts.get(DEFAULT_BELT)
         this.initMinerSettings()
     }
+    setDefaultDisable() {
+        this.disable.clear()
+        for (let recipe of this.defaultDisable) {
+            this.disable.add(recipe)
+        }
+    }
+    isDefaultDisable() {
+        if (this.disable.size !== this.defaultDisable.size) {
+            return false
+        }
+        for (let recipe of this.disable) {
+            if (!this.defaultDisable.has(recipe)) {
+                return false
+            }
+        }
+        return true
+    }
+    setDisable(recipe) {
+        this.disable.add(recipe)
+    }
+    setEnable(recipe) {
+        this.disable.delete(recipe)
+    }
+    setDefaultPriority() {
+        let tiers = []
+        for (let tierNames of DEFAULT_PRIORITY) {
+            let tier = []
+            for (let name of tierNames) {
+                tier.push(this.resourceNameMap.get(name).key)
+            }
+            tiers.push(tier)
+        }
+        this.setPriorities(tiers)
+    }
+    setPriorities(tiers) {
+        this.priority = []
+        for (let tier of tiers) {
+            let tierList = new PriorityLevel()
+            for (let key of tier) {
+                let recipe = this.recipes.get(key)
+                if (!recipe) {
+                    throw new Error("bad resource key: " + key)
+                }
+                tierList.add(recipe)
+            }
+            this.priority.push(tierList)
+        }
+    }
+    isDefaultPriority() {
+        if (this.priority.length !== DEFAULT_PRIORITY.length) {
+            return false
+        }
+        for (let i = 0; i < this.priority.length; i++) {
+            let pri = this.priority[i]
+            let def = DEFAULT_PRIORITY[i]
+            if (pri.recipes.size !== def.length) {
+                return false
+            }
+            for (let name of def) {
+                if (!pri.has(this.resourceNameMap.get(name))) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+    // Moves recipe to the given priority level. If the recipe's old
+    // priority is empty as a result, removes it and returns true. Returns
+    // false otherwise.
+    setPriority(recipe, priority) {
+        let oldPriority = null
+        let i = 0
+        for (; i < this.priority.length; i++) {
+            let p = this.priority[i]
+            if (p.has(recipe)) {
+                oldPriority = p
+                break
+            }
+        }
+        oldPriority.remove(recipe)
+        priority.add(recipe)
+        if (oldPriority.isEmpty()) {
+            this.priority.splice(i, 1)
+            return true
+        }
+        return false
+    }
+    // Creates a new priority level immediately preceding the given one.
+    // If the given priority is null, adds the new priority to the end of
+    // the priority list.
+    //
+    // Returns the new PriorityLevel.
+    addPriorityBefore(priority) {
+        let newPriority = new PriorityLevel()
+        if (priority === null) {
+            this.priority.push(newPriority)
+        } else {
+            for (let i = 0; i < this.priority.length; i++) {
+                if (this.priority[i] === priority) {
+                    this.priority.splice(i, 0, newPriority)
+                    break
+                }
+            }
+        }
+        return newPriority
+    }
     initMinerSettings() {
         this.minerSettings = new Map()
         for (let [recipeKey, recipe] of this.recipes) {
@@ -107,22 +292,67 @@ class FactorySpecification {
             }
         }
     }
-    getRecipe(item) {
-        // TODO: Alternate recipes.
-        let recipe = this.altRecipes.get(item)
-        if (recipe === undefined) {
-            return item.recipes[0]
-        } else {
-            return recipe
+    getUses(item) {
+        let recipes = []
+        for (let recipe of item.uses) {
+            if (!this.disable.has(recipe)) {
+                recipes.push(recipe)
+            }
+        }
+        return recipes
+    }
+    getRecipes(item) {
+        let recipes = []
+        for (let recipe of item.recipes) {
+            if (!this.disable.has(recipe)) {
+                recipes.push(recipe)
+            }
+        }
+        // The logic here is complicated, but has to do with which recipes we
+        // want to be present in the solution, related to ignored items.
+        if (recipes.length === 0) {
+            let recipe = item.disableRecipe
+            if (recipe === null) {
+                recipe = new DisabledRecipe(item, true)
+                item.disableRecipe = recipe
+            }
+            return [recipe]
+        }
+        if (this.ignore.has(item)) {
+            let recipe = item.ignoreRecipe
+            if (recipe === null) {
+                recipe = new DisabledRecipe(item, false)
+                item.ignoreRecipe = recipe
+            }
+            if (recipes.length !== 1 || recipes[0].products.length !== 1) {
+                return [recipe, ...recipes]
+            }
+            return [recipe]
+        }
+        return recipes
+    }
+    _getItemGraph(item, recipes) {
+        for (let recipe of this.getRecipes(item)) {
+            if (recipes.has(recipe)) {
+                continue
+            }
+            recipes.add(recipe)
+            for (let ing of recipe.ingredients) {
+                this._getItemGraph(ing.item, recipes)
+            }
         }
     }
-    setRecipe(recipe) {
-        let item = recipe.product.item
-        if (recipe === item.recipes[0]) {
-            this.altRecipes.delete(item)
-        } else {
-            this.altRecipes.set(item, recipe)
+    // Returns the set of recipes which may contribute to the production of
+    // the given collection of items.
+    getRecipeGraph(items) {
+        let graph = new Set()
+        for (let [item, rate] of items) {
+            this._getItemGraph(item, graph)
         }
+        return graph
+    }
+    getRecipe(item) {
+        return item.recipes[0]
     }
     getBuilding(recipe) {
         if (recipe.category === null) {
@@ -155,7 +385,9 @@ class FactorySpecification {
         return building.getRecipeRate(this, recipe)
     }
     getResourcePurity(recipe) {
-        return this.minerSettings.get(recipe).purity
+        // XXX: water extractors, blah
+        //return this.minerSettings.get(recipe).purity
+        return resourcePurities[1]
     }
     setMiner(recipe, miner, purity) {
         this.minerSettings.set(recipe, {miner, purity})
@@ -170,7 +402,7 @@ class FactorySpecification {
     getBeltCount(rate) {
         return rate.div(this.belt.rate)
     }
-    getPowerUsage(recipe, rate, itemCount) {
+    getPowerUsage(recipe, rate) {
         let building = this.getBuilding(recipe)
         if (building === null) {
             return {average: zero, peak: zero}
@@ -216,11 +448,13 @@ class FactorySpecification {
         }
     }
     solve() {
-        let totals = new Totals()
+        let outputs = new Map()
         for (let target of this.buildTargets) {
-            let subtotals = target.item.produce(this, target.getRate(), this.ignore)
-            totals.combine(subtotals)
+            let rate = target.getRate()
+            rate = rate.add(outputs.get(target.item) || zero)
+            outputs.set(target.item, rate)
         }
+        let totals = solve(this, outputs)
         return totals
     }
     setHash() {
@@ -228,9 +462,11 @@ class FactorySpecification {
     }
     updateSolution() {
         let totals = this.solve()
-        displayItems(this, totals, this.ignore)
-        renderTotals(totals, this.buildTargets, this.ignore)
+        displayItems(this, totals)
+        renderTotals(totals, this.ignore)
         this.setHash()
+
+        renderDebug()
     }
 }
 

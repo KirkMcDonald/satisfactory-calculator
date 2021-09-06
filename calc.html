@@ -15,7 +15,7 @@
 </script>
     <script src="third_party/BigInteger.min.js"></script>
     <script src="third_party/d3.min.js"></script>
-    <script src="third_party/d3-sankey.min.js"></script>
+    <!--<script src="third_party/d3-sankey.min.js"></script>-->
     <script>
         var handlers = {}
     </script>
@@ -30,7 +30,7 @@
     </script>
 </head>
 
-<!--Copyright 2019 Kirk McDonald
+<!--Copyright 2019-2021 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -55,8 +55,12 @@ limitations under the License.-->
     <div class="tabs">
         <button class="tab_button" id="graph_button" onclick="handlers.clickTab('graph')">Visualize</button>
         <button class="tab_button" id="totals_button" onclick="handlers.clickTab('totals')">Items</button>
+        <button class="tab_button" id="recipes_button" onclick="handlers.clickTab('recipes')">Alt-Recipes</button>
+        <button class="tab_button" id="miners_button" onclick="handlers.clickTab('miners')">Miners</button>
+        <button class="tab_button" id="resources_button" onclick="handlers.clickTab('resources')">Resources</button>
         <button class="tab_button" id="settings_button" onclick="handlers.clickTab('settings')">Settings</button>
         <button class="tab_button" id="about_button" onclick="handlers.clickTab('about')">About</button>
+        <button class="tab_button" id="debug_button" onclick="handlers.clickTab('debug')">Debug</button>
     </div>
 
     <div id="graph_tab" class="tab graph">
@@ -69,10 +73,12 @@ limitations under the License.-->
         <tbody></tbody>
         <tfoot>
             <tr>
+                <td class="surplus"></td>
                 <td class="right-align power-label"><b>total average power: </b></td>
                 <td class="right-align pad"><tt></tt></td>
             </tr>
             <tr>
+                <td class="surplus"></td>
                 <td class="right-align power-label"><b>total peak power: </b></td>
                 <td class="right-align pad"><tt></tt></td>
             </tr>
@@ -109,25 +115,21 @@ limitations under the License.-->
             <td class="setting-label">Belt:</td>
             <td><span id="belt_selector"></span></td>
             </tr>
-
-        <tr class="setting-section">
-        <td colspan="2"><span>Recipes</span><hr></td>
-        </tr>
-
-            <tr>
-            <td colspan="2"><div id="alt_recipe_settings"></div></td>
-            </tr>
-
-        <tr class="setting-section">
-        <td colspan="2"><span>Resources</span><hr></td>
-        </tr>
-
-            <tr>
-            <!--<td class="setting-label"></td>-->
-            <td colspan="2"><div id="resource_settings"></div></td>
-            </tr>
-
         </table>
+    </div>
+
+    <div id="recipes_tab" class="tab">
+        <p>Click to toggle recipe.</p>
+        <div id="recipe_toggles"></div>
+    </div>
+
+    <div id="resources_tab" class="tab">
+        <p>Click and drag items to configure resource priority.</p>
+        <div id="resource_settings"></div>
+    </div>
+
+    <div id="miners_tab" class="tab">
+        <div id="miner_settings"></div>
     </div>
 
     <div id="about_tab" class="tab">
@@ -140,6 +142,17 @@ limitations under the License.-->
         <p>
         If you wish to support the calculator, please consider donating to <a href="https://www.patreon.com/kirkmcdonald">my Patreon campaign</a>. Any amount helps. And thank you!
     </div>
+    </div>
+
+    <div id="debug_tab" class="tab">
+        <div id="debug_message"></div>
+
+        <label for="render_debug">Render debug tab:</label>
+        <input type="checkbox" id="render_debug" onchange="toggleDebug(event)"><br>
+        Last tableau:
+        <div id="debug_tableau"></div>
+        Last solution:
+        <div id="debug_solution"></div>
     </div>
 </body>
 </html>

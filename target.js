@@ -1,4 +1,4 @@
-/*Copyright 2019 Kirk McDonald
+/*Copyright 2019-2021 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ export class BuildTarget {
 
         itemLabel.append("img")
             .classed("icon", true)
-            .attr("src", d => d.iconPath())
+            .attr("src", d => d.icon.path())
             //.attr("width", 32)
             //.attr("height", 32)
             .attr("title", d => d.name)

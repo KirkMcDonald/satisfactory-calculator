@@ -1,4 +1,4 @@
-/*Copyright 2019 Kirk McDonald
+/*Copyright 2019-2021 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
+import { Icon } from "./icon.js"
 import { Rational, zero, one } from "./rational.js"
 
 export class Ingredient {
@@ -21,7 +22,7 @@ export class Ingredient {
 }
 
 class Recipe {
-    constructor(key, name, category, time, ingredients, product) {
+    constructor(key, name, category, time, ingredients, products) {
         this.key = key
         this.name = name
         this.category = category
@@ -30,36 +31,88 @@ class Recipe {
         for (let ing of ingredients) {
             ing.item.addUse(this)
         }
-        this.product = product
-        product.item.addRecipe(this)
+        this.products = products
+        for (let ing of products) {
+            ing.item.addRecipe(this)
+        }
+        this.icon = new Icon(products[0].item.name, name)
     }
     gives(item) {
-        if (this.product.item === item) {
-            return this.product.amount
+        for (let ing of this.products) {
+            if (ing.item === item) {
+                return ing.amount
+            }
         }
         return null
     }
-    iconPath() {
-        return this.product.item.iconPath()
+    isResource() {
+        return false
+    }
+    isReal() {
+        return true
+    }
+    maxPriority() {
+        return false
+    }
+}
+
+// Pseudo-recipe representing the ex nihilo production of items with all
+// recipes disabled.
+export class DisabledRecipe {
+    constructor(item, max) {
+        this.name = item.name
+        this.category = null
+        this.ingredients = []
+        this.products = [new Ingredient(item, one)]
+        this.max = max
+        this.icon = new Icon(this.name)
+    }
+    gives(item) {
+        for (let ing of this.products) {
+            if (ing.item === item) {
+                return ing.amount
+            }
+        }
+        return null
+    }
+    isResource() {
+        return false
+    }
+    isReal() {
+        return true
+    }
+    maxPriority() {
+        return this.max
     }
 }
 
 function makeRecipe(data, items, d) {
     let time = Rational.from_float(d.time)
-    let [item_key, amount] = d.product
-    let item = items.get(item_key)
-    let product = new Ingredient(item, Rational.from_float(amount))
+    let raw_products
+    if ("product" in d) {
+        raw_products = [d.product]
+    } else {
+        raw_products = d.products
+    }
+    let products = []
+    for (let [item_key, amount] of raw_products) {
+        let item = items.get(item_key)
+        products.push(new Ingredient(item, Rational.from_float(amount)))
+    }
     let ingredients = []
     for (let [item_key, amount] of d.ingredients) {
         let item = items.get(item_key)
         ingredients.push(new Ingredient(item, Rational.from_float(amount)))
     }
-    return new Recipe(d.key_name, d.name, d.category, time, ingredients, product)
+    return new Recipe(d.key_name, d.name, d.category, time, ingredients, products)
 }
 
 class ResourceRecipe extends Recipe {
     constructor(item, category) {
-        super(item.key, item.name, category, zero, [], new Ingredient(item, one))
+        super(item.key, item.name, category, zero, [], [new Ingredient(item, one)])
+    }
+    isResource() {
+        return true
     }
 }
 

@@ -1,4 +1,4 @@
-/*Copyright 2019 Kirk McDonald
+/*Copyright 2019-2021 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
+import { Icon } from "./icon.js"
 import { Rational } from "./rational.js"
 
 class Belt {
@@ -18,9 +19,7 @@ class Belt {
         this.key = key
         this.name = name
         this.rate = rate
-    }
-    iconPath() {
-        return "images/" + this.name + ".png"
+        this.icon = new Icon(name)
     }
 }
 

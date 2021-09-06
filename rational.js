@@ -1,4 +1,4 @@
-/*Copyright 2015-2019 Kirk McDonald
+/*Copyright 2015-2021 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -93,6 +93,9 @@ export class Rational {
     isZero() {
         return this.p.isZero()
     }
+    isOne() {
+        return this.p.equals(1) && this.q.equals(1)
+    }
     isInteger() {
         return this.q.equals(bigInt.one)
     }
@@ -131,12 +134,17 @@ export class Rational {
         )
     }
     sub(other) {
+        if (other.isZero()) return this
         return new Rational(
             this.p.times(other.q).subtract(this.q.times(other.p)),
             this.q.times(other.q)
         )
     }
     mul(other) {
+        if (this.isZero()) return zero
+        if (other.isZero()) return zero
+        if (this.isOne()) return other
+        if (other.isOne()) return this
         return new Rational(
             this.p.times(other.p),
             this.q.times(other.q)

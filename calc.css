@@ -108,7 +108,7 @@ tr.setting-row td:first-child {
 td.setting-label {
     text-align: right;
 }
-div#resource_settings, div#alt_recipe_settings {
+div#miner_settings, div#alt_recipe_settings {
     padding-left: 3em;
 }
 .top {
@@ -135,6 +135,57 @@ input.prec {
 }
 #belt_selector input[type="radio"]:checked + label {
     background: var(--accent);
+}
+#recipe_toggles .toggle {
+    cursor: pointer;
+    display: inline-block;
+    border-radius: 4px;
+    border: 2px solid var(--light);
+    margin: 2px;
+    padding: 2px;
+    background-color: var(--dark);
+}
+#recipe_toggles .toggle:hover {
+    border-color: var(--bright);
+}
+#recipe_toggles .selected {
+    border-color: var(--accent);
+}
+#recipe_toggles .selected:hover {
+    border-color: var(--accent);
+}
+#resource_settings {
+    border: 2px solid var(--light);
+    border-radius: 5px;
+    background-color: var(--dark);
+}
+#resource_settings .resource-tier {
+    border: 1px solid transparent;
+}
+#resource_settings .resource-tier.highlight {
+    border-color: var(--accent);
+}
+#resource_settings .bookend {
+    background-color: var(--light);
+}
+#resource_settings .bookend.highlight {
+    background-color: var(--accent);
+}
+#resource_settings .bookend * {
+    pointer-events: none;
+}
+#resource_settings .middle {
+    height: 10px;
+    background-color: var(--light);
+}
+#resource_settings .middle.highlight {
+    background-color: var(--accent);
+}
+#resource_settings .resource {
+    display: inline-block;
+}
+#resource_settings.dragging .resource-tier > * {
+    pointer-events: none;
 }
 table.resource {
     border-collapse: collapse;
@@ -201,6 +252,9 @@ div.tabs button.active, div.tabs button.active:hover {
     color: var(--bright);
     background-color: var(--main);
 }
+button#debug_button {
+    float: right;
+}
 div.tab {
     display: none;
     padding: 1em;
@@ -211,7 +265,7 @@ div.graph {
     min-width: max-content;
 }
 g.node rect {
-    stroke: var(--foreground);
+    /*stroke: var(--foreground);*/
     stroke-width: 1px;
 }
 g.overlay {
@@ -226,6 +280,9 @@ text {
 #totals {
     border-collapse: collapse;
 }
+#totals.nosurplus .surplus {
+    display: none;
+}
 tr.display-row td.pad, th.pad {
     padding-left: 1em;
 }
@@ -238,6 +295,43 @@ input.overclock {
 }
 tr.nobuilding td.building {
     display: none;
+}
+tr.noitem td.item > * {
+    display: none;
+}
+/* breakdowns */
+.breakdown-open .breakdown-arrow {
+    transform: rotate(90deg);
+}
+.breakdown-arrow {
+    color: var(--foreground);
+    cursor: pointer;
+    transition: transform 0.25s;
+}
+.breakdown-arrow:hover {
+    color: var(--accent);
+}
+.breakdown {
+    display: none;
+    height: 0;
+}
+.breakdown.breakdown-open {
+    display: table-row;
+    height: auto;
+    transition: height 0.25s;
+}
+.breakdown table {
+    border-collapse: collapse;
+    border-left: solid 0.5em var(--medium);
+    border-right: solid 0.5em var(--medium);
+    background: var(--medium);
+    border-radius: 0.25em;
+}
+.usage-arrow {
+    vertical-align: middle;
+}
+.breakdown-first-output td {
+    border-top: 1px solid var(--light);
 }
 /* about */
 .about-content {
