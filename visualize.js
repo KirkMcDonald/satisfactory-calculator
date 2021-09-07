@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 import { CirclePath, makeCurve } from "./circlepath.js"
-import { toggleIgnoreHandler } from "./events.js"
+import { toggleIgnoreHandler, installSVGEvents } from "./events.js"
 import { spec } from "./factory.js"
 import { Rational, zero, one } from "./rational.js"
 import { Ingredient } from "./recipe.js"
@@ -347,24 +347,8 @@ export function renderTotals(totals, ignore) {
         link.belts = belts
     }
 
-    let width = 0
-    let height = 0
-    for (let node of nodes) {
-        if (node.x1 > width) {
-            width = node.x1
-        }
-        if (node.y1 > height) {
-            height = node.y1
-        }
-    }
-
-    let margin = 25
-
     let svg = d3.select("svg#graph")
         .classed("sankey", true)
-        .attr("viewBox", `${-margin},-25,${width+margin*2},${height+50}`)
-        .style("width", width+margin*2)
-        .style("height", height+50)
     svg.selectAll("g").remove()
 
     // Node rects
@@ -505,4 +489,6 @@ export function renderTotals(totals, ignore) {
             //.on("click", toggleIgnoreHandler)
             .append("title")
                 .text(d => d.node.name + (d.node.count.isZero() ? "" : `\n${d.node.building.name} \u00d7 ${spec.format.count(d.node.count)}`))
+
+    installSVGEvents(svg)
 }

@@ -58,3 +58,112 @@ export function changeCountPrecision(event) {
     spec.format.countPrecision = Number(event.target.value)
     spec.updateSolution()
 }
+
+// visualizer events
+
+// Number of distinct zoom "steps."
+const MAX_SCALE = 10
+// Aspect ratio of visualizer display.
+const ASPECT_RATIO = 16/9
+
+export function installSVGEvents(svg) {
+    let node = svg.node()
+    let {x, y, width, height} = node.getBBox()
+    // The diagram's bounding box.
+    let [diagramX, diagramY, diagramWidth, diagramHeight] = [x, y, width, height]
+    if (width / height < ASPECT_RATIO) {
+        // Too thin. Expand width.
+        let newWidth = height * ASPECT_RATIO
+        x -= (newWidth - width) / 2
+        width = newWidth
+    } else if (width / height > ASPECT_RATIO) {
+        // Too wide. Expand height.
+        let newHeight = width / ASPECT_RATIO
+        y -= (newHeight - height) / 2
+        height = newHeight
+    }
+    // The size and position of the viewport with diagram centered and zoomed
+    // all the way out.
+    let [origX, origY, origWidth, origHeight] = [x, y, width, height]
+    // Place the graph at the top of the viewport by default; this will get
+    // clamped.
+    y = diagramY
+    let scale = MAX_SCALE
+
+    function clamp() {
+        let midX = x + width/2
+        let midY = y + height/2
+        // The outer edges of the diagram should not proceed past halfway
+        // across the viewport.
+        if (diagramX > midX) {
+            x = diagramX - width/2
+        } else if (diagramX + diagramWidth < midX) {
+            x = diagramX + diagramWidth - width/2
+        }
+        if (diagramY > midY) {
+            y = diagramY - height/2
+        } else if (diagramY + diagramHeight < midY) {
+            y = diagramY + diagramHeight - height/2
+        }
+    }
+    function setViewBox() {
+        clamp()
+        svg.attr("viewBox", `${x} ${y} ${width} ${height}`)
+    }
+    function point(event) {
+        let clientPoint = new DOMPointReadOnly(event.clientX, event.clientY)
+        return clientPoint.matrixTransform(node.getScreenCTM().inverse())
+    }
+    function zoom(event) {
+        let origScale = scale
+        if (event.deltaY < 0) {
+            // zoom in
+            if (scale === 1) {
+                return
+            }
+            scale -= 1
+        } else if (event.deltaY > 0) {
+            // zoom out
+            if (scale === MAX_SCALE) {
+                return
+            }
+            scale += 1
+        }
+        let pt = point(event)
+        let dx = pt.x - x
+        let dy = pt.y - y
+        x = pt.x - (dx / origScale * scale)
+        y = pt.y - (dy / origScale * scale)
+        width = origWidth * (scale / MAX_SCALE)
+        height = origHeight * (scale / MAX_SCALE)
+        setViewBox()
+        event.preventDefault()
+    }
+    let clickPt = null
+    function mouseDown(event) {
+        clickPt = point(event)
+        event.preventDefault()
+    }
+    function mouseMove(event) {
+        if (clickPt === null) {
+            return
+        }
+        let pt = point(event)
+        let dx = pt.x - clickPt.x
+        let dy = pt.y - clickPt.y
+        x -= dx
+        y -= dy
+        setViewBox()
+        event.preventDefault()
+    }
+    function mouseUp(event) {
+        clickPt = null
+        event.preventDefault()
+    }
+
+    setViewBox()
+    svg.on("wheel", zoom)
+    svg.on("mousedown", mouseDown)
+    svg.on("mousemove", mouseMove)
+    svg.on("mouseup", mouseUp)
+}

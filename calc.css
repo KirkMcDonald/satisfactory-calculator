@@ -262,7 +262,7 @@ div.tab {
 }
 /* visualizer */
 div.graph {
-    min-width: max-content;
+    /*min-width: max-content;*/
 }
 g.node rect {
     /*stroke: var(--foreground);*/
