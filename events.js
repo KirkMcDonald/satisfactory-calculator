@@ -68,7 +68,13 @@ const ASPECT_RATIO = 16/9
 
 export function installSVGEvents(svg) {
     let node = svg.node()
+    // Flash the graph to be visible, in order to measure its bounding box.
+    let tab = d3.select("#graph_tab")
+    let style = tab.style("display")
+    tab.style("display", "block")
+    // These variables will contain and control the viewport.
     let {x, y, width, height} = node.getBBox()
+    tab.style("display", style)
     // The diagram's bounding box.
     let [diagramX, diagramY, diagramWidth, diagramHeight] = [x, y, width, height]
     if (width / height < ASPECT_RATIO) {
