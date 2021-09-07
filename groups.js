@@ -12,8 +12,50 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 
-function topoSort(groupMap, groups) {
-    let result = []
+function neighbors(groupMap, group) {
+    let result = new Set()
+    for (let recipe of group) {
+        for (let ing of recipe.ingredients) {
+            for (let subRecipe of ing.item.recipes) {
+                if (groupMap.has(subRecipe)) {
+                    result.add(groupMap.get(subRecipe))
+                }
+            }
+        }
+    }
+    result.delete(group)
+    return result
+}
+
+function visit(groupMap, group, result, seen) {
+    if (result.has(group) || seen.has(group)) {
+        return
+    }
+    seen.add(group)
+    for (let g of neighbors(groupMap, group)) {
+        visit(groupMap, g, result, seen)
+    }
+    seen.delete(group)
+    result.add(group)
+}
+
+export function topoSort(groups) {
+    let groupMap = new Map()
+    for (let group of groups) {
+        for (let recipe of group) {
+            groupMap.set(recipe, group)
+        }
+    }
+    let result = new Set()
+    let seen = new Set()
+    for (let group of groups) {
+        if (!result.has(group) && !seen.has(group)) {
+            visit(groupMap, group, result, seen)
+        }
+    }
+    result = Array.from(result)
+    result.reverse()
+    return result
 }
 
 export function getRecipeGroups(recipes) {

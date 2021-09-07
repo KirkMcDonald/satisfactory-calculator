@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 import { toggleIgnoreHandler } from "./events.js"
 import { spec } from "./factory.js"
-import { getRecipeGroups } from "./groups.js"
+import { getRecipeGroups, topoSort } from "./groups.js"
 import { Rational, zero, one } from "./rational.js"
 
 class Header {
@@ -134,8 +134,8 @@ class DisplayGroup {
 let displayGroups = []
 
 function getDisplayGroups(totals) {
-    let groupObjects = getRecipeGroups(new Set(totals.rates.keys()))
-    setlen(displayGroups, groupObjects.size, () => new DisplayGroup())
+    let groupObjects = topoSort(getRecipeGroups(new Set(totals.rates.keys())))
+    setlen(displayGroups, groupObjects.length, () => new DisplayGroup())
     let i = 0
     for (let group of groupObjects) {
         let items = new Set()
