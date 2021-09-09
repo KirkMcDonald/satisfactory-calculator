@@ -88,14 +88,8 @@ export class DisabledRecipe {
 
 function makeRecipe(data, items, d) {
     let time = Rational.from_float(d.time)
-    let raw_products
-    if ("product" in d) {
-        raw_products = [d.product]
-    } else {
-        raw_products = d.products
-    }
     let products = []
-    for (let [item_key, amount] of raw_products) {
+    for (let [item_key, amount] of d.products) {
         let item = items.get(item_key)
         products.push(new Ingredient(item, Rational.from_float(amount)))
     }
