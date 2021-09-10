@@ -68,6 +68,13 @@
             "category": "refining",
             "power": 30,
             "max": 1
+        },
+        {
+            "name": "Packager",
+            "key_name": "packager",
+            "category": "packaging",
+            "power": 10,
+            "max": 2
         }
     ],
     "miners": [
@@ -349,7 +356,7 @@
             "stack_size": 100
         },
         {
-            "name": "Filter",
+            "name": "Gas Filter",
             "key_name": "filter",
             "tier": 6,
             "stack_size": 100
@@ -587,6 +594,11 @@
             "name": "Adaptive Control Unit",
             "key_name": "adaptive-control-unit",
             "tier": 5
+        },
+        {
+            "name": "Portable Miner",
+            "key_name": "portable-miner",
+            "tier": 0
         }
     ],
     "fluids": [
@@ -964,7 +976,7 @@
             "name": "Alternate: Wet Concrete",
             "key_name": "alt-wet-concrete",
             "category": "refining",
-            "time": 6,
+            "time": 3,
             "ingredients": [
                 ["limestone", 6],
                 ["water", 5]
@@ -1085,12 +1097,12 @@
             "name": "Color Cartridge",
             "key_name": "color-cartridge",
             "category": "crafting1",
-            "time": 40,
+            "time": 8,
             "ingredients": [
-                ["flower-petals", 25]
+                ["flower-petals", 5]
             ],
             "products": [
-                ["color-cartridge", 50]
+                ["color-cartridge", 10]
             ]
         },
         {
@@ -1353,7 +1365,7 @@
             ]
         },
         {
-            "name": "Alternate: Silicone Circuit Board",
+            "name": "Alternate: Silicon Circuit Board",
             "key_name": "alt-circuit-board",
             "category": "crafting2",
             "time": 24,
@@ -1726,7 +1738,20 @@
             ]
         },
         {
-            "name": "Filter",
+            "name": "Alternate: Polyester Fabric",
+            "key_name": "alt-fabric",
+            "category": "refining",
+            "time": 12,
+            "ingredients": [
+                ["polymer-resin", 16],
+                ["water", 10]
+            ],
+            "products": [
+                ["fabric", 1]
+            ]
+        },
+        {
+            "name": "Gas Filter",
             "key_name": "filter",
             "category": "crafting3",
             "time": 8,
@@ -2250,9 +2275,34 @@
             ]
         },
         {
+            "name": "Alternate: Steel Canister",
+            "key_name": "alt-steel-canister",
+            "category": "crafting1",
+            "time": 3,
+            "ingredients": [
+                ["steel-ingot", 3]
+            ],
+            "products": [
+                ["empty-canister", 2]
+            ]
+        },
+        {
+            "name": "Alternate: Coated Iron Canister",
+            "key_name": "alt-coated-iron-canister",
+            "category": "crafting2",
+            "time": 4,
+            "ingredients": [
+                ["iron-plate", 2],
+                ["copper-sheet", 1]
+            ],
+            "products": [
+                ["empty-canister", 4]
+            ]
+        },
+        {
             "name": "Packaged Fuel",
             "key_name": "packaged-fuel",
-            "category": "refining",
+            "category": "packaging",
             "time": 3,
             "ingredients": [
                 ["fuel", 2],
@@ -2278,7 +2328,7 @@
         {
             "name": "Unpackage Fuel",
             "key_name": "unpackage-fuel",
-            "category": "refining",
+            "category": "packaging",
             "time": 2,
             "ingredients": [
                 ["packaged-fuel", 2]
@@ -2291,7 +2341,7 @@
         {
             "name": "Packaged Turbofuel",
             "key_name": "packaged-turbofuel",
-            "category": "refining",
+            "category": "packaging",
             "time": 6,
             "ingredients": [
                 ["turbofuel", 2],
@@ -2304,7 +2354,7 @@
         {
             "name": "Unpackage Turbo Fuel",
             "key_name": "unpackage-turbofuel",
-            "category": "refining",
+            "category": "packaging",
             "time": 6,
             "ingredients": [
                 ["packaged-turbofuel", 2]
@@ -2317,7 +2367,7 @@
         {
             "name": "Packaged Water",
             "key_name": "packaged-water",
-            "category": "refining",
+            "category": "packaging",
             "time": 2,
             "ingredients": [
                 ["water", 2],
@@ -2330,7 +2380,7 @@
         {
             "name": "Unpackage Water",
             "key_name": "unpackage-water",
-            "category": "refining",
+            "category": "packaging",
             "time": 1,
             "ingredients": [
                 ["packaged-water", 2]
@@ -2343,7 +2393,7 @@
         {
             "name": "Packaged Oil",
             "key_name": "packaged-oil",
-            "category": "refining",
+            "category": "packaging",
             "time": 4,
             "ingredients": [
                 ["crude-oil", 2],
@@ -2356,7 +2406,7 @@
         {
             "name": "Unpackage Oil",
             "key_name": "unpackage-oil",
-            "category": "refining",
+            "category": "packaging",
             "time": 2,
             "ingredients": [
                 ["packaged-oil", 2]
@@ -2369,7 +2419,7 @@
         {
             "name": "Packaged Heavy Oil Residue",
             "key_name": "packaged-heavy-oil-residue",
-            "category": "refining",
+            "category": "packaging",
             "time": 4,
             "ingredients": [
                 ["heavy-oil-residue", 2],
@@ -2382,7 +2432,7 @@
         {
             "name": "Unpackage Heavy Oil Residue",
             "key_name": "unpackage-heavy-oil-residue",
-            "category": "refining",
+            "category": "packaging",
             "time": 6,
             "ingredients": [
                 ["packaged-heavy-oil-residue", 2]
@@ -2395,7 +2445,7 @@
         {
             "name": "Packaged Liquid Biofuel",
             "key_name": "packaged-liquid-biofuel",
-            "category": "refining",
+            "category": "packaging",
             "time": 3,
             "ingredients": [
                 ["liquid-biofuel", 2],
@@ -2408,7 +2458,7 @@
         {
             "name": "Unpackage Liquid Biofuel",
             "key_name": "unpackage-liquid-biofuel",
-            "category": "refining",
+            "category": "packaging",
             "time": 2,
             "ingredients": [
                 ["packaged-liquid-biofuel", 2]
@@ -2568,6 +2618,20 @@
             ]
         },
         {
+            "name": "Alternate: Automated Speed Wiring",
+            "key_name": "alt-automated-wiring",
+            "category": "crafting3",
+            "time": 32,
+            "ingredients": [
+                ["stator", 2],
+                ["wire", 40],
+                ["high-speed-connector", 1]
+            ],
+            "products": [
+                ["automated-wiring", 4]
+            ]
+        },
+        {
             "name": "Modular Engine",
             "key_name": "modular-engine",
             "category": "crafting3",
@@ -2594,6 +2658,21 @@
             ],
             "products": [
                 ["adaptive-control-unit", 2]
+            ]
+        },
+        {
+            "name": "Alternate: Automated Miner",
+            "key_name": "automated-miner",
+            "category": "crafting3",
+            "time": 60,
+            "ingredients": [
+                ["motor", 1],
+                ["steel-pipe", 4],
+                ["iron-rod", 4],
+                ["iron-plate", 2]
+            ],
+            "products": [
+                ["portable-miner", 1]
             ]
         }
     ],
