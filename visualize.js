@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 import { renderBoxGraph } from "./boxline.js"
-import { installSVGEvents } from "./events.js"
+import { visualizerType, visualizerRender, installSVGEvents } from "./events.js"
 import { spec } from "./factory.js"
 import { iconSize, colonWidth } from "./graph.js"
 import { zero, one } from "./rational.js"
@@ -149,9 +149,31 @@ function makeGraph(totals, ignore) {
 export function renderTotals(totals, ignore) {
     let data = makeGraph(totals, ignore)
 
-    renderSankey(data, ignore)
-    //renderBoxGraph(data, ignore)
+    if (visualizerType === "sankey") {
+        renderSankey(data, ignore)
+    } else {
+        renderBoxGraph(data, ignore)
+    }
 
     let svg = d3.select("svg#graph")
-    installSVGEvents(svg)
+    let tab = d3.select("#graph_tab")
+    if (visualizerRender === "zoom") {
+        tab.style("min-width", 0)
+        svg.attr("width", null)
+        svg.attr("height", null)
+        installSVGEvents(svg)
+    } else {
+        tab.style("min-width", "max-content")
+        let style = tab.style("display")
+        tab.style("display", "block")
+        let {x, y, width, height} = svg.node().getBBox()
+        tab.style("display", style)
+        svg.attr("viewBox", `${x} ${y} ${width} ${height}`)
+            .attr("width", width)
+            .attr("height", height)
+        svg.on("wheel", null)
+        svg.on("mousedown", null)
+        svg.on("mousemove", null)
+        svg.on("mouseup", null)
+    }
 }

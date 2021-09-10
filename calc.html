@@ -21,12 +21,14 @@
         var handlers = {}
     </script>
     <script type="module">
-        import { plusHandler, clickTab, changeRatePrecision, changeCountPrecision } from "./events.js"
+        import { plusHandler, clickTab, changeRatePrecision, changeCountPrecision, changeVisType, changeVisRender } from "./events.js"
         import { init } from "./init.js"
         handlers.plusHandler = plusHandler
         handlers.clickTab = clickTab
         handlers.changeRatePrecision = changeRatePrecision
         handlers.changeCountPrecision = changeCountPrecision
+        handlers.changeVisType = changeVisType
+        handlers.changeVisRender = changeVisRender
         handlers.init = init
     </script>
 </head>
@@ -65,6 +67,33 @@ limitations under the License.-->
     </div>
 
     <div id="graph_tab" class="tab graph">
+        <div class="graph_setting">
+            <form id="graph_type">
+                <input id="sankey_type" type="radio" name="type" value="sankey" checked autocomplete="off" onchange="handlers.changeVisType(event)">
+                <label for="sankey_type">
+                    <svg viewBox="0 0 64 64" width="64" height="64">
+                        <use href="images/icons.svg#sankey"></use>
+                    </svg>
+                </label>
+
+                <input id="boxline_type" type="radio" name="type" value="boxline" autocomplete="off" onchange="handlers.changeVisType(event)">
+                <label for="boxline_type">
+                    <svg viewBox="0 0 64 64" width="64" height="64">
+                        <use href="images/icons.svg#boxline"></use>
+                    </svg>
+                </label>
+            </form>
+        </div>
+        <div class="graph_setting">
+            Render mode:<br>
+            <form id="graph_render">
+                <input id="zoom_render" type="radio" name="render" value="zoom" checked autocomplete="off" onchange="handlers.changeVisRender(event)">
+                <label for="zoom_render">Zoom &amp; pan</label>
+
+                <input id="fix_render" type="radio" name="render" value="fix" autocomplete="off" onchange="handlers.changeVisRender(event)">
+                <label for="fix_render">Fixed</label>
+            </form>
+        </div>
         <svg id="graph"><g /></svg>
     </div>
 

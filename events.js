@@ -61,6 +61,26 @@ export function changeCountPrecision(event) {
 
 // visualizer events
 
+export const DEFAULT_VISUALIZER = "sankey"
+
+export let visualizerType = DEFAULT_VISUALIZER
+
+export function changeVisType(event) {
+    visualizerType = event.target.value
+    spec.updateSolution()
+}
+
+export const DEFAULT_RENDER = "zoom"
+
+export let visualizerRender = DEFAULT_RENDER
+
+export function changeVisRender(event) {
+    visualizerRender = event.target.value
+    spec.updateSolution()
+}
+
+// Number of SVG coordinate points per zoom level.
+const ZOOM_SCALE = 100
 // Number of distinct zoom "steps."
 const MAX_SCALE = 10
 // Aspect ratio of visualizer display.
@@ -77,6 +97,8 @@ export function installSVGEvents(svg) {
     tab.style("display", style)
     // The diagram's bounding box.
     let [diagramX, diagramY, diagramWidth, diagramHeight] = [x, y, width, height]
+    // Calculate initial scale.
+    //let scale = Math.max(Math.ceil(width/ZOOM_SCALE), Math.ceil(height/ZOOM_SCALE))
     if (width / height < ASPECT_RATIO) {
         // Too thin. Expand width.
         let newWidth = height * ASPECT_RATIO
@@ -121,6 +143,7 @@ export function installSVGEvents(svg) {
         return clientPoint.matrixTransform(node.getScreenCTM().inverse())
     }
     function zoom(event) {
+        event.preventDefault()
         let origScale = scale
         if (event.deltaY < 0) {
             // zoom in
@@ -143,7 +166,6 @@ export function installSVGEvents(svg) {
         width = origWidth * (scale / MAX_SCALE)
         height = origHeight * (scale / MAX_SCALE)
         setViewBox()
-        event.preventDefault()
     }
     let clickPt = null
     function mouseDown(event) {

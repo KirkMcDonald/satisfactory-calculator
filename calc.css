@@ -272,6 +272,24 @@ div.tab {
 div.graph {
     /*min-width: max-content;*/
 }
+div.graph_setting {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+#graph_type input[type="radio"] {
+    display: none;
+}
+#graph_type input[type="radio"] + label:hover {
+    color: var(--bright);
+}
+#graph_type input[type="radio"]:checked + label {
+    color: var(--accent);
+}
+#graph_type input[type="radio"]:checked + label:hover {
+    color: var(--accent);
+}
 g.node rect {
     /*stroke: var(--foreground);*/
     stroke-width: 1px;
@@ -283,7 +301,10 @@ g.node .colon {
     stroke: none;
     fill: var(--foreground);
 }
-text {
+svg#graph {
+    display: block;
+}
+svg#graph text {
     stroke: none;
     fill: var(--foreground);
     font: 12px sans-serif;
