@@ -152,7 +152,7 @@ input.prec {
     border-color: var(--accent);
 }
 #recipe_toggles .selected:hover {
-    border-color: var(--accent);
+    /*border-color: var(--accent);*/
 }
 #resource_settings {
     border: 2px solid var(--light);
@@ -206,11 +206,16 @@ table.resource input[type="radio"] + label:hover {
 table.resource input[type="radio"]:checked + label {
     fill: var(--accent);
 }
-#alt_recipe_settings .ingredient {
+#recipe_toggles .title {
+    font-size: 12px;
+    color: var(--foreground);
+    font-style: italic;
+}
+#recipe_toggles .ingredient {
     position: relative;
     display: inline-block;
 }
-#alt_recipe_settings .count {
+#recipe_toggles .count {
     position: absolute;
     right: 0px;
     bottom: 0px;
@@ -221,14 +226,17 @@ table.resource input[type="radio"]:checked + label {
     padding-left: 2px;
     padding-top: 2px;
 }
-#alt_recipe_settings .arrow {
+#recipe_toggles .arrow {
     font-size: 16px;
 }
-#alt_recipe_settings .open .count {
+#recipe_toggles .open .count {
     font-size: 16px
 }
-#alt_recipe_settings .open .arrow {
+#recipe_toggles .open .arrow {
     font-size: 32px;
+}
+#recipe_toggles .toggle-row {
+    margin: 1em;
 }
 /* tabs */
 div.tabs {

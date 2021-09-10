@@ -183,6 +183,15 @@ function renderBelts(settings) {
 
 // recipe disabling
 
+function renderIngredient(ingSpan) {
+    ingSpan.classed("ingredient", true)
+        .attr("title", d => d.item.name)
+        .append(d => d.item.icon.make(32))
+    ingSpan.append("span")
+        .classed("count", true)
+        .text(d => spec.format.count(d.amount))
+}
+
 function renderRecipes(settings) {
     if (settings.has("disable")) {
         let keys = settings.get("disable").split(",")
@@ -206,7 +215,7 @@ function renderRecipes(settings) {
 
     let div = d3.select("#recipe_toggles")
     div.selectAll("*").remove()
-    div.selectAll("div")
+    let recipe = div.selectAll("div")
         .data(groups)
         .join("div")
             .classed("toggle-row", true)
@@ -215,6 +224,7 @@ function renderRecipes(settings) {
             .join("div")
                 .classed("toggle", true)
                 .classed("selected", d => !spec.disable.has(d))
+                .attr("title", d => d.name)
                 .on("click", function(event, d) {
                     let disabled = spec.disable.has(d)
                     d3.select(this).classed("selected", disabled)
@@ -225,7 +235,23 @@ function renderRecipes(settings) {
                     }
                     spec.updateSolution()
                 })
-                .append(d => d.icon.make(48))
+    recipe.append("span")
+        .classed("title", true)
+        .text(d => d.name)
+    recipe.append("br")
+    let productSpan = recipe.append("span")
+        .selectAll("span")
+        .data(d => d.products)
+        .join("span")
+    renderIngredient(productSpan)
+    recipe.append("span")
+        .classed("arrow", true)
+        .text("\u21d0")
+    let ingredientSpan = recipe.append("span")
+        .selectAll("span")
+        .data(d => d.ingredients)
+        .join("span")
+    renderIngredient(ingredientSpan)
 }
 
 // miners
