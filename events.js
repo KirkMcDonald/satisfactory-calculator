@@ -153,7 +153,7 @@ export function installSVGEvents(svg) {
             scale -= 1
         } else if (event.deltaY > 0) {
             // zoom out
-            if (scale === MAX_SCALE) {
+            if (scale === MAX_SCALE+2) {
                 return
             }
             scale += 1
