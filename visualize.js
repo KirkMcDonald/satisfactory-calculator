@@ -161,6 +161,7 @@ export function renderTotals(totals, ignore) {
         tab.style("min-width", 0)
         svg.attr("width", null)
         svg.attr("height", null)
+        svg.style("border", "1px var(--foreground) solid")
         installSVGEvents(svg)
     } else {
         tab.style("min-width", "max-content")
@@ -171,6 +172,7 @@ export function renderTotals(totals, ignore) {
         svg.attr("viewBox", `${x} ${y} ${width} ${height}`)
             .attr("width", width)
             .attr("height", height)
+            .style("border", null)
         svg.on("wheel", null)
         svg.on("mousedown", null)
         svg.on("mousemove", null)
