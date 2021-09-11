@@ -94,7 +94,7 @@ function linkPath(d) {
 export function renderSankey(data, ignore) {
     let maxNodeWidth = 0
     let testSVG = d3.select("body").append("svg")
-        .classed("sankey", true)
+        .classed("sankey test", true)
     let text = testSVG.append("text")
     for (let node of data.nodes) {
         let nodeWidth = node.labelWidth(text, 2)

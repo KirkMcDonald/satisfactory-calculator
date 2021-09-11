@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 import { spec } from "./factory.js"
-import { colorList, iconSize, getColorMaps, renderNode } from "./graph.js"
+import { colorList, iconSize, nodeMargin, getColorMaps, renderNode } from "./graph.js"
 
 function edgePath(edge) {
     let start = edge.points[0]
@@ -28,167 +28,146 @@ function edgeName(link) {
         return `link-${link.index}`
 }
 
-export function renderBoxGraph({nodes, links}, ignore) {
+export function renderBoxGraph({nodes, links}, ignore, callback) {
     let [itemColors, recipeColors] = getColorMaps(nodes, links)
-    let g = new dagre.graphlib.Graph({multigraph: true})
-    g.setGraph({rankdir: "TB"})
-    g.setDefaultEdgeLabel(() => {})
-
-    let testSVG = d3.select("body").append("svg")
+    let dpi = 72
+    let dot = [
+        "digraph {\n",
+        "    bgcolor=transparent;\n",
+        `    dpi=${dpi};\n`,
+        "    ranksep=1;\n",
+    ]
+    let testSVG = d3.select("body").append("svg").classed("test", true)
     let text = testSVG.append("text")
+    let nodeMap = new Map()
     for (let node of nodes) {
-        let width = node.labelWidth(text, 10)
-        let height = 52
-        let label = {node, width, height}
-        g.setNode(node.name, label)
-        node.linkObjs = []
-        node.links = function() { return this.linkObjs }
+        nodeMap.set(node.name, node)
+        let width = node.labelWidth(text)
+        let height = iconSize + nodeMargin*2
+        let fill = d3.color(colorList[recipeColors.get(node.recipe) % colorList.length]).darker().hex()
+        let stroke = colorList[recipeColors.get(node.recipe) % colorList.length]
+        dot.push(`    "${node.name}" [label="" shape=rect fixedsize=true width="${width/dpi}" height="${height/dpi}"];\n`)
     }
 
+    let linkMap = new Map()
     for (let [i, link] of links.entries()) {
+        let key = `${link.source.name}->${link.target.name}`
+        linkMap.set(key, link)
         link.index = i
         let s = ` \u00d7 ${spec.format.rate(link.rate)}/${spec.format.rateName}`
         text.text(s)
         let textWidth = text.node().getBBox().width
-        let width = 32 + 10 + textWidth
-        let height = 32 + 10
+        let width = iconSize + 10 + textWidth
+        let height = iconSize + 10
+        let fill = d3.color(colorList[itemColors.get(link.item) % colorList.length]).darker().hex()
+        let stroke = colorList[itemColors.get(link.item) % colorList.length]
         let label = {
-            link: link,
-            labelpos: "c",
             width: width,
             height: height,
             text: s,
         }
         link.label = label
-        g.setEdge(link.source.name, link.target.name, label, edgeName(link))
-        link.source.linkObjs.push(link)
-        link.target.linkObjs.push(link)
+        dot.push(`    "${link.source.name}" -> "${link.target.name}" [label="MNII${s}" color="${stroke}" fillcolor="${fill}" penwidth=3];\n`)
     }
+    dot.push("};\n")
     text.remove()
     testSVG.remove()
+    let dotText = dot.join("")
+    let div = d3.select("#graph_container")
+    div.selectAll("*").remove()
+    div.graphviz(/*{useWorker: false}*/)
+        // Disable default zoom stuff; we have our own.
+        .zoom(false)
+        .renderDot(dotText, () => {
+            let svg = div.select("svg")
+                .attr("id", "graph")
+                .classed("sankey", false)
+            let rects = svg.selectAll(".node")
+                .each(function() {
+                    let selector = d3.select(this)
+                    let d = nodeMap.get(selector.select("title").text())
+                    selector.datum(d)
+                    let box = this.getBBox()
+                    d.x0 = box.x
+                    d.y0 = box.y
+                    d.x1 = box.x + box.width
+                    d.y1 = box.y + box.height
+                })
+            rects.selectAll("polygon").remove()
+            renderNode(rects, recipeColors, ignore)
 
-    dagre.layout(g)
-    for (let nodeName of g.nodes()) {
-        let dagreNode = g.node(nodeName)
-        let node = dagreNode.node
-        node.x0 = dagreNode.x - dagreNode.width/2
-        node.y0 = dagreNode.y - dagreNode.height/2
-        node.x1 = node.x0 + dagreNode.width
-        node.y1 = node.y0 + dagreNode.height
-    }
-    for (let edgeName of g.edges()) {
-        let dagreEdge = g.edge(edgeName)
-        let link = dagreEdge.link
-        link.points = dagreEdge.points
-    }
+            let edgeLabels = svg.selectAll(".edge")
+                .each(function() {
+                    let selector = d3.select(this)
+                    let d = linkMap.get(selector.select("title").text())
+                    d.elements.push(this)
+                    selector.datum(d)
+                    let text = selector.select("text")
+                    let box = text.node().getBBox()
+                    d.label.x = box.x + box.width/2
+                    d.label.y = box.y + box.height/2
+                    text.remove()
+                })
+            edgeLabels.selectAll("path, polygon")
+                .classed("highlighter", true)
+            edgeLabels.append("rect")
+                .classed("highlighter", true)
+                .attr("x", d => {
+                    let edge = d.label
+                    return edge.x - edge.width/2
+                })
+                .attr("y", d => {
+                    let edge = d.label
+                    return edge.y - edge.height/2
+                })
+                .attr("width", d => d.label.width)
+                .attr("height", d => d.label.height)
+                .attr("rx", 6)
+                .attr("ry", 6)
+                .attr("fill", d => d3.color(colorList[itemColors.get(d.item) % 10]).darker())
+                .attr("fill-opacity", 0)
+                .attr("stroke", "none")
+            edgeLabels.append("image")
+                .attr("x", d => {
+                    let edge = d.label
+                    return edge.x - (edge.width/2) + 5
+                })
+                .attr("y", d => {
+                    let edge = d.label
+                    return edge.y - iconSize/2
+                })
+                .attr("height", iconSize)
+                .attr("width", iconSize)
+                .attr("xlink:href", d => d.item.icon.path())
+            edgeLabels.append("text")
+                .attr("x", d => {
+                    let edge = d.label
+                    return edge.x - (edge.width/2) + 5 + iconSize
+                })
+                .attr("y", d => d.label.y)
+                .attr("dy", "0.35em")
+                .text(d => d.label.text)
 
-    let {width, height} = g.graph()
-    let svg = d3.select("svg#graph")
-        .classed("sankey", false)
-        /*.attr("viewBox", `-25,-25,${width+50},${height+50}`)
-        .style("width", width+50)
-        .style("height", height+50)*/
-    svg.selectAll("g").remove()
+            svg.select("g").append("g")
+                .classed("overlay", true)
+                .selectAll("rect")
+                .data(nodes)
+                .join("rect")
+                    .attr("stroke", "none")
+                    .attr("fill", "transparent")
+                    .attr("x", d => d.x0)
+                    .attr("y", d => d.y0)
+                    .attr("width", d => d.x1 - d.x0)
+                    .attr("height", d => d.y1 - d.y0)
+                    .on("mouseover", (event, d) => {
+                        d.highlight()
+                    })
+                    .on("mouseout", (event, d) => {
+                        d.unhighlight()
+                    })
+                    .append("title")
+                        .text(d => d.name)
 
-    let edges = svg.append("g")
-        .classed("edges", true)
-        .selectAll("g")
-        .data(links)
-        .join("g")
-            .classed("edge", true)
-            .classed("edgePathFuel", d => d.fuel)
-            .each(function(d) { d.elements.push(this) })
-    edges.append("path")
-        .classed("highlighter", true)
-        .attr("fill", "none")
-        .attr("stroke", d => colorList[itemColors.get(d.item) % colorList.length])
-        .attr("stroke-width", 3)
-        .attr("d", edgePath)
-        .attr("marker-end", d => `url(#arrowhead-${edgeName(d)})`)
-    edges.append("defs")
-        .append("marker")
-            .attr("id", d => "arrowhead-" + edgeName(d))
-            .attr("viewBox", "0 0 10 10")
-            .attr("refX", "9")
-            .attr("refY", "5")
-            .attr("markerWidth", "16")
-            .attr("markerHeight", "12")
-            .attr("markerUnits", "userSpaceOnUse")
-            .attr("orient", "auto")
-        .append("path")
-            .classed("highlighter", true)
-            .attr("d", "M 0,0 L 10,5 L 0,10 z")
-            .attr("stroke-width", 1)
-            .attr("stroke", d => colorList[itemColors.get(d.item) % colorList.length])
-            .attr("fill", d => d3.color(colorList[itemColors.get(d.item) % colorList.length]).darker())
-
-    let edgeLabels = svg.append("g")
-        .classed("edgeLabels", true)
-        .selectAll("g")
-        .data(links)
-        .join("g")
-            .classed("edgeLabel", true)
-            .each(function(d) { d.elements.push(this) })
-    edgeLabels.append("rect")
-        .classed("highlighter", true)
-        .attr("x", d => {
-            let edge = d.label
-            return edge.x - edge.width/2
+            callback()
         })
-        .attr("y", d => {
-            let edge = d.label
-            return edge.y - edge.height/2
-        })
-        .attr("width", d => d.label.width)
-        .attr("height", d => d.label.height)
-        .attr("rx", 6)
-        .attr("ry", 6)
-        .attr("fill", d => d3.color(colorList[itemColors.get(d.item) % 10]).darker())
-        .attr("fill-opacity", 0)
-        .attr("stroke", "none")
-    edgeLabels.append("image")
-        .attr("x", d => {
-            let edge = d.label
-            return edge.x - (edge.width/2) + 5
-        })
-        .attr("y", d => {
-            let edge = d.label
-            return edge.y - iconSize/2
-        })
-        .attr("height", iconSize)
-        .attr("width", iconSize)
-        .attr("xlink:href", d => d.item.icon.path())
-    edgeLabels.append("text")
-        .attr("x", d => {
-            let edge = d.label
-            return edge.x - (edge.width/2) + 5 + iconSize
-        })
-        .attr("y", d => d.label.y)
-        .attr("dy", "0.35em")
-        .text(d => d.label.text)
-
-    let rects = svg.append("g")
-        .classed("nodes", true)
-        .selectAll("g")
-        .data(nodes)
-        .join("g")
-            .classed("node", true)
-    renderNode(rects, recipeColors, ignore)
-
-    svg.append("g")
-        .classed("overlay", true)
-        .selectAll("rect")
-        .data(nodes)
-        .join("rect")
-            .attr("stroke", "none")
-            .attr("fill", "transparent")
-            .attr("x", d => d.x0)
-            .attr("y", d => d.y0)
-            .attr("width", d => d.x1 - d.x0)
-            .attr("height", d => d.y1 - d.y0)
-            /*.on("mouseover", d => GraphMouseOverHandler(d))
-            .on("mouseout", d => GraphMouseLeaveHandler(d))
-            .on("click", d => GraphClickHandler(d))*/
-            .append("title")
-                .text(d => d.name)
 }

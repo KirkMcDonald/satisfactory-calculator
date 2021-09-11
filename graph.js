@@ -28,8 +28,8 @@ export const colorList = [
 ]
 
 export const iconSize = 32
-
 export const colonWidth = 12
+export const nodeMargin = 2
 
 function itemNeighbors(item) {
     let touching = new Set()
@@ -98,6 +98,7 @@ export function getColorMaps(nodes, links) {
 }
 
 export function renderNode(rects, recipeColors, ignore) {
+    // main rect
     rects.append("rect")
         .attr("x", d => d.x0)
         .attr("y", d => d.y0)
@@ -106,6 +107,7 @@ export function renderNode(rects, recipeColors, ignore) {
         .attr("fill", d => d3.color(colorList[recipeColors.get(d.recipe) % colorList.length]).darker())
         .attr("stroke", d => colorList[recipeColors.get(d.recipe) % colorList.length])
         .each(function(d) { d.element = this })
+    // plain text node (output, surplus)
     rects.filter(d => d.rate === null)
         .append("text")
             .attr("x", d => (d.x0 + d.x1) / 2)
@@ -114,31 +116,35 @@ export function renderNode(rects, recipeColors, ignore) {
             .attr("text-anchor", "middle")
             .text(d => d.text())
     let labeledNode = rects.filter(d => d.rate !== null)
+    // recipe icon
     labeledNode.append("image")
         .classed("ignore", d => ignore.has(d.recipe))
-        .attr("x", d => d.x0 + 2)
+        .attr("x", d => d.x0 + nodeMargin)
         .attr("y", d => (d.y0 + d.y1) / 2 - (iconSize / 2))
         .attr("height", iconSize)
         .attr("width", iconSize)
         .attr("xlink:href", d => d.recipe.icon.path())
+    // node text (building count, or plain rate if no building)
     labeledNode.append("text")
-        .attr("x", d => d.x0 + iconSize + (d.building === null ? 0 : colonWidth + iconSize) + 5)
+        .attr("x", d => d.x0 + nodeMargin + iconSize + (d.building === null ? 0 : colonWidth + iconSize) /*+ 5*/)
         .attr("y", d => (d.y0 + d.y1) / 2)
         .attr("dy", "0.35em")
         .text(d => d.text())
     let buildingNode = rects.filter(d => d.building !== null)
+    // colon
     buildingNode.append("circle")
         .classed("colon", true)
-        .attr("cx", d => d.x0 + iconSize + colonWidth/2 + 2)
+        .attr("cx", d => d.x0 + nodeMargin + iconSize + colonWidth/2)
         .attr("cy", d => (d.y0 + d.y1) / 2 - 4)
         .attr("r", 1)
     buildingNode.append("circle")
         .classed("colon", true)
-        .attr("cx", d => d.x0 + iconSize + colonWidth/2 + 2)
+        .attr("cx", d => d.x0 + nodeMargin + iconSize + colonWidth/2)
         .attr("cy", d => (d.y0 + d.y1) / 2 + 4)
         .attr("r", 1)
+    // building icon
     buildingNode.append("image")
-        .attr("x", d => d.x0 + iconSize + colonWidth + 2)
+        .attr("x", d => d.x0 + nodeMargin + iconSize + colonWidth)
         .attr("y", d => (d.y0 + d.y1) / 2 - iconSize/2)
         .attr("height", iconSize)
         .attr("width", iconSize)

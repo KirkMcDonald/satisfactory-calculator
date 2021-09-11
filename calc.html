@@ -16,7 +16,8 @@
     <script src="third_party/BigInteger.min.js"></script>
     <script src="third_party/d3.min.js"></script>
     <!--<script src="third_party/d3-sankey.min.js"></script>-->
-    <script src="third_party/dagre.min.js"></script>
+    <script src="third_party/graphvizlib/index.min.js"></script>
+    <script src="third_party/d3-graphviz.js"></script>
     <script>
         var handlers = {}
     </script>
@@ -94,7 +95,9 @@ limitations under the License.-->
                 <label for="fix_render">Fixed</label>
             </form>
         </div>
+        <div id="graph_container">
         <svg id="graph"><g /></svg>
+        </div>
     </div>
 
     <div id="totals_tab" class="tab">

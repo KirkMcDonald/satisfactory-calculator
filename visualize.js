@@ -14,7 +14,7 @@ limitations under the License.*/
 import { renderBoxGraph } from "./boxline.js"
 import { visualizerType, visualizerRender, installSVGEvents } from "./events.js"
 import { spec } from "./factory.js"
-import { iconSize, colonWidth } from "./graph.js"
+import { iconSize, colonWidth, nodeMargin } from "./graph.js"
 import { zero, one } from "./rational.js"
 import { renderSankey } from "./sankey.js"
 
@@ -29,6 +29,9 @@ class GraphEdge {
         this.extra = extra
         this.elements = []
         this.nodeHighlighters = new Set()
+
+        source.linkObjects.push(this)
+        target.linkObjects.push(this)
     }
     hasHighlighters() {
         return this.nodeHighlighters.size > 0
@@ -59,9 +62,10 @@ class GraphNode {
         this.building = building || null
         this.count = count
         this.rate = rate
+        this.linkObjects = []
     }
     links() {
-        return this.sourceLinks.concat(this.targetLinks)
+        return this.linkObjects
     }
     text() {
         if (this.rate === null) {
@@ -72,14 +76,42 @@ class GraphNode {
             return ` \u00d7 ${spec.format.count(this.count)}`
         }
     }
-    labelWidth(text, margin) {
+    // There are three types of nodes, each of which calculate their width
+    // differently:
+    //
+    // 1) Plain text nodes, used for the "output" and "surplus" nodes. These
+    //    are simply the width of the rendered text string, plus a margin on
+    //    either side.
+    //      [margin] [text] [margin]
+    // 2) Rate nodes, which represent the production of an item in lieu of a
+    //    building. These consist of:
+    //      [margin] [item icon] [text label] [margin]
+    // 3) Recipe nodes, which contain a recipe icon, a representation of a
+    //    colon (as two circles), a building icon, and a text label:
+    //      [margin] [recipe icon] [colon] [building icon] [text] [margin]
+    //
+    // The constant `iconSize` is the width and height, in SVG coordinate
+    // units, of all icons.
+    //
+    // The constant `colonWidth` is the distance, in SVG coordinate units,
+    // between the recipe and building icons; the colon symbol is then centered
+    // in this gap.
+    //
+    // The constant `nodeMargin` is 2: 1 pixel for the rect border, and one
+    // pixel for separation from the border.
+    //
+    // These calculations hold for both the Sankey and boxline visualizations,
+    // with the slight caveat that this is the exact width of each node in the
+    // boxline mode, while nodes are of a uniform width in the Sankey diagram,
+    // chosen from the maximum node width calculated here.
+    labelWidth(text) {
         text.text(this.text())
         let textWidth = text.node().getBBox().width
-        let nodeWidth = textWidth + margin*2
+        let nodeWidth = textWidth + nodeMargin*2
         if (this.building !== null) {
-            nodeWidth += iconSize * 2 + colonWidth + 3
+            nodeWidth += iconSize * 2 + colonWidth// + 3
         } else if (this.rate !== null) {
-            nodeWidth += iconSize + 3
+            nodeWidth += iconSize// + 3
         }
         return nodeWidth
     }
@@ -149,33 +181,36 @@ function makeGraph(totals, ignore) {
 export function renderTotals(totals, ignore) {
     let data = makeGraph(totals, ignore)
 
-    if (visualizerType === "sankey") {
-        renderSankey(data, ignore)
-    } else {
-        renderBoxGraph(data, ignore)
+    let callback = function() {
+        let svg = d3.select("svg#graph")
+        let tab = d3.select("#graph_tab")
+        if (visualizerRender === "zoom") {
+            tab.style("min-width", 0)
+            svg.attr("width", null)
+            svg.attr("height", null)
+            svg.style("border", "1px var(--foreground) solid")
+            installSVGEvents(svg)
+        } else {
+            tab.style("min-width", "max-content")
+            let style = tab.style("display")
+            tab.style("display", "block")
+            let {x, y, width, height} = svg.node().getBBox()
+            tab.style("display", style)
+            svg.attr("viewBox", `${x} ${y} ${width} ${height}`)
+                .attr("width", width)
+                .attr("height", height)
+                .style("border", null)
+            svg.on("wheel", null)
+            svg.on("mousedown", null)
+            svg.on("mousemove", null)
+            svg.on("mouseup", null)
+        }
     }
 
-    let svg = d3.select("svg#graph")
-    let tab = d3.select("#graph_tab")
-    if (visualizerRender === "zoom") {
-        tab.style("min-width", 0)
-        svg.attr("width", null)
-        svg.attr("height", null)
-        svg.style("border", "1px var(--foreground) solid")
-        installSVGEvents(svg)
+    if (visualizerType === "sankey") {
+        renderSankey(data, ignore)
+        callback()
     } else {
-        tab.style("min-width", "max-content")
-        let style = tab.style("display")
-        tab.style("display", "block")
-        let {x, y, width, height} = svg.node().getBBox()
-        tab.style("display", style)
-        svg.attr("viewBox", `${x} ${y} ${width} ${height}`)
-            .attr("width", width)
-            .attr("height", height)
-            .style("border", null)
-        svg.on("wheel", null)
-        svg.on("mousedown", null)
-        svg.on("mousemove", null)
-        svg.on("mouseup", null)
+        renderBoxGraph(data, ignore, callback)
     }
 }
