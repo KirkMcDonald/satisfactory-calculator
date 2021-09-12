@@ -82,6 +82,9 @@ export function renderBoxGraph({nodes, links}, ignore, callback) {
             let svg = div.select("svg")
                 .attr("id", "graph")
                 .classed("sankey", false)
+            let tab = d3.select("#graph_tab")
+            let style = tab.style("display")
+            tab.style("display", "block")
             let rects = svg.selectAll(".node")
                 .each(function() {
                     let selector = d3.select(this)
@@ -108,6 +111,7 @@ export function renderBoxGraph({nodes, links}, ignore, callback) {
                     d.label.y = box.y + box.height/2
                     text.remove()
                 })
+            tab.style("display", style)
             edgeLabels.selectAll("path, polygon")
                 .classed("highlighter", true)
             edgeLabels.append("rect")
