@@ -75,6 +75,13 @@
             "category": "packaging",
             "power": 10,
             "max": 2
+        },
+        {
+            "name": "Blender",
+            "key_name": "blender",
+            "category": "blending",
+            "power": 75,
+            "max": 4
         }
     ],
     "miners": [
@@ -571,6 +578,11 @@
             "tier": 5
         },
         {
+            "name": "Packaged Sulfuric Acid",
+            "key_name": "packaged-sulfuric-acid",
+            "tier": 7
+        },
+        {
             "name": "Smart Plating",
             "key_name": "smart-plating",
             "tier": 2
@@ -596,9 +608,19 @@
             "tier": 5
         },
         {
+            "name": "Assembly Director System",
+            "key_name": "assembly-director-system",
+            "tier": 7
+        },
+        {
             "name": "Portable Miner",
             "key_name": "portable-miner",
             "tier": 0
+        },
+        {
+            "name": "Aluminum Casing",
+            "key_name": "aluminum-casing",
+            "tier": 7
         }
     ],
     "fluids": [
@@ -2006,10 +2028,10 @@
             "name": "Aluminum Ingot",
             "key_name": "aluminum-ingot",
             "category": "smelting2",
-            "time": 3,
+            "time": 4,
             "ingredients": [
-                ["aluminum-scrap", 12],
-                ["silica", 7]
+                ["aluminum-scrap", 6],
+                ["silica", 5]
             ],
             "products": [
                 ["aluminum-ingot", 4]
@@ -2019,25 +2041,50 @@
             "name": "Alternate: Pure Aluminum Ingot",
             "key_name": "alt-aluminum-ingot",
             "category": "smelting1",
-            "time": 5,
+            "time": 2,
             "ingredients": [
-                ["aluminum-scrap", 12]
+                ["aluminum-scrap", 2]
             ],
             "products": [
-                ["aluminum-ingot", 3]
+                ["aluminum-ingot", 1]
             ]
         },
         {
             "name": "Alclad Aluminum Sheet",
             "key_name": "alclad-aluminum-sheet",
             "category": "crafting2",
-            "time": 8,
+            "time": 6,
             "ingredients": [
-                ["aluminum-ingot", 8],
-                ["copper-ingot", 3]
+                ["aluminum-ingot", 3],
+                ["copper-ingot", 1]
             ],
             "products": [
-                ["alclad-aluminum-sheet", 4]
+                ["alclad-aluminum-sheet", 3]
+            ]
+        },
+        {
+            "name": "Aluminum Casing",
+            "key_name": "aluminum-casing",
+            "category": "crafting1",
+            "time": 2,
+            "ingredients": [
+                ["aluminum-ingot", 3]
+            ],
+            "products": [
+                ["aluminum-casing", 2]
+            ]
+        },
+        {
+            "name": "Alternate: Alclad Casing",
+            "key_name": "alt-aluminum-casing",
+            "category": "crafting2",
+            "time": 8,
+            "ingredients": [
+                ["aluminum-ingot", 20],
+                ["copper-ingot", 10]
+            ],
+            "products": [
+                ["aluminum-casing", 15]
             ]
         },
         {
@@ -2070,26 +2117,26 @@
             "name": "Radio Control Unit",
             "key_name": "radio-control-unit",
             "category": "crafting3",
-            "time": 24,
+            "time": 48,
             "ingredients": [
-                ["heat-sink", 4],
-                ["rubber", 16],
+                ["aluminum-casing", 32],
                 ["crystal-oscillator", 1],
                 ["computer", 1]
             ],
             "products": [
-                ["radio-control-unit", 1]
+                ["radio-control-unit", 2]
             ]
         },
         {
             "name": "Alternate: Radio Control System",
             "key_name": "alt-radio-control-unit",
             "category": "crafting3",
-            "time": 48,
+            "time": 40,
             "ingredients": [
-                ["heat-sink", 10],
-                ["supercomputer", 1],
-                ["quartz-crystal", 30]
+                ["crystal-oscillator", 1],
+                ["circuit-board", 10],
+                ["aluminum-casing", 60],
+                ["rubber", 30]
             ],
             "products": [
                 ["radio-control-unit", 3]
@@ -2128,16 +2175,16 @@
         {
             "name": "Battery",
             "key_name": "battery",
-            "category": "crafting3",
-            "time": 32,
+            "category": "blending",
+            "time": 3,
             "ingredients": [
-                ["alclad-aluminum-sheet", 8],
-                ["wire", 16],
-                ["sulfur", 20],
-                ["plastic", 8]
+                ["sulfuric-acid", 2.5],
+                ["alumina-solution", 2],
+                ["aluminum-casing", 1]
             ],
             "products": [
-                ["battery", 3]
+                ["battery", 1],
+                ["water", 1.5]
             ]
         },
         {
@@ -2231,7 +2278,7 @@
             "ingredients": [
                 ["filter", 1],
                 ["quickwire", 8],
-                ["rubber", 2]
+                ["aluminum-casing", 1]
             ],
             "products": [
                 ["iodine-infused-filter", 1]
@@ -2469,6 +2516,32 @@
             ]
         },
         {
+            "name": "Packaged Sulfuric Acid",
+            "key_name": "packaged-sulfuric-acid",
+            "category": "packaging",
+            "time": 3,
+            "ingredients": [
+                ["sulfuric-acid", 2],
+                ["empty-canister", 2]
+            ],
+            "products": [
+                ["packaged-sulfuric-acid", 2]
+            ]
+        },
+        {
+            "name": "Unpackage Sulfuric Acid",
+            "key_name": "unpackage-sulfuric-acid",
+            "category": "packaging",
+            "time": 1,
+            "ingredients": [
+                ["packaged-sulfuric-acid", 1]
+            ],
+            "products": [
+                ["sulfuric-acid", 1],
+                ["empty-canister", 1]
+            ]
+        },
+        {
             "name": "Liquid Biofuel",
             "key_name": "liquid-biofuel",
             "category": "refining",
@@ -2488,25 +2561,25 @@
             "time": 1,
             "ingredients": [
                 ["alumina-solution", 4],
-                ["petroleum-coke", 1]
+                ["coal", 2]
             ],
             "products": [
                 ["aluminum-scrap", 6],
-                ["water", 1]
+                ["water", 2]
             ]
         },
         {
             "name": "Alternate: Electrode-Aluminum Scrap",
             "key_name": "alt-aluminum-scrap",
             "category": "refining",
-            "time": 2,
+            "time": 4,
             "ingredients": [
-                ["alumina-solution", 3],
-                ["coal", 1]
+                ["alumina-solution", 12],
+                ["petroleum-coke", 4]
             ],
             "products": [
-                ["aluminum-scrap", 5],
-                ["water", 1]
+                ["aluminum-scrap", 20],
+                ["water", 7]
             ]
         },
         {
@@ -2515,12 +2588,25 @@
             "category": "refining",
             "time": 6,
             "ingredients": [
-                ["bauxite", 7],
+                ["bauxite", 12],
+                ["water", 18]
+            ],
+            "products": [
+                ["alumina-solution", 12],
+                ["silica", 5]
+            ]
+        },
+        {
+            "name": "Alternate: Sloppy Alumina",
+            "key_name": "alt-alumina-solution",
+            "category": "refining",
+            "time": 3,
+            "ingredients": [
+                ["bauxite", 10],
                 ["water", 10]
             ],
             "products": [
-                ["alumina-solution", 8],
-                ["silica", 2]
+                ["alumina-solution", 12]
             ]
         },
         {
@@ -2547,7 +2633,7 @@
                 ["water", 5]
             ],
             "products": [
-                ["sulfuric-acid", 10]
+                ["sulfuric-acid", 5]
             ]
         },
         {
@@ -2658,6 +2744,19 @@
             ],
             "products": [
                 ["adaptive-control-unit", 2]
+            ]
+        },
+        {
+            "name": "Assembly Director System",
+            "key_name": "assembly-director-system",
+            "category": "crafting2",
+            "time": 80,
+            "ingredients": [
+                ["adaptive-control-unit", 2],
+                ["supercomputer", 1]
+            ],
+            "products": [
+                ["assembly-director-system", 1]
             ]
         },
         {
