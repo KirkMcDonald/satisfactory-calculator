@@ -82,6 +82,13 @@
             "category": "blending",
             "power": 75,
             "max": 4
+        },
+        {
+            "name": "Particle Accelerator",
+            "key_name": "accelerator",
+            "category": "accellerating",
+            "power": 0,
+            "max": 3
         }
     ],
     "miners": [
@@ -461,7 +468,7 @@
         {
             "name": "Heat Sink",
             "key_name": "heat-sink",
-            "tier": 7,
+            "tier": 8,
             "stack_size": 100
         },
         {
@@ -485,31 +492,25 @@
         {
             "name": "Uranium",
             "key_name": "uranium",
-            "tier": 7,
-            "stack_size": 100
-        },
-        {
-            "name": "Uranium Pellet",
-            "key_name": "uranium-pellet",
-            "tier": 7,
+            "tier": 8,
             "stack_size": 100
         },
         {
             "name": "Encased Uranium Cell",
             "key_name": "uranium-cell",
-            "tier": 7,
+            "tier": 8,
             "stack_size": 100
         },
         {
             "name": "Electromagnetic Control Rod",
             "key_name": "em-control-rod",
-            "tier": 7,
+            "tier": 8,
             "stack_size": 100
         },
         {
-            "name": "Nuclear Fuel Rod",
-            "key_name": "nuclear-fuel-rod",
-            "tier": 7,
+            "name": "Uranium Fuel Rod",
+            "key_name": "uranium-fuel-rod",
+            "tier": 8,
             "stack_size": 100
         },
         {
@@ -540,6 +541,42 @@
             "name": "Petroleum Coke",
             "key_name": "petroleum-coke",
             "tier": 5,
+            "stack_size": 100
+        },
+        {
+            "name": "Non-fissile Uranium",
+            "key_name": "non-fissile-uranium",
+            "tier": 8,
+            "stack_size": 100
+        },
+        {
+            "name": "Plutonium Pellet",
+            "key_name": "plutonium-pellet",
+            "tier": 8,
+            "stack_size": 100
+        },
+        {
+            "name": "Encased Plutonium Cell",
+            "key_name": "encased-plutonium-cell",
+            "tier": 8,
+            "stack_size": 100
+        },
+        {
+            "name": "Plutonium Fuel Rod",
+            "key_name": "plutonium-fuel-rod",
+            "tier": 8,
+            "stack_size": 100
+        },
+        {
+            "name": "Copper Powder",
+            "key_name": "copper-powder",
+            "tier": 8,
+            "stack_size": 100
+        },
+        {
+            "name": "Pressure Conversion Cube",
+            "key_name": "pressure-conversion-cube",
+            "tier": 8,
             "stack_size": 100
         },
         {
@@ -578,9 +615,24 @@
             "tier": 5
         },
         {
+            "name": "Packaged Alumina Solution",
+            "key_name": "packaged-alumina-solution",
+            "tier": 7
+        },
+        {
             "name": "Packaged Sulfuric Acid",
             "key_name": "packaged-sulfuric-acid",
             "tier": 7
+        },
+        {
+            "name": "Packaged Nitrogen Gas",
+            "key_name": "packaged-nitrogen-gas",
+            "tier": 8
+        },
+        {
+            "name": "Packaged Nitric Acid",
+            "key_name": "packaged-nitric-acid",
+            "tier": 8
         },
         {
             "name": "Smart Plating",
@@ -613,6 +665,22 @@
             "tier": 7
         },
         {
+            "name": "Magnetic Field Generator",
+            "key_name": "magnetic-field-generator",
+            "tier": 8
+        },
+        {
+            "name": "Thermal Propulsion Rocket",
+            "key_name": "thermal-propulsion-rocket",
+            "tier": 8
+        },
+        {
+            "name": "Nuclear Pasta",
+            "key_name": "nuclear-pasta",
+            "tier": 8,
+            "stack_size": 100
+        },
+        {
             "name": "Portable Miner",
             "key_name": "portable-miner",
             "tier": 0
@@ -621,6 +689,26 @@
             "name": "Aluminum Casing",
             "key_name": "aluminum-casing",
             "tier": 7
+        },
+        {
+            "name": "Empty Fluid Tank",
+            "key_name": "empty-fluid-tank",
+            "tier": 8
+        },
+        {
+            "name": "Cooling System",
+            "key_name": "cooling-system",
+            "tier": 8
+        },
+        {
+            "name": "Fused Modular Frame",
+            "key_name": "fused-modular-frame",
+            "tier": 8
+        },
+        {
+            "name": "Uranium Waste",
+            "key_name": "uranium-waste",
+            "tier": 8
         }
     ],
     "fluids": [
@@ -663,6 +751,16 @@
             "name": "Sulfuric Acid",
             "key_name": "sulfuric-acid",
             "tier": 7
+        },
+        {
+            "name": "Nitrogen Gas",
+            "key_name": "nitrogen-gas",
+            "tier": 8
+        },
+        {
+            "name": "Nitric Acid",
+            "key_name": "nitric-acid",
+            "tier": 8
         }
     ],
     "recipes": [
@@ -1361,6 +1459,19 @@
             ]
         },
         {
+            "name": "Alternate: Electric Motor",
+            "key_name": "alt-electric-motor",
+            "category": "crafting2",
+            "time": 16,
+            "ingredients": [
+                ["em-control-rod", 1],
+                ["rotor", 2]
+            ],
+            "products": [
+                ["motor", 2]
+            ]
+        },
+        {
             "name": "Circuit Board",
             "key_name": "circuit-board",
             "category": "crafting2",
@@ -1474,6 +1585,19 @@
             ],
             "products": [
                 ["fuel", 4]
+            ]
+        },
+        {
+            "name": "Alternate: Diluted Fuel",
+            "key_name": "alt-diluted-fuel",
+            "category": "blending",
+            "time": 6,
+            "ingredients": [
+                ["heavy-oil-residue", 5],
+                ["water", 10]
+            ],
+            "products": [
+                ["fuel", 10]
             ]
         },
         {
@@ -1700,6 +1824,34 @@
                 ["ai-limiter", 2],
                 ["high-speed-connector", 3],
                 ["plastic", 28]
+            ],
+            "products": [
+                ["supercomputer", 1]
+            ]
+        },
+        {
+            "name": "Alternate: Super-State Computer",
+            "key_name": "alt-super-state-computer",
+            "category": "crafting3",
+            "time": 50,
+            "ingredients": [
+                ["computer", 3],
+                ["em-control-rod", 2],
+                ["battery", 20],
+                ["wire", 45]
+            ],
+            "products": [
+                ["supercomputer", 2]
+            ]
+        },
+        {
+            "name": "Alternate: OC Supercomputer",
+            "key_name": "alt-oc-supercomputer",
+            "category": "crafting2",
+            "time": 20,
+            "ingredients": [
+                ["radio-control-unit", 3],
+                ["cooling-system", 3]
             ],
             "products": [
                 ["supercomputer", 1]
@@ -2000,6 +2152,21 @@
             ]
         },
         {
+            "name": "Alternate: Turbo Blend Fuel",
+            "key_name": "alt-turbo-blend-fuel",
+            "category": "blending",
+            "time": 8,
+            "ingredients": [
+                ["fuel", 2],
+                ["heavy-oil-residue", 4],
+                ["sulfur", 3],
+                ["petroleum-coke", 3]
+            ],
+            "products": [
+                ["turbofuel", 6]
+            ]
+        },
+        {
             "name": "Silica",
             "key_name": "silica",
             "category": "crafting1",
@@ -2091,26 +2258,26 @@
             "name": "Heat Sink",
             "key_name": "heat-sink",
             "category": "crafting2",
-            "time": 12,
+            "time": 8,
             "ingredients": [
-                ["alclad-aluminum-sheet", 8],
-                ["rubber", 14]
+                ["alclad-aluminum-sheet", 5],
+                ["copper-sheet", 3]
             ],
             "products": [
-                ["heat-sink", 2]
+                ["heat-sink", 1]
             ]
         },
         {
             "name": "Alternate: Heat Exchanger",
             "key_name": "alt-heat-sink",
             "category": "crafting2",
-            "time": 32,
+            "time": 6,
             "ingredients": [
-                ["alclad-aluminum-sheet", 20],
-                ["copper-sheet", 30]
+                ["aluminum-casing", 3],
+                ["rubber", 3]
             ],
             "products": [
-                ["heat-sink", 7]
+                ["heat-sink", 1]
             ]
         },
         {
@@ -2125,6 +2292,20 @@
             ],
             "products": [
                 ["radio-control-unit", 2]
+            ]
+        },
+        {
+            "name": "Alternate: Radio Connection Unit",
+            "key_name": "alt-radio-connection-unit",
+            "category": "crafting3",
+            "time": 16,
+            "ingredients": [
+                ["heat-sink", 4],
+                ["high-speed-connector", 2],
+                ["quartz-crystal", 12]
+            ],
+            "products": [
+                ["radio-control-unit", 1]
             ]
         },
         {
@@ -2148,7 +2329,7 @@
             "category": "crafting3",
             "time": 32,
             "ingredients": [
-                ["heat-sink", 4],
+                ["cooling-system", 4],
                 ["radio-control-unit", 2],
                 ["motor", 4],
                 ["rubber", 24]
@@ -2158,18 +2339,33 @@
             ]
         },
         {
-            "name": "Alternate: Turbo Rigour Motor",
-            "key_name": "alt-turbo-motor",
+            "name": "Alternate: Turbo Electric Motor",
+            "key_name": "alt-turbo-electric-motor",
             "category": "crafting3",
             "time": 64,
             "ingredients": [
                 ["motor", 7],
-                ["radio-control-unit", 5],
-                ["ai-limiter", 9],
-                ["stator", 7]
+                ["radio-control-unit", 9],
+                ["em-control-rod", 5],
+                ["rotor", 7]
             ],
             "products": [
                 ["turbo-motor", 3]
+            ]
+        },
+        {
+            "name": "Alternate: Turbo Pressure Motor",
+            "key_name": "alt-turbo-pressure-motor",
+            "category": "crafting3",
+            "time": 32,
+            "ingredients": [
+                ["motor", 4],
+                ["pressure-conversion-cube", 1],
+                ["packaged-nitrogen-gas", 24],
+                ["stator", 8]
+            ],
+            "products": [
+                ["turbo-motor", 2]
             ]
         },
         {
@@ -2188,31 +2384,80 @@
             ]
         },
         {
-            "name": "Encased Uranium Cell",
-            "key_name": "uranium-cell",
-            "category": "crafting2",
-            "time": 60,
+            "name": "Alternate: Classic Battery",
+            "key_name": "alt-battery",
+            "category": "crafting3",
+            "time": 8,
             "ingredients": [
-                ["uranium-pellet", 40],
-                ["concrete", 9]
+                ["sulfur", 6],
+                ["alclad-aluminum-sheet", 7],
+                ["plastic", 8],
+                ["wire", 12]
             ],
             "products": [
-                ["uranium-cell", 10]
+                ["battery", 4]
+            ]
+        },
+        {
+            "name": "Encased Uranium Cell",
+            "key_name": "uranium-cell",
+            "category": "blending",
+            "time": 12,
+            "ingredients": [
+                ["uranium", 10],
+                ["concrete", 3],
+                ["sulfuric-acid", 8]
+            ],
+            "products": [
+                ["uranium-cell", 5],
+                ["sulfuric-acid", 2]
             ]
         },
         {
             "name": "Alternate: Infused Uranium Cell",
             "key_name": "alt-uranium-cell",
             "category": "crafting3",
-            "time": 120,
+            "time": 12,
             "ingredients": [
-                ["uranium-pellet", 40],
-                ["sulfur", 45],
-                ["silica", 45],
-                ["quickwire", 75]
+                ["uranium", 5],
+                ["silica", 3],
+                ["sulfur", 5],
+                ["quickwire", 15]
             ],
             "products": [
-                ["uranium-cell", 35]
+                ["uranium-cell", 4]
+            ]
+        },
+        {
+            "name": "Non-fissile Uranium",
+            "key_name": "non-fissile-uranium",
+            "category": "blending",
+            "time": 24,
+            "ingredients": [
+                ["uranium-waste", 15],
+                ["silica", 10],
+                ["nitric-acid", 6],
+                ["sulfuric-acid", 6]
+            ],
+            "products": [
+                ["non-fissile-uranium", 20],
+                ["water", 6]
+            ]
+        },
+        {
+            "name": "Alternate: Fertile Uranium",
+            "key_name": "alt-fertile-uranium",
+            "category": "blending",
+            "time": 12,
+            "ingredients": [
+                ["uranium", 5],
+                ["uranium-waste", 5],
+                ["nitric-acid", 3],
+                ["sulfuric-acid", 5]
+            ],
+            "products": [
+                ["non-fissile-uranium", 20],
+                ["water", 8]
             ]
         },
         {
@@ -2232,42 +2477,123 @@
             "name": "Alternate: Electromagnetic Connection Rod",
             "key_name": "alt-em-control-rod",
             "category": "crafting2",
-            "time": 60,
+            "time": 15,
             "ingredients": [
-                ["stator", 10],
-                ["high-speed-connector", 5]
+                ["stator", 2],
+                ["high-speed-connector", 1]
             ],
             "products": [
-                ["em-control-rod", 10]
+                ["em-control-rod", 2]
             ]
         },
         {
-            "name": "Nuclear Fuel Rod",
-            "key_name": "nuclear-fuel-rod",
+            "name": "Nitric Acid",
+            "key_name": "nitric-acid",
+            "category": "blending",
+            "time": 6,
+            "ingredients": [
+                ["nitrogen-gas", 12],
+                ["water", 3],
+                ["iron-plate", 1]
+            ],
+            "products": [
+                ["nitric-acid", 3]
+            ]
+        },
+        {
+            "name": "Uranium Fuel Rod",
+            "key_name": "uranium-fuel-rod",
             "category": "crafting3",
             "time": 150,
             "ingredients": [
-                ["uranium-cell", 25],
+                ["uranium-cell", 50],
                 ["encased-industrial-beam", 3],
                 ["em-control-rod", 5]
             ],
             "products": [
-                ["nuclear-fuel-rod", 1]
+                ["uranium-fuel-rod", 1]
             ]
         },
         {
-            "name": "Alternate: Nuclear Fuel Rod",
-            "key_name": "alt-nuclear-fuel-rod",
+            "name": "Alternate: Uranium Fuel Unit",
+            "key_name": "alt-uranium-fuel-unit",
             "category": "crafting3",
             "time": 300,
             "ingredients": [
-                ["uranium-cell", 50],
+                ["uranium-cell", 100],
                 ["em-control-rod", 10],
                 ["crystal-oscillator", 3],
                 ["beacon", 6]
             ],
             "products": [
-                ["nuclear-fuel-rod", 3]
+                ["uranium-fuel-rod", 3]
+            ]
+        },
+        {
+            "name": "Plutonium Pellet",
+            "key_name": "plutonium-pellet",
+            "category": "accellerating",
+            "time": 60,
+            "ingredients": [
+                ["non-fissile-uranium", 100],
+                ["uranium-waste", 25]
+            ],
+            "products": [
+                ["plutonium-pellet", 30]
+            ]
+        },
+        {
+            "name": "Encased Plutonium Cell",
+            "key_name": "encased-plutonium-cell",
+            "category": "crafting2",
+            "time": 12,
+            "ingredients": [
+                ["plutonium-pellet", 2],
+                ["concrete", 4]
+            ],
+            "products": [
+                ["encased-plutonium-cell", 1]
+            ]
+        },
+        {
+            "name": "Alternate: Instant Plutonium Cell",
+            "key_name": "alt-plutonium-cell",
+            "category": "accellerating",
+            "time": 120,
+            "ingredients": [
+                ["non-fissile-uranium", 150],
+                ["aluminum-casing", 20]
+            ],
+            "products": [
+                ["encased-plutonium-cell", 20]
+            ]
+        },
+        {
+            "name": "Plutonium Fuel Rod",
+            "key_name": "plutonium-fuel-rod",
+            "category": "crafting3",
+            "time": 240,
+            "ingredients": [
+                ["encased-plutonium-cell", 30],
+                ["steel-beam", 18],
+                ["em-control-rod", 6],
+                ["heat-sink", 10]
+            ],
+            "products": [
+                ["plutonium-fuel-rod", 1]
+            ]
+        },
+        {
+            "name": "Alternate: Plutonium Fuel Unit",
+            "key_name": "alt-plutonium-fuel-rod",
+            "category": "crafting2",
+            "time": 120,
+            "ingredients": [
+                ["encased-plutonium-cell", 20],
+                ["pressure-conversion-cube", 1]
+            ],
+            "products": [
+                ["plutonium-fuel-rod", 1]
             ]
         },
         {
@@ -2307,6 +2633,18 @@
             ],
             "products": [
                 ["copper-sheet", 3]
+            ]
+        },
+        {
+            "name": "Copper Powder",
+            "key_name": "copper-powder",
+            "category": "crafting1",
+            "time": 6,
+            "ingredients": [
+                ["copper-ingot", 30]
+            ],
+            "products": [
+                ["copper-powder", 5]
             ]
         },
         {
@@ -2542,6 +2880,84 @@
             ]
         },
         {
+            "name": "Packaged Alumina Solution",
+            "key_name": "packaged-alumina-solution",
+            "category": "packaging",
+            "time": 1,
+            "ingredients": [
+                ["alumina-solution", 2],
+                ["empty-canister", 2]
+            ],
+            "products": [
+                ["packaged-alumina-solution", 2]
+            ]
+        },
+        {
+            "name": "Unpackage Alumina Solution",
+            "key_name": "unpackage-alumina-solution",
+            "category": "packaging",
+            "time": 1,
+            "ingredients": [
+                ["packaged-alumina-solution", 2]
+            ],
+            "products": [
+                ["alumina-solution", 2],
+                ["empty-canister", 2]
+            ]
+        },
+        {
+            "name": "Packaged Nitrogen Gas",
+            "key_name": "packaged-nitrogen-gas",
+            "category": "packaging",
+            "time": 1,
+            "ingredients": [
+                ["nitrogen-gas", 4],
+                ["empty-fluid-tank", 1]
+            ],
+            "products": [
+                ["packaged-nitrogen-gas", 1]
+            ]
+        },
+        {
+            "name": "Unpackage Nitrogen Gas",
+            "key_name": "unpackage-nitrogen-gas",
+            "category": "packaging",
+            "time": 1,
+            "ingredients": [
+                ["packaged-nitrogen-gas", 1]
+            ],
+            "products": [
+                ["nitrogen-gas", 4],
+                ["empty-fluid-tank", 1]
+            ]
+        },
+        {
+            "name": "Packaged Nitric Acid",
+            "key_name": "packaged-nitric-acid",
+            "category": "packaging",
+            "time": 2,
+            "ingredients": [
+                ["nitric-acid", 1],
+                ["empty-fluid-tank", 1]
+            ],
+            "products": [
+                ["packaged-nitric-acid", 1]
+            ]
+        },
+        {
+            "name": "Unpackage Nitric Acid",
+            "key_name": "unpackage-nitric-acid",
+            "category": "packaging",
+            "time": 3,
+            "ingredients": [
+                ["packaged-nitric-acid", 1]
+            ],
+            "products": [
+                ["nitric-acid", 1],
+                ["empty-fluid-tank", 1]
+            ]
+        },
+        {
             "name": "Liquid Biofuel",
             "key_name": "liquid-biofuel",
             "category": "refining",
@@ -2583,6 +2999,22 @@
             ]
         },
         {
+            "name": "Alternate: Instant Scrap",
+            "key_name": "alt-instant-scrap",
+            "category": "blending",
+            "time": 6,
+            "ingredients": [
+                ["bauxite", 15],
+                ["coal", 10],
+                ["sulfuric-acid", 5],
+                ["water", 6]
+            ],
+            "products": [
+                ["aluminum-scrap", 30],
+                ["water", 5]
+            ]
+        },
+        {
             "name": "Alumina Solution",
             "key_name": "alumina-solution",
             "category": "refining",
@@ -2610,20 +3042,6 @@
             ]
         },
         {
-            "name": "Uranium Pellet",
-            "key_name": "uranium-pellet",
-            "category": "refining",
-            "time": 6,
-            "ingredients": [
-                ["uranium", 5],
-                ["sulfuric-acid", 8]
-            ],
-            "products": [
-                ["uranium-pellet", 5],
-                ["sulfuric-acid", 2]
-            ]
-        },
-        {
             "name": "Sulfuric Acid",
             "key_name": "sulfuric-acid",
             "category": "refining",
@@ -2634,6 +3052,77 @@
             ],
             "products": [
                 ["sulfuric-acid", 5]
+            ]
+        },
+        {
+            "name": "Fused Modular Frame",
+            "key_name": "fused-modular-frame",
+            "category": "blending",
+            "time": 40,
+            "ingredients": [
+                ["heavy-modular-frame", 1],
+                ["aluminum-casing", 50],
+                ["nitrogen-gas", 25]
+            ],
+            "products": [
+                ["fused-modular-frame", 1]
+            ]
+        },
+        {
+            "name": "Alternate: Heat-Fused Frame",
+            "key_name": "alt-fused-modular-frame",
+            "category": "blending",
+            "time": 20,
+            "ingredients": [
+                ["heavy-modular-frame", 1],
+                ["aluminum-ingot", 50],
+                ["nitric-acid", 8],
+                ["fuel", 10]
+            ],
+            "products": [
+                ["fused-modular-frame", 1]
+            ]
+        },
+        {
+            "name": "Pressure Conversion Cube",
+            "key_name": "pressure-conversion-cube",
+            "category": "crafting2",
+            "time": 60,
+            "ingredients": [
+                ["fused-modular-frame", 1],
+                ["radio-control-unit", 2]
+            ],
+            "products": [
+                ["pressure-conversion-cube", 1]
+            ]
+        },
+        {
+            "name": "Cooling System",
+            "key_name": "cooling-system",
+            "category": "blending",
+            "time": 10,
+            "ingredients": [
+                ["heat-sink", 2],
+                ["rubber", 2],
+                ["water", 5],
+                ["nitrogen-gas", 25]
+            ],
+            "products": [
+                ["cooling-system", 1]
+            ]
+        },
+        {
+            "name": "Alternate: Cooling Device",
+            "key_name": "alt-cooling-device",
+            "category": "blending",
+            "time": 32,
+            "ingredients": [
+                ["heat-sink", 5],
+                ["motor", 1],
+                ["nitrogen-gas", 24]
+            ],
+            "products": [
+                ["cooling-system", 2]
             ]
         },
         {
@@ -2760,6 +3249,48 @@
             ]
         },
         {
+            "name": "Magnetic Field Generator",
+            "key_name": "magnetic-field-generator",
+            "category": "crafting3",
+            "time": 120,
+            "ingredients": [
+                ["versatile-framework", 5],
+                ["em-control-rod", 2],
+                ["battery", 10]
+            ],
+            "products": [
+                ["magnetic-field-generator", 2]
+            ]
+        },
+        {
+            "name": "Thermal Propulsion Rocket",
+            "key_name": "thermal-propulsion-rocket",
+            "category": "crafting3",
+            "time": 120,
+            "ingredients": [
+                ["modular-engine", 5],
+                ["turbo-motor", 2],
+                ["cooling-system", 6],
+                ["fused-modular-frame", 2]
+            ],
+            "products": [
+                ["thermal-propulsion-rocket", 2]
+            ]
+        },
+        {
+            "name": "Nuclear Pasta",
+            "key_name": "nuclear-pasta",
+            "category": "accellerating",
+            "time": 120,
+            "ingredients": [
+                ["copper-powder", 200],
+                ["pressure-conversion-cube", 1]
+            ],
+            "products": [
+                ["nuclear-pasta", 1]
+            ]
+        },
+        {
             "name": "Alternate: Automated Miner",
             "key_name": "automated-miner",
             "category": "crafting3",
@@ -2818,6 +3349,10 @@
         },
         {
             "key_name": "water",
+            "category": "water"
+        },
+        {
+            "key_name": "nitrogen-gas",
             "category": "water"
         }
     ]
