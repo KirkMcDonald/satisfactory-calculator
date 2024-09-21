@@ -150,7 +150,10 @@ export function simplex(A) {
         if (!min.less(zero)) {
             return
         }
-        pivotCol(A, minCol)
+        let bestRow = pivotCol(A, minCol)
+        if (bestRow === null) {
+            throw new Exception("failed to pivot")
+        }
     }
 }
 
