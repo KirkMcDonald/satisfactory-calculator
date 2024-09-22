@@ -91,9 +91,30 @@
         {
             "name": "Particle Accelerator",
             "key_name": "accelerator",
-            "category": "accellerating",
+            "category": "accelerating",
             "power": 0,
             "max": 3
+        },
+        {
+            "name": "Converter",
+            "key_name": "converter",
+            "category": "converting",
+            "power": 0,
+            "max": 2
+        },
+        {
+            "name": "Quantum Encoder",
+            "key_name": "quantum-encoder",
+            "category": "encoding",
+            "power": 0,
+            "max": 4
+        },
+        {
+            "name": "Nuclear Power Plant",
+            "key_name": "nuclear-power-plant",
+            "category": "nuke-reacting",
+            "power": 0,
+            "max": 2
         }
     ],
     "miners": [
@@ -694,6 +715,16 @@
             "tier": 8
         },
         {
+            "name": "Packaged Rocket Fuel",
+            "key_name": "packaged-rocket-fuel",
+            "tier": 8
+        },
+        {
+            "name": "Packaged Ionized Fuel",
+            "key_name": "packaged-ionized-fuel",
+            "tier": 8
+        },
+        {
             "name": "Smart Plating",
             "key_name": "smart-plating",
             "tier": 2
@@ -770,6 +801,11 @@
             "tier": 8
         },
         {
+            "name": "Plutonium Waste",
+            "key_name": "plutonium-waste",
+            "tier": 8
+        },
+        {
             "name": "SAM",
             "key_name": "sam",
             "tier": 10
@@ -818,6 +854,66 @@
             "name": "Turbo Rifle Ammo",
             "key_name": "turbo-rifle-ammo",
             "tier": 11
+        },
+        {
+            "name": "Diamonds",
+            "key_name": "diamonds",
+            "tier": 9
+        },
+        {
+            "name": "Time Crystal",
+            "key_name": "time-crystal",
+            "tier": 9
+        },
+        {
+            "name": "Ficsite Ingot",
+            "key_name": "ficsite-ingot",
+            "tier": 9
+        },
+        {
+            "name": "Ficsite Trigon",
+            "key_name": "ficsite-trigon",
+            "tier": 9
+        },
+        {
+            "name": "Dark Matter Crystal",
+            "key_name": "dark-matter-crystal",
+            "tier": 9
+        },
+        {
+            "name": "Ficsonium",
+            "key_name": "ficsonium",
+            "tier": 9
+        },
+        {
+            "name": "Ficsonium Fuel Rod",
+            "key_name": "ficsonium-fuel-rod",
+            "tier": 9
+        },
+        {
+            "name": "Superposition Oscillator",
+            "key_name": "superposition-oscillator",
+            "tier": 9
+        },
+        {
+            "name": "Neural-Quantum Processor",
+            "key_name": "neural-quantum-processor",
+            "tier": 9
+        },
+        {
+            "name": "Singularity Cell",
+            "key_name": "singularity-cell",
+            "tier": 9
+        },
+        {
+            "name": "AI Expansion Server",
+            "key_name": "ai-expansion-server",
+            "tier": 9
+        },
+        {
+            "name": "Alien Power Matrix",
+            "key_name": "alien-power-matrix",
+            "tier": 9
         }
     ],
     "fluids": [
@@ -875,6 +971,26 @@
             "name": "Dissolved Silica",
             "key_name": "dissolved-silica",
             "tier": 8
+        },
+        {
+            "name": "Rocket Fuel",
+            "key_name": "rocket-fuel",
+            "tier": 8
+        },
+        {
+            "name": "Dark Matter Residue",
+            "key_name": "dark-matter-residue",
+            "tier": 9
+        },
+        {
+            "name": "Excited Photonic Matter",
+            "key_name": "excited-photonic-matter",
+            "tier": 9
+        },
+        {
+            "name": "Ionized Fuel",
+            "key_name": "ionized-fuel",
+            "tier": 9
         }
     ],
     "recipes": [
@@ -2528,6 +2644,36 @@
             ]
         },
         {
+            "name": "Rocket Fuel",
+            "key_name": "rocket-fuel",
+            "category": "blending",
+            "time": 6,
+            "ingredients": [
+                ["turbofuel", 6],
+                ["nitric-acid", 1]
+            ],
+            "products": [
+                ["rocket-fuel", 10],
+                ["compacted-coal", 1]
+            ]
+        },
+        {
+            "name": "Alternate: Nitro Rocket Fuel",
+            "key_name": "alt-rocket-fuel",
+            "category": "blending",
+            "time": 2.4,
+            "ingredients": [
+                ["fuel", 4],
+                ["nitrogen-gas", 3],
+                ["sulfur", 4],
+                ["coal", 2]
+            ],
+            "products": [
+                ["rocket-fuel", 6],
+                ["compacted-coal", 1]
+            ]
+        },
+        {
             "name": "Silica",
             "key_name": "silica",
             "category": "crafting1",
@@ -2908,7 +3054,7 @@
         {
             "name": "Plutonium Pellet",
             "key_name": "plutonium-pellet",
-            "category": "accellerating",
+            "category": "accelerating",
             "time": 60,
             "ingredients": [
                 ["non-fissile-uranium", 100],
@@ -2934,7 +3080,7 @@
         {
             "name": "Alternate: Instant Plutonium Cell",
             "key_name": "alt-plutonium-cell",
-            "category": "accellerating",
+            "category": "accelerating",
             "time": 120,
             "ingredients": [
                 ["non-fissile-uranium", 150],
@@ -3123,6 +3269,58 @@
             "products": [
                 ["turbofuel", 2],
                 ["empty-canister", 2]
+            ]
+        },
+        {
+            "name": "Packaged Rocket Fuel",
+            "key_name": "packaged-rocket-fuel",
+            "category": "packaging",
+            "time": 1,
+            "ingredients": [
+                ["rocket-fuel", 2],
+                ["empty-fluid-tank", 1]
+            ],
+            "products": [
+                ["packaged-rocket-fuel", 1]
+            ]
+        },
+        {
+            "name": "Unpackage Rocket Fuel",
+            "key_name": "unpackage-rocket-fuel",
+            "category": "packaging",
+            "time": 1,
+            "ingredients": [
+                ["packaged-rocket-fuel", 1]
+            ],
+            "products": [
+                ["rocket-fuel", 2],
+                ["empty-fluid-tank", 1]
+            ]
+        },
+        {
+            "name": "Packaged Ionized Fuel",
+            "key_name": "packaged-ionized-fuel",
+            "category": "packaging",
+            "time": 3,
+            "ingredients": [
+                ["ionized-fuel", 4],
+                ["empty-fluid-tank", 2]
+            ],
+            "products": [
+                ["packaged-ionized-fuel", 2]
+            ]
+        },
+        {
+            "name": "Unpackage Ionized Fuel",
+            "key_name": "unpackage-ionized-fuel",
+            "category": "packaging",
+            "time": 3,
+            "ingredients": [
+                ["packaged-ionized-fuel", 2]
+            ],
+            "products": [
+                ["ionized-fuel", 4],
+                ["empty-fluid-tank", 2]
             ]
         },
         {
@@ -3667,7 +3865,7 @@
         {
             "name": "Nuclear Pasta",
             "key_name": "nuclear-pasta",
-            "category": "accellerating",
+            "category": "accelerating",
             "time": 120,
             "ingredients": [
                 ["copper-powder", 200],
@@ -3766,6 +3964,382 @@
             ],
             "products": [
                 ["explosive-rebar", 1]
+            ]
+        },
+        {
+            "name": "Diamonds",
+            "key_name": "diamonds",
+            "category": "accelerating",
+            "time": 2,
+            "ingredients": [
+                ["coal", 20]
+            ],
+            "products": [
+                ["diamonds", 1]
+            ]
+        },
+        {
+            "name": "Alternate: Petroleum Diamonds",
+            "key_name": "alt-diamonds-petroleum",
+            "category": "accelerating",
+            "time": 2,
+            "ingredients": [
+                ["petroleum-coke", 24]
+            ],
+            "products": [
+                ["diamonds", 1]
+            ]
+        },
+        {
+            "name": "Alternate: Turbo Diamonds",
+            "key_name": "alt-diamonds-turbo",
+            "category": "accelerating",
+            "time": 3,
+            "ingredients": [
+                ["coal", 30],
+                ["packaged-turbofuel", 2]
+            ],
+            "products": [
+                ["diamonds", 3]
+            ]
+        },
+        {
+            "name": "Alternate: Oil-Based Diamonds",
+            "key_name": "alt-diamonds-oil",
+            "category": "accelerating",
+            "time": 3,
+            "ingredients": [
+                ["crude-oil", 10]
+            ],
+            "products": [
+                ["diamonds", 2]
+            ]
+        },
+        {
+            "name": "Alternate: Cloudy Diamonds",
+            "key_name": "alt-diamonds-cloudy",
+            "category": "accelerating",
+            "time": 3,
+            "ingredients": [
+                ["coal", 12],
+                ["limestone", 24]
+            ],
+            "products": [
+                ["diamonds", 1]
+            ]
+        },
+        {
+            "name": "Alternate: Pink Diamonds",
+            "key_name": "alt-diamonds-pink",
+            "category": "accelerating",
+            "time": 4,
+            "ingredients": [
+                ["coal", 8],
+                ["quartz-crystal", 3]
+            ],
+            "products": [
+                ["diamonds", 1]
+            ]
+        },
+        {
+            "name": "Time Crystal",
+            "key_name": "time-crystal",
+            "category": "converting",
+            "time": 10,
+            "ingredients": [
+                ["diamonds", 2]
+            ],
+            "products": [
+                ["time-crystal", 1]
+            ]
+        },
+        {
+            "name": "Ficsite Ingot (Iron)",
+            "key_name": "ficsite-ingot-iron",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 4],
+                ["iron-ingot", 24]
+            ],
+            "products": [
+                ["ficsite-ingot", 1]
+            ]
+        },
+        {
+            "name": "Ficsite Ingot (Caterium)",
+            "key_name": "ficsite-ingot-caterium",
+            "category": "converting",
+            "time": 4,
+            "ingredients": [
+                ["reanimated-sam", 3],
+                ["caterium-ingot", 4]
+            ],
+            "products": [
+                ["ficsite-ingot", 1]
+            ]
+        },
+        {
+            "name": "Ficsite Ingot (Aluminum)",
+            "key_name": "ficsite-ingot-aluminum",
+            "category": "converting",
+            "time": 2,
+            "ingredients": [
+                ["reanimated-sam", 2],
+                ["aluminum-ingot", 4]
+            ],
+            "products": [
+                ["ficsite-ingot", 1]
+            ]
+        },
+        {
+            "name": "Ficsite Trigon",
+            "key_name": "ficsite-trigon",
+            "category": "crafting1",
+            "time": 6,
+            "ingredients": [
+                ["ficsite-ingot", 1]
+            ],
+            "products": [
+                ["ficsite-trigon", 3]
+            ]
+        },
+        {
+            "name": "Excited Photonic Matter",
+            "key_name": "excited-photonic-matter",
+            "category": "converting",
+            "time": 3,
+            "ingredients": [
+            ],
+            "products": [
+                ["excited-photonic-matter", 10]
+            ]
+        },
+        {
+            "name": "Dark Matter Residue",
+            "key_name": "dark-matter-residue",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 5]
+            ],
+            "products": [
+                ["dark-matter-residue", 10]
+            ]
+        },
+        {
+            "name": "Dark Matter Crystal",
+            "key_name": "dark-matter-crystal",
+            "category": "accelerating",
+            "time": 2,
+            "ingredients": [
+                ["diamonds", 1],
+                ["dark-matter-residue", 5]
+            ],
+            "products": [
+                ["dark-matter-crystal", 1]
+            ]
+        },
+        {
+            "name": "Alternate: Dark Matter Crystallization",
+            "key_name": "alt-dark-matter-crystal",
+            "category": "accelerating",
+            "time": 3,
+            "ingredients": [
+                ["dark-matter-residue", 10]
+            ],
+            "products": [
+                ["dark-matter-crystal", 1]
+            ]
+        },
+        {
+            "name": "Alternate: Dark Matter Trap",
+            "key_name": "alt-dark-matter-trap",
+            "category": "accelerating",
+            "time": 2,
+            "ingredients": [
+                ["time-crystal", 1],
+                ["dark-matter-residue", 5]
+            ],
+            "products": [
+                ["dark-matter-crystal", 2]
+            ]
+        },
+        {
+            "name": "Ficsonium",
+            "key_name": "ficsonium",
+            "category": "accelerating",
+            "time": 6,
+            "ingredients": [
+                ["plutonium-waste", 1],
+                ["singularity-cell", 1],
+                ["dark-matter-residue", 20]
+            ],
+            "products": [
+                ["ficsonium", 1]
+            ]
+        },
+        {
+            "name": "Superposition Oscillator",
+            "key_name": "superposition-oscillator",
+            "category": "encoding",
+            "time": 12,
+            "ingredients": [
+                ["dark-matter-crystal", 6],
+                ["crystal-oscillator", 1],
+                ["alclad-aluminum-sheet", 9],
+                ["excited-photonic-matter", 10]
+            ],
+            "products": [
+                ["superposition-oscillator", 1],
+                ["dark-matter-residue", 25]
+            ]
+        },
+        {
+            "name": "Neural-Quantum Processor",
+            "key_name": "neural-quantum-processor",
+            "category": "encoding",
+            "time": 20,
+            "ingredients": [
+                ["time-crystal", 5],
+                ["supercomputer", 1],
+                ["ficsite-trigon", 15],
+                ["excited-photonic-matter", 25]
+            ],
+            "products": [
+                ["neural-quantum-processor", 1],
+                ["dark-matter-residue", 25]
+            ]
+        },
+        {
+            "name": "Ficsonium Fuel Rod",
+            "key_name": "ficsonium-fuel-rod",
+            "category": "encoding",
+            "time": 24,
+            "ingredients": [
+                ["ficsonium", 2],
+                ["em-control-rod", 2],
+                ["ficsite-trigon", 40],
+                ["excited-photonic-matter", 20]
+            ],
+            "products": [
+                ["ficsonium-fuel-rod", 1],
+                ["dark-matter-residue", 20]
+            ]
+        },
+        {
+            "name": "Synthetic Power Shard",
+            "key_name": "synthetic-power-shard",
+            "category": "encoding",
+            "time": 12,
+            "ingredients": [
+                ["time-crystal", 2],
+                ["dark-matter-crystal", 2],
+                ["quartz-crystal", 12],
+                ["excited-photonic-matter", 12]
+            ],
+            "products": [
+                ["power-shard", 1],
+                ["dark-matter-residue", 12]
+            ]
+        },
+        {
+            "name": "Ionized Fuel",
+            "key_name": "ionized-fuel",
+            "category": "refining",
+            "time": 24,
+            "ingredients": [
+                ["rocket-fuel", 16],
+                ["power-shard", 1]
+            ],
+            "products": [
+                ["ionized-fuel", 16],
+                ["compacted-coal", 2]
+            ]
+        },
+        {
+            "name": "Alternate: Dark-Ion Fuel",
+            "key_name": "alt-dark-ion-fuel",
+            "category": "converting",
+            "time": 3,
+            "ingredients": [
+                ["rocket-fuel", 12],
+                ["dark-matter-crystal", 4]
+            ],
+            "products": [
+                ["ionized-fuel", 10],
+                ["compacted-coal", 2]
+            ]
+        },
+        {
+            "name": "AI Expansion Server",
+            "key_name": "ai-expansion-server",
+            "category": "encoding",
+            "time": 15,
+            "ingredients": [
+                ["magnetic-field-generator", 1],
+                ["neural-quantum-processor", 1],
+                ["superposition-oscillator", 1],
+                ["excited-photonic-matter", 25]
+            ],
+            "products": [
+                ["ai-expansion-server", 1],
+                ["dark-matter-residue", 25]
+            ]
+        },
+        {
+            "name": "Alien Power Matrix",
+            "key_name": "alien-power-matrix",
+            "category": "encoding",
+            "time": 24,
+            "ingredients": [
+                ["sam-fluctuator", 5],
+                ["power-shard", 3],
+                ["superposition-oscillator", 3],
+                ["excited-photonic-matter", 24]
+            ],
+            "products": [
+                ["alien-power-matrix", 1],
+                ["dark-matter-residue", 24]
+            ]
+        },
+        {
+            "name": "Iron Ore (Limestone)",
+            "key_name": "iron-ore-limestone",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["limestone", 24]
+            ],
+            "products": [
+                ["iron-ore", 12]
+            ]
+        },
+        {
+            "name": "Reactor Cycle (Uranium)",
+            "key_name": "reactor-uranium",
+            "category": "nuke-reacting",
+            "time": 300,
+            "ingredients": [
+                ["uranium-fuel-rod", 1],
+                ["water", 1200]
+            ],
+            "products": [
+                ["uranium-waste", 50]
+            ]
+        },
+        {
+            "name": "Reactor Cycle (Plutonium)",
+            "key_name": "reactor-plutonium",
+            "category": "nuke-reacting",
+            "time": 600,
+            "ingredients": [
+                ["plutonium-fuel-rod", 1],
+                ["water", 2400]
+            ],
+            "products": [
+                ["plutonium-waste", 10]
             ]
         }
     ],
