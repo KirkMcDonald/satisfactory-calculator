@@ -85,7 +85,7 @@ export function formatSettings() {
     }
 
     let minerStrings = []
-    for (let [recipe, {miner, purity}] of spec.minerSettings) {
+    for (let [recipe, {miner, purity}] of spec.minerSettings.entries()) {
         let miners = spec.buildings.get(recipe.category)
         let defaultMiner = miners[0]
         if (miner !== defaultMiner || purity !== DEFAULT_PURITY) {

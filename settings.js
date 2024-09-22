@@ -256,7 +256,7 @@ function renderRecipes(settings) {
 
 // miners
 
-function mineHandler(d) {
+function mineHandler(event, d) {
     spec.setMiner(d.recipe, d.miner, d.purity)
     spec.updateSolution()
 }

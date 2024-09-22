@@ -386,8 +386,11 @@ class FactorySpecification {
     }
     getResourcePurity(recipe) {
         // XXX: water extractors, blah
-        //return this.minerSettings.get(recipe).purity
-        return resourcePurities[1]
+        if (this.minerSettings.has(recipe)) {
+            return this.minerSettings.get(recipe).purity
+        } else {
+            return resourcePurities[1]
+        }
     }
     setMiner(recipe, miner, purity) {
         this.minerSettings.set(recipe, {miner, purity})
@@ -466,7 +469,7 @@ class FactorySpecification {
         renderTotals(totals, this.ignore)
         this.setHash()
 
-        renderDebug()
+        //renderDebug()
     }
 }
 
