@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION, longRateNames } from "./align.js"
 import { dropdown } from "./dropdown.js"
-import { DEFAULT_TAB, clickTab } from "./events.js"
+import { DEFAULT_TAB, clickTab, DEFAULT_VISUALIZER, visualizerType, setVisualizerType, DEFAULT_RENDER, visualizerRender, setVisualizerRender } from "./events.js"
 import { spec, resourcePurities, DEFAULT_BELT } from "./factory.js"
 import { getRecipeGroups } from "./groups.js"
 import { Rational } from "./rational.js"
@@ -179,6 +179,23 @@ function renderBelts(settings) {
     beltOption.append("label")
         .attr("for", d => "belt." + d.key)
         .append(d => d.icon.make(32))
+}
+
+// visualizer
+
+function renderVisualizer(settings) {
+    if (settings.has("vt")) {
+        setVisualizerType(settings.get("vt"))
+    } else {
+        setVisualizerType(DEFAULT_VISUALIZER)
+    }
+    d3.select(`#${visualizerType}_type`).attr("checked", true)
+    if (settings.has("vr")) {
+        setVisualizerRender(settings.get("vr"))
+    } else {
+        setVisualizerRender(DEFAULT_RENDER)
+    }
+    d3.select(`#${visualizerType}_render`).attr("checked", true)
 }
 
 // recipe disabling
@@ -494,6 +511,7 @@ export function renderSettings(settings) {
     renderRateOptions(settings)
     renderPrecisions(settings)
     renderBelts(settings)
+    renderVisualizer(settings)
     renderRecipes(settings)
     renderResources(settings)
     renderResourcePriorities(settings)

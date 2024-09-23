@@ -65,6 +65,10 @@ export const DEFAULT_VISUALIZER = "sankey"
 
 export let visualizerType = DEFAULT_VISUALIZER
 
+export function setVisualizerType(vt) {
+    visualizerType = vt
+}
+
 export function changeVisType(event) {
     visualizerType = event.target.value
     spec.updateSolution()
@@ -73,6 +77,10 @@ export function changeVisType(event) {
 export const DEFAULT_RENDER = "zoom"
 
 export let visualizerRender = DEFAULT_RENDER
+
+export function setVisualizerRender(vr) {
+    visualizerRender = vr
+}
 
 export function changeVisRender(event) {
     visualizerRender = event.target.value
