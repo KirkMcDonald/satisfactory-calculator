@@ -88,7 +88,7 @@ export function getColorMaps(nodes, links) {
     let recipeColor = 0
     for (let node of nodes) {
         let recipe = node.recipe
-        if (recipe.products.length === 1) {
+        if (recipe.products.length === 1 && itemColors.has(recipe.products[0].item)) {
             recipeColors.set(recipe, itemColors.get(recipe.products[0].item))
         } else {
             recipeColors.set(recipe, recipeColor++)
