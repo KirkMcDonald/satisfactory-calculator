@@ -906,6 +906,11 @@
             "tier": 9
         },
         {
+            "name": "Ballistic Warp Drive",
+            "key_name": "ballistic-warp-drive",
+            "tier": 9
+        },
+        {
             "name": "AI Expansion Server",
             "key_name": "ai-expansion-server",
             "tier": 9
@@ -2512,6 +2517,21 @@
             ]
         },
         {
+            "name": "Nuke Nobelisk",
+            "key_name": "nuke-nobelisk",
+            "category": "crafting3",
+            "time": 120,
+            "ingredients": [
+                ["nobelisk", 5],
+                ["uranium-cell", 20],
+                ["smokeless-powder", 10],
+                ["ai-limiter", 6]
+            ],
+            "products": [
+                ["nuke-nobelisk", 5]
+            ]
+        },
+        {
             "name": "Rifle Ammo",
             "key_name": "rifle-ammo",
             "category": "crafting2",
@@ -2534,7 +2554,7 @@
                 ["high-speed-connector", 1]
             ],
             "products": [
-                ["rifle-ammo", 10]
+                ["homing-rifle-ammo", 10]
             ]
         },
         {
@@ -4272,6 +4292,36 @@
             ]
         },
         {
+            "name": "Singularity Cell",
+            "key_name": "singularity-cell",
+            "category": "crafting3",
+            "time": 60,
+            "ingredients": [
+                ["nuclear-pasta", 1],
+                ["dark-matter-crystal", 20],
+                ["iron-plate", 100],
+                ["concrete", 200]
+            ],
+            "products": [
+                ["singularity-cell", 10]
+            ]
+        },
+        {
+            "name": "Ballistic Warp Drive",
+            "key_name": "ballistic-warp-drive",
+            "category": "crafting3",
+            "time": 60,
+            "ingredients": [
+                ["thermal-propulsion-rocket", 1],
+                ["singularity-cell", 5],
+                ["superposition-oscillator", 2],
+                ["dark-matter-crystal", 40]
+            ],
+            "products": [
+                ["ballistic-warp-drive", 1]
+            ]
+        },
+        {
             "name": "AI Expansion Server",
             "key_name": "ai-expansion-server",
             "category": "encoding",
@@ -4314,6 +4364,214 @@
             ],
             "products": [
                 ["iron-ore", 12]
+            ]
+        },
+        {
+            "name": "Copper Ore (Sulfur)",
+            "key_name": "copper-ore-sulfur",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["sulfur", 12]
+            ],
+            "products": [
+                ["copper-ore", 12]
+            ]
+        },
+        {
+            "name": "Copper Ore (Quartz)",
+            "key_name": "copper-ore-quartz",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["raw-quartz", 10]
+            ],
+            "products": [
+                ["copper-ore", 12]
+            ]
+        },
+        {
+            "name": "Limestone (Sulfur)",
+            "key_name": "limestone-sulfur",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["sulfur", 2]
+            ],
+            "products": [
+                ["limestone", 12]
+            ]
+        },
+        {
+            "name": "Coal (Limestone)",
+            "key_name": "coal-limestone",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["limestone", 36]
+            ],
+            "products": [
+                ["coal", 12]
+            ]
+        },
+        {
+            "name": "Coal (Iron)",
+            "key_name": "coal-iron",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["iron-ore", 18]
+            ],
+            "products": [
+                ["coal", 12]
+            ]
+        },
+        {
+            "name": "Sulfur (Iron)",
+            "key_name": "sulfur-iron",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["iron-ore", 30]
+            ],
+            "products": [
+                ["sulfur", 12]
+            ]
+        },
+        {
+            "name": "Sulfur (Coal)",
+            "key_name": "sulfur-coal",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["coal", 20]
+            ],
+            "products": [
+                ["sulfur", 12]
+            ]
+        },
+        {
+            "name": "Caterium Ore (Copper)",
+            "key_name": "caterium-ore-copper",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["copper-ore", 15]
+            ],
+            "products": [
+                ["caterium-ore", 12]
+            ]
+        },
+        {
+            "name": "Caterium Ore (Quartz)",
+            "key_name": "caterium-ore-quartz",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["raw-quartz", 12]
+            ],
+            "products": [
+                ["caterium-ore", 12]
+            ]
+        },
+        {
+            "name": "Raw Quartz (Coal)",
+            "key_name": "raw-quartz-coal",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["coal", 24]
+            ],
+            "products": [
+                ["raw-quartz", 12]
+            ]
+        },
+        {
+            "name": "Raw Quartz (Bauxite)",
+            "key_name": "raw-quartz-bauxite",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["bauxite", 10]
+            ],
+            "products": [
+                ["raw-quartz", 12]
+            ]
+        },
+        {
+            "name": "Bauxite (Copper)",
+            "key_name": "bauxite-copper",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["copper-ore", 18]
+            ],
+            "products": [
+                ["bauxite", 12]
+            ]
+        },
+        {
+            "name": "Bauxite (Caterium)",
+            "key_name": "bauxite-caterium",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["caterium-ore", 15]
+            ],
+            "products": [
+                ["bauxite", 12]
+            ]
+        },
+        {
+            "name": "Nitrogen Gas (Caterium)",
+            "key_name": "nitrogen-gas-caterium",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["caterium-ore", 12]
+            ],
+            "products": [
+                ["nitrogen-gas", 12]
+            ]
+        },
+        {
+            "name": "Nitrogen Gas (Bauxite)",
+            "key_name": "nitrogen-gas-bauxite",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["bauxite", 10]
+            ],
+            "products": [
+                ["nitrogen-gas", 12]
+            ]
+        },
+        {
+            "name": "Uranium Ore (Bauxite)",
+            "key_name": "uranium-ore-bauxite",
+            "category": "converting",
+            "time": 6,
+            "ingredients": [
+                ["reanimated-sam", 1],
+                ["bauxite", 48]
+            ],
+            "products": [
+                ["uranium", 12]
             ]
         },
         {
