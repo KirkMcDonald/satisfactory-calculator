@@ -1192,19 +1192,6 @@
             ]
         },
         {
-            "name": "Alternate: Steel Cast Plate",
-            "key_name": "alt-steel-cast-plate",
-            "category": "smelting2",
-            "time": 4,
-            "ingredients": [
-                ["steel-ingot", 1],
-                ["iron-ingot", 1]
-            ],
-            "products": [
-                ["iron-plate", 3]
-            ]
-        },
-        {
             "name": "Iron Rod",
             "key_name": "iron-rod",
             "category": "crafting1",
