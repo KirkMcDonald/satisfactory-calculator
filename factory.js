@@ -15,6 +15,7 @@ import { Formatter } from "./align.js"
 import { renderDebug } from "./debug.js"
 import { displayItems } from "./display.js"
 import { formatSettings } from "./fragment.js"
+import { PriorityList } from "./priority.js"
 import { Rational, zero, half, one } from "./rational.js"
 import { DisabledRecipe } from "./recipe.js"
 import { solve } from "./solve.js"
@@ -34,42 +35,6 @@ export let resourcePurities = [
 export let DEFAULT_PURITY = resourcePurities[1]
 
 export let DEFAULT_BELT = "belt1"
-
-// higher in list == harder to acquire
-// Broadly speaking, corresponds to tech tree.
-// Much of this order is arbitrary; don't read too much into it.
-// This strictly relates to acquisition as a resource directly from the world.
-// If an item can be acquired from crafting via lower-priority items, then the
-// solution will prefer the craft over harvesting the resource.
-const DEFAULT_PRIORITY = [
-    ["Iron Ore", "Copper Ore", "Limestone"],
-    ["Coal", "Water"],
-    ["Caterium Ore", "Sulfur", "Raw Quartz"],
-    ["Crude Oil"],
-    ["Bauxite"],
-    ["Uranium"],
-]
-
-class PriorityLevel {
-    constructor() {
-        this.recipes = new Set()
-    }
-    getRecipeArray() {
-        return Array.from(this.recipes)
-    }
-    add(recipe) {
-        this.recipes.add(recipe)
-    }
-    remove(recipe) {
-        this.recipes.delete(recipe)
-    }
-    has(recipe) {
-        return this.recipes.has(recipe)
-    }
-    isEmpty() {
-        return this.recipes.size == 0
-    }
-}
 
 class FactorySpecification {
     constructor() {
@@ -96,7 +61,8 @@ class FactorySpecification {
         this.disable = new Set()
         this.defaultDisable = new Set()
 
-        this.priority = []
+        this.priority = null
+        this.defaultPriority = null
 
         this.format = new Formatter()
 
@@ -172,6 +138,8 @@ class FactorySpecification {
         this.belts = belts
         this.belt = belts.get(DEFAULT_BELT)
         this.initMinerSettings()
+        this.defaultPriority = PriorityList.getDefault(recipes)
+        this.priority = null
     }
     setDefaultDisable() {
         this.disable.clear()
@@ -197,87 +165,13 @@ class FactorySpecification {
         this.disable.delete(recipe)
     }
     setDefaultPriority() {
-        let tiers = []
-        for (let tierNames of DEFAULT_PRIORITY) {
-            let tier = []
-            for (let name of tierNames) {
-                tier.push(this.resourceNameMap.get(name).key)
-            }
-            tiers.push(tier)
-        }
-        this.setPriorities(tiers)
+        this.priority = this.defaultPriority.copy()
     }
     setPriorities(tiers) {
-        this.priority = []
-        for (let tier of tiers) {
-            let tierList = new PriorityLevel()
-            for (let key of tier) {
-                let recipe = this.recipes.get(key)
-                if (!recipe) {
-                    throw new Error("bad resource key: " + key)
-                }
-                tierList.add(recipe)
-            }
-            this.priority.push(tierList)
-        }
+        this.priority.applyKeys(tiers, this.recipes)
     }
     isDefaultPriority() {
-        if (this.priority.length !== DEFAULT_PRIORITY.length) {
-            return false
-        }
-        for (let i = 0; i < this.priority.length; i++) {
-            let pri = this.priority[i]
-            let def = DEFAULT_PRIORITY[i]
-            if (pri.recipes.size !== def.length) {
-                return false
-            }
-            for (let name of def) {
-                if (!pri.has(this.resourceNameMap.get(name))) {
-                    return false
-                }
-            }
-        }
-        return true
-    }
-    // Moves recipe to the given priority level. If the recipe's old
-    // priority is empty as a result, removes it and returns true. Returns
-    // false otherwise.
-    setPriority(recipe, priority) {
-        let oldPriority = null
-        let i = 0
-        for (; i < this.priority.length; i++) {
-            let p = this.priority[i]
-            if (p.has(recipe)) {
-                oldPriority = p
-                break
-            }
-        }
-        oldPriority.remove(recipe)
-        priority.add(recipe)
-        if (oldPriority.isEmpty()) {
-            this.priority.splice(i, 1)
-            return true
-        }
-        return false
-    }
-    // Creates a new priority level immediately preceding the given one.
-    // If the given priority is null, adds the new priority to the end of
-    // the priority list.
-    //
-    // Returns the new PriorityLevel.
-    addPriorityBefore(priority) {
-        let newPriority = new PriorityLevel()
-        if (priority === null) {
-            this.priority.push(newPriority)
-        } else {
-            for (let i = 0; i < this.priority.length; i++) {
-                if (this.priority[i] === priority) {
-                    this.priority.splice(i, 0, newPriority)
-                    break
-                }
-            }
-        }
-        return newPriority
+        return this.priority.equal(this.defaultPriority)
     }
     initMinerSettings() {
         this.minerSettings = new Map()

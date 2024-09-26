@@ -16,6 +16,7 @@ import { dropdown } from "./dropdown.js"
 import { DEFAULT_TAB, clickTab, DEFAULT_VISUALIZER, visualizerType, setVisualizerType, DEFAULT_RENDER, visualizerRender, setVisualizerRender } from "./events.js"
 import { spec, resourcePurities, DEFAULT_BELT } from "./factory.js"
 import { getRecipeGroups } from "./groups.js"
+import { PriorityUI } from "./priority.js"
 import { Rational } from "./rational.js"
 
 // There are several things going on with this control flow. Settings should
@@ -358,7 +359,10 @@ function renderResources(settings) {
 
 // resource priority
 
+let priorityUI = null
+
 function renderResourcePriorities(settings) {
+    spec.setDefaultPriority()
     if (settings.has("priority")) {
         let tiers = []
         let keys = settings.get("priority").split(";")
@@ -366,142 +370,9 @@ function renderResourcePriorities(settings) {
             tiers.push(s.split(","))
         }
         spec.setPriorities(tiers)
-    } else {
-        spec.setDefaultPriority()
     }
-    let dragitem = null
-    let dragElement = null
-
-    let div = d3.select("#resource_settings")
-    div.selectAll("*").remove()
-
-    function dropTargetBoilerplate(s, drop) {
-        s.on("dragover", function(event, d) {
-            event.preventDefault()
-        })
-        s.on("dragenter", function(event, d) {
-            this.classList.add("highlight")
-        })
-        s.on("dragleave", function(event, d) {
-            if (event.target === this) {
-                this.classList.remove("highlight")
-            }
-        })
-        s.on("drop", function(event, d) {
-            if (dragitem === null) {
-                return
-            }
-            event.preventDefault()
-            this.classList.remove("highlight")
-            drop.call(this, event, d)
-            dragitem = null
-            dragElement = null
-            spec.updateSolution()
-        })
-    }
-
-    function removeTier(tier) {
-        let oldMiddle = tier.previousSibling
-        if (oldMiddle.classList.contains("middle")) {
-            d3.select(oldMiddle).remove()
-        } else {
-            d3.select(tier.nextSibling).remove()
-        }
-        d3.select(tier).remove()
-    }
-
-    function makeTier(p) {
-        let tier = d3.create("div")
-            .datum(p)
-            .classed("resource-tier", true)
-        dropTargetBoilerplate(tier, function(event, d) {
-            if (dragElement.parentNode !== this) {
-                let remove = spec.setPriority(dragitem, d)
-                let oldTier = dragElement.parentNode
-                this.appendChild(dragElement)
-                if (remove) {
-                    removeTier(oldTier)
-                }
-            }
-        })
-        let resource = tier.selectAll("div")
-            .data(d => d.getRecipeArray())
-            .join("div")
-        resource.classed("resource", true)
-            //.attr("draggable", "true")
-            .on("dragstart", function(event, d) {
-                div.classed("dragging", true)
-                dragitem = d
-                dragElement = this
-            })
-            .on("dragend", function(event, d) {
-                div.classed("dragging", false)
-            })
-        resource.append(d => d.icon.make(48))
-        return tier.node()
-    }
-
-    function makeMiddle(p) {
-        let middle = d3.create("div")
-            .datum(p)
-            .classed("middle", true)
-        dropTargetBoilerplate(middle, function(event, d) {
-            let p = spec.addPriorityBefore(d)
-            let oldTier = dragElement.parentNode
-            div.node().insertBefore(makeMiddle(p), this)
-            let newTier = makeTier(p)
-            div.node().insertBefore(newTier, this)
-            let remove = spec.setPriority(dragitem, p)
-            newTier.appendChild(dragElement)
-            if (remove) {
-                removeTier(oldTier)
-            }
-        })
-        return middle.node()
-    }
-
-    let less = div.append("div")
-        .classed("resource-tier bookend", true)
-    dropTargetBoilerplate(less, function(event, d) {
-        let first = spec.priority[0]
-        let firstTier = this.nextSibling
-        let p = spec.addPriorityBefore(first)
-        let oldTier = dragElement.parentNode
-        let newTier = makeTier(p)
-        div.node().insertBefore(newTier, firstTier)
-        div.node().insertBefore(makeMiddle(first), firstTier)
-        let remove = spec.setPriority(dragitem, p)
-        newTier.appendChild(dragElement)
-        if (remove) {
-            removeTier(oldTier)
-        }
-    })
-    less.append("span")
-        .text("less valuable")
-    let first = true
-    for (let p of spec.priority) {
-        if (!first) {
-            div.append(() => makeMiddle(p))
-        }
-        first = false
-        div.append(() => makeTier(p))
-    }
-    let more = div.append("div")
-        .classed("resource-tier bookend", true)
-    dropTargetBoilerplate(more, function(event, d) {
-        let p = spec.addPriorityBefore(null)
-        let oldTier = dragElement.parentNode
-        div.node().insertBefore(makeMiddle(p), this)
-        let newTier = makeTier(p)
-        div.node().insertBefore(newTier, this)
-        let remove = spec.setPriority(dragitem, p)
-        newTier.appendChild(dragElement)
-        if (remove) {
-            removeTier(oldTier)
-        }
-    })
-    more.append("span")
-        .text("more valuable")
+    priorityUI = new PriorityUI()
+    priorityUI.render()
 }
 
 export function renderSettings(settings) {

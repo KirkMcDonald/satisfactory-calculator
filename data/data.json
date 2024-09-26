@@ -4604,55 +4604,81 @@
     "resources": [
         {
             "key_name": "iron-ore",
-            "category": "mineral"
+            "category": "mineral",
+            "priority": 1,
+            "weight": 307
         },
         {
             "key_name": "copper-ore",
-            "category": "mineral"
+            "category": "mineral",
+            "priority": 1,
+            "weight": 123
         },
         {
             "key_name": "coal",
-            "category": "mineral"
+            "category": "mineral",
+            "priority": 1,
+            "weight": 141
         },
         {
             "key_name": "limestone",
-            "category": "mineral"
+            "category": "mineral",
+            "priority": 1,
+            "weight": 233
         },
         {
             "key_name": "caterium-ore",
-            "category": "mineral"
+            "category": "mineral",
+            "priority": 1,
+            "weight": 50
         },
         {
             "key_name": "sulfur",
-            "category": "mineral"
+            "category": "mineral",
+            "priority": 1,
+            "weight": 36
         },
         {
             "key_name": "raw-quartz",
-            "category": "mineral"
+            "category": "mineral",
+            "priority": 1,
+            "weight": 45
         },
         {
             "key_name": "crude-oil",
-            "category": "oil"
+            "category": "oil",
+            "priority": 1,
+            "weight": 42
         },
         {
             "key_name": "bauxite",
-            "category": "mineral"
+            "category": "mineral",
+            "priority": 1,
+            "weight": 41
         },
         {
             "key_name": "uranium",
-            "category": "mineral"
+            "category": "mineral",
+            "priority": 1,
+            "weight": 7
         },
         {
             "key_name": "water",
-            "category": "water"
+            "category": "water",
+            "priority": 0,
+            "weight": 100
         },
         {
             "key_name": "nitrogen-gas",
-            "category": "water"
+            "category": "water",
+            "priority": 1,
+            "weight": 40
         },
         {
             "key_name": "sam",
-            "category": "mineral"
+            "category": "mineral",
+            "priority": 1,
+            "weight": 34
         }
     ]
 }

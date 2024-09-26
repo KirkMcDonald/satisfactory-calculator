@@ -71,7 +71,7 @@ export function formatSettings() {
 
     if (!spec.isDefaultPriority()) {
         let priority = []
-        for (let tier of spec.priority) {
+        for (let tier of spec.priority.priority) {
             let keys = []
             for (let p of tier.recipes) {
                 keys.push(p.key)

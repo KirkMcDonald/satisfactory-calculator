@@ -45,6 +45,18 @@ class Recipe {
         }
         return null
     }
+    netGives(item) {
+        let amount = this.gives(item)
+        if (amount === null) {
+            return null
+        }
+        for (let ing of this.ingredients) {
+            if (ing.item === item) {
+                return amount.sub(ing.amount)
+            }
+        }
+        return amount
+    }
     isResource() {
         return false
     }
@@ -102,8 +114,10 @@ function makeRecipe(data, items, d) {
 }
 
 class ResourceRecipe extends Recipe {
-    constructor(item, category) {
+    constructor(item, category, priority, weight) {
         super(item.key, item.name, category, zero, [], [new Ingredient(item, one)])
+        this.defaultPriority = priority
+        this.defaultWeight = weight
     }
     isResource() {
         return true
@@ -114,14 +128,16 @@ export function getRecipes(data, items) {
     let recipes = new Map()
     for (let d of data.resources) {
         let item = items.get(d.key_name)
-        recipes.set(d.key_name, new ResourceRecipe(item, d.category))
+        recipes.set(d.key_name, new ResourceRecipe(item, d.category, d.priority, Rational.from_float(d.weight)))
     }
     for (let d of data.recipes) {
         recipes.set(d.key_name, makeRecipe(data, items, d))
     }
+    let hundred = Rational.from_float(100)
     for (let [itemKey, item] of items) {
         if (item.recipes.length === 0) {
-            recipes.set(itemKey, new ResourceRecipe(item, null))
+            console.log("item with no recipes:", item)
+            recipes.set(itemKey, new ResourceRecipe(item, null, 2, hundred))
         }
     }
     return recipes
