@@ -265,7 +265,7 @@ button#debug_button {
 }
 div.tab {
     display: none;
-    padding: 1em;
+    padding: 0.5em;
     background-color: var(--main);
 }
 /* visualizer */
