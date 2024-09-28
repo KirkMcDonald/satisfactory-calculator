@@ -4270,7 +4270,7 @@
             "category": "converting",
             "time": 3,
             "ingredients": [
-                ["rocket-fuel", 12],
+                ["packaged-rocket-fuel", 12],
                 ["dark-matter-crystal", 4]
             ],
             "products": [
