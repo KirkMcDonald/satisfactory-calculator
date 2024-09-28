@@ -73,8 +73,8 @@ export function formatSettings() {
         let priority = []
         for (let tier of spec.priority.priority) {
             let keys = []
-            for (let p of tier.recipes) {
-                keys.push(p.key)
+            for (let [r, w] of tier.recipes) {
+                keys.push(`${r.key}=${w.toString()}`)
             }
             priority.push(keys.join(","))
         }

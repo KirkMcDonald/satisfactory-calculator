@@ -225,10 +225,17 @@ export function solve(spec, outputs) {
     let P = cost_ratio
     for (let p of spec.priority) {
         let N = zero
-        for (let recipe of p.recipes) {
+        let maxWeight = null
+        for (let [recipe, weight] of p.recipes) {
+            if (maxWeight === null || maxWeight.less(weight)) {
+                maxWeight = weight
+            }
+        }
+        for (let [recipe, weight] of p.recipes) {
             if (recipeRows.has(recipe)) {
-                N = N.add(one)
-                A.setIndex(recipeRows.get(recipe), columns - 1, P)
+                let normalizedWeight = maxWeight.div(weight)
+                N = N.add(normalizedWeight)
+                A.setIndex(recipeRows.get(recipe), columns - 1, P.mul(normalizedWeight))
             }
         }
         if (!N.isZero()) {

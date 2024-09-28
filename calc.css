@@ -183,6 +183,10 @@ input.prec {
 }
 #resource_settings .resource {
     display: inline-block;
+    margin: 3px;
+}
+#resource_settings img.icon {
+    display: block;
 }
 #resource_settings.dragging .resource-tier > * {
     pointer-events: none;

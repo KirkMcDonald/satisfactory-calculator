@@ -12,15 +12,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 import { spec } from "./factory.js"
+import { Rational } from "./rational.js"
 
 class PriorityLevel {
     constructor() {
-        this.recipes = new Set()
+        this.recipes = new Map()
     }
     copy() {
         let p = new PriorityLevel()
-        for (let r of this.recipes) {
-            p.recipes.add(r)
+        for (let [r, w] of this.recipes) {
+            p.recipes.set(r, w)
         }
         return p
     }
@@ -28,24 +29,37 @@ class PriorityLevel {
         if (this.recipes.size !== other.recipes.size) {
             return false
         }
-        for (let r of this.recipes) {
-            if (!other.recipes.has(r)) {
+        for (let [r, w] of this.recipes) {
+            if (!other.recipes.has(r) || other.recipes.get(r) !== w) {
                 return false
             }
         }
         return true
     }
     getRecipeArray() {
-        return Array.from(this.recipes)
+        let r = Array.from(this.recipes.keys())
+        r.sort((a, b) => {
+            let x = this.recipes.get(a)
+            let y = this.recipes.get(b)
+            return y.sub(x).toFloat()
+        })
+        return r
     }
-    add(recipe) {
-        this.recipes.add(recipe)
+    add(recipe, weight) {
+        this.recipes.set(recipe, weight)
     }
     remove(recipe) {
         this.recipes.delete(recipe)
     }
     has(recipe) {
         return this.recipes.has(recipe)
+    }
+    getWeight(recipe) {
+        return this.recipes.get(recipe)
+    }
+    // Exactly the same as add(), but I feel like this deserves a distinct name.
+    setWeight(recipe, weight) {
+        this.recipes.set(recipe, weight)
     }
     isEmpty() {
         return this.recipes.size == 0
@@ -86,7 +100,7 @@ export class PriorityList {
                 while (p.priority.length < pri + 1) {
                     p.priority.push(new PriorityLevel())
                 }
-                p.priority[pri].add(recipe)
+                p.priority[pri].add(recipe, recipe.defaultWeight)
             }
         }
         return p
@@ -120,13 +134,13 @@ export class PriorityList {
                 this.priority.push(new PriorityLevel())
             }
             let p = this.priority[i]
-            for (let key of tiers[i]) {
+            for (let [key, weight] of tiers[i]) {
                 let recipe = recipes.get(key)
                 if (recipe === undefined) {
                     console.log("unknown recipe:", key)
                     continue
                 }
-                this.setPriority(recipe, p, true)
+                this.setPriority(recipe, weight, p, true)
             }
         }
         this.removeEmpty()
@@ -149,6 +163,14 @@ export class PriorityList {
         }
         return true
     }*/
+    getPriority(recipe) {
+        for (let p of this.priority) {
+            if (p.has(recipe)) {
+                return p
+            }
+        }
+        return null
+    }
     remove(recipe) {
         for (let p of this.priority) {
             if (p.has(recipe)) {
@@ -160,21 +182,27 @@ export class PriorityList {
             }
         }
     }
-    // Moves recipe to the given priority level. If the recipe's old
-    // priority is empty as a result, removes it and returns true. Returns
-    // false otherwise.
-    setPriority(recipe, priority, preserveEmpty) {
+    // Moves recipe to the given priority level. Optionally sets its weight, as
+    // well; preserves the existing weight if `weight` is null. If the recipe's
+    // old priority is empty as a result, removes it and returns true (unless
+    // preserveEmpty is given and true). Returns false otherwise.
+    setPriority(recipe, weight, priority, preserveEmpty) {
         let oldPriority = null
+        let oldWeight = null
         let i = 0
         for (; i < this.priority.length; i++) {
             let p = this.priority[i]
             if (p.has(recipe)) {
                 oldPriority = p
+                oldWeight = p.getWeight(recipe)
                 break
             }
         }
-        priority.add(recipe)
-        if (oldPriority !== null) {
+        if (weight === null) {
+            weight = oldWeight
+        }
+        priority.add(recipe, weight)
+        if (oldPriority !== null && oldPriority !== priority) {
             oldPriority.remove(recipe)
             if (!preserveEmpty && oldPriority.isEmpty()) {
                 this.priority.splice(i, 1)
@@ -182,6 +210,20 @@ export class PriorityList {
             }
         }
         return false
+    }
+    getWeight(recipe) {
+        let p = this.getPriority(recipe)
+        if (p === null) {
+            return null
+        }
+        return p.getWeight(recipe)
+    }
+    setWeight(recipe, weight) {
+        let p = this.getPriority(recipe)
+        if (p === null) {
+            return
+        }
+        p.setWeight(recipe, weight)
     }
     // Creates a new priority level immediately preceding the given one.
     // If the given priority is null, adds the new priority to the end of
@@ -210,6 +252,7 @@ export class PriorityUI {
         this.dragElement = null
 
         this.div = d3.select("#resource_settings")
+        this.elementMap = new Map()
     }
 
     render() {
@@ -225,7 +268,7 @@ export class PriorityUI {
             let newTier = self.makeTier(p)
             self.div.node().insertBefore(newTier, firstTier)
             self.div.node().insertBefore(self.makeMiddle(first), firstTier)
-            let remove = spec.priority.setPriority(self.dragitem, p)
+            let remove = spec.priority.setPriority(self.dragitem, null, p)
             newTier.appendChild(self.dragElement)
             if (remove) {
                 self.removeTier(oldTier)
@@ -249,7 +292,7 @@ export class PriorityUI {
             self.div.node().insertBefore(self.makeMiddle(p), this)
             let newTier = self.makeTier(p)
             self.div.node().insertBefore(newTier, this)
-            let remove = spec.priority.setPriority(self.dragitem, p)
+            let remove = spec.priority.setPriority(self.dragitem, null, p)
             newTier.appendChild(self.dragElement)
             if (remove) {
                 self.removeTier(oldTier)
@@ -285,6 +328,24 @@ export class PriorityUI {
         })
     }
 
+    _getWeightFromElement(resource) {
+        return spec.priority.getWeight(this.elementMap.get(resource))
+    }
+    insertSorted(tier, resource) {
+        let weight = this._getWeightFromElement(resource)
+        for (let element of tier.childNodes) {
+            if (element === resource) {
+                continue
+            }
+            let value = this._getWeightFromElement(element)
+            if (value.less(weight)) {
+                tier.insertBefore(resource, element)
+                return
+            }
+        }
+        tier.appendChild(resource)
+    }
+
     removeTier(tier) {
         let oldMiddle = tier.previousSibling
         if (oldMiddle.classList.contains("middle")) {
@@ -302,9 +363,10 @@ export class PriorityUI {
             .classed("resource-tier", true)
         this.dropTargetBoilerplate(tier, function(event, d) {
             if (self.dragElement.parentNode !== this) {
-                let remove = spec.priority.setPriority(self.dragitem, d)
+                let remove = spec.priority.setPriority(self.dragitem, null, d)
                 let oldTier = self.dragElement.parentNode
-                this.appendChild(self.dragElement)
+                //this.appendChild(self.dragElement)
+                self.insertSorted(this, self.dragElement)
                 if (remove) {
                     self.removeTier(oldTier)
                 }
@@ -324,6 +386,18 @@ export class PriorityUI {
                 self.div.classed("dragging", false)
             })
         resource.append(d => d.icon.make(48))
+        resource.append("input")
+            .attr("type", "text")
+            .attr("size", 4)
+            .attr("value", d => spec.priority.getWeight(d).toString())
+            .on("change", function(event, d) {
+                spec.priority.setWeight(d, Rational.from_string(this.value))
+                self.insertSorted(this.parentNode.parentNode, this.parentNode)
+                spec.updateSolution()
+            })
+        resource.each(function(d) {
+            self.elementMap.set(this, d)
+        })
         return tier.node()
     }
 
@@ -333,15 +407,15 @@ export class PriorityUI {
             .datum(p)
             .classed("middle", true)
         this.dropTargetBoilerplate(middle, function(event, d) {
-            let p = spec.addPriorityBefore(d)
+            let p = spec.priority.addPriorityBefore(d)
             let oldTier = self.dragElement.parentNode
-            self.div.node().insertBefore(makeMiddle(p), this)
-            let newTier = makeTier(p)
+            self.div.node().insertBefore(self.makeMiddle(p), this)
+            let newTier = self.makeTier(p)
             self.div.node().insertBefore(newTier, this)
-            let remove = spec.priority.setPriority(self.dragitem, p)
+            let remove = spec.priority.setPriority(self.dragitem, null, p)
             newTier.appendChild(self.dragElement)
             if (remove) {
-                removeTier(oldTier)
+                self.removeTier(oldTier)
             }
         })
         return middle.node()

@@ -366,10 +366,24 @@ function renderResourcePriorities(settings) {
     if (settings.has("priority")) {
         let tiers = []
         let keys = settings.get("priority").split(";")
-        for (let s of keys) {
-            tiers.push(s.split(","))
+        outer: for (let tierStr of keys) {
+            let tier = []
+            for (let pair of tierStr.split(",")) {
+                // Backward compatibility: If this is using the old format,
+                // ignore the whole thing and bail.
+                if (pair.indexOf("=") === -1) {
+                    console.log("bailing:", pair)
+                    tiers = null
+                    break outer
+                }
+                let [key, weightStr] = pair.split("=")
+                tier.push([key, Rational.from_string(weightStr)])
+            }
+            tiers.push(tier)
         }
-        spec.setPriorities(tiers)
+        if (tiers !== null) {
+            spec.setPriorities(tiers)
+        }
     }
     priorityUI = new PriorityUI()
     priorityUI.render()
