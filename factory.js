@@ -36,6 +36,8 @@ export let DEFAULT_PURITY = resourcePurities[1]
 
 export let DEFAULT_BELT = "belt1"
 
+const OVERCLOCK_POWER_EXPONENT = Math.log2(2.5)
+
 class FactorySpecification {
     constructor() {
         // Game data definitions
@@ -404,7 +406,7 @@ class FactorySpecification {
             // to the range [1.0, 2.5], any imprecision introduced by this
             // approximation is minimal (and is probably less than is present
             // in the game itself).
-            let overclockFactor = Rational.from_float(Math.pow(overclock.toFloat(), 1.6))
+            let overclockFactor = Rational.from_float(Math.pow(overclock.toFloat(), OVERCLOCK_POWER_EXPONENT))
             average = average.mul(overclockFactor)
             peak = peak.mul(overclockFactor)
         }
