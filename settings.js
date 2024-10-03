@@ -392,8 +392,8 @@ export function renderSettings(settings) {
     renderPrecisions(settings)
     renderBelts(settings)
     renderVisualizer(settings)
-    renderRecipes(settings)
     renderResources(settings)
     renderResourcePriorities(settings)
+    renderRecipes(settings)
     renderTab(settings)
 }
