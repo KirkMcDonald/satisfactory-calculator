@@ -54,8 +54,8 @@ export function formatSettings() {
     settings += targetStrings.join(",")
 
     let ignore = []
-    for (let recipe of spec.ignore) {
-        ignore.push(recipe.key)
+    for (let item of spec.ignore) {
+        ignore.push(item.key)
     }
     if (ignore.length > 0) {
         settings += "&ignore=" + ignore.join(",")
@@ -71,10 +71,10 @@ export function formatSettings() {
 
     if (!spec.isDefaultPriority()) {
         let priority = []
-        for (let tier of spec.priority.priority) {
+        for (let level of spec.priority) {
             let keys = []
-            for (let [r, w] of tier.recipes) {
-                keys.push(`${r.key}=${w.toString()}`)
+            for (let {recipe, weight} of level) {
+                keys.push(`${recipe.key}=${weight.toString()}`)
             }
             priority.push(keys.join(","))
         }

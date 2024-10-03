@@ -14,295 +14,316 @@ limitations under the License.*/
 import { spec } from "./factory.js"
 import { Rational } from "./rational.js"
 
-class PriorityLevel {
-    constructor() {
-        this.recipes = new Map()
+class Resource {
+    constructor(recipe, weight) {
+        this.level = null
+        this.recipe = recipe
+        this.weight = weight
+        let self = this
+        this.div = d3.create("div")
+        this.div.classed("resource", true)
+            //.attr("draggable", "true")
+            .on("dragstart", function(event, d) {
+                self.level.list.div.classed("dragging", true)
+                self.level.list.dragItem = self
+            })
+            .on("dragend", function(event, d) {
+                self.level.list.div.classed("dragging", false)
+            })
+        this.div.append(() => self.recipe.icon.make(48))
+        this.div.append("input")
+            .attr("type", "text")
+            .attr("size", 4)
+            .attr("value", this.weight.toString())
+            .on("change", function(event, d) {
+                self.weight = Rational.from_string(this.value)
+                self.level.insertSorted(self)
+                spec.updateSolution()
+            })
     }
-    copy() {
-        let p = new PriorityLevel()
-        for (let [r, w] of this.recipes) {
-            p.recipes.set(r, w)
+    // Removes this Resource from its current PriorityLevel. If the level is
+    // left empty as a rusult, it is removed. The Resource is then free to be
+    // inserted into a different level.
+    remove() {
+        if (this.level === null) {
+            return
         }
-        return p
+        for (let i = 0; i < this.level.resources.length; i++) {
+            let r = this.level.resources[i]
+            if (r === this) {
+                this.level.resources.splice(i, 1)
+                break
+            }
+        }
+        this.div.remove()
+        if (this.level.isEmpty()) {
+            this.level.remove()
+        }
+        this.level = null
     }
-    equal(other) {
-        if (this.recipes.size !== other.recipes.size) {
+}
+
+class PriorityLevel {
+    constructor(list) {
+        this.resources = []
+        this.middle = null
+        this.list = list
+        this.div = d3.create("div")
+            .datum(this)
+            .classed("resource-tier", true)
+        let self = this
+        list._dropTargetBoilerplate(this.div, function(event, d) {
+            if (list.dragItem.level !== self) {
+                self.insertSorted(list.dragItem)
+            }
+        })
+    }
+    [Symbol.iterator]() {
+        return this.resources[Symbol.iterator]()
+    }
+    equalMap(m) {
+        if (m.size !== this.resources.length) {
             return false
         }
-        for (let [r, w] of this.recipes) {
-            if (!other.recipes.has(r) || other.recipes.get(r) !== w) {
+        for (let {recipe, weight} of this) {
+            if (!m.has(recipe) || !m.get(recipe).equal(weight)) {
                 return false
             }
         }
         return true
     }
-    getRecipeArray() {
-        let r = Array.from(this.recipes.keys())
-        r.sort((a, b) => {
-            let x = this.recipes.get(a)
-            let y = this.recipes.get(b)
-            return y.sub(x).toFloat()
-        })
-        return r
+    has(resource) {
+        return resource.level === this
     }
-    add(recipe, weight) {
-        this.recipes.set(recipe, weight)
-    }
-    remove(recipe) {
-        this.recipes.delete(recipe)
-    }
-    has(recipe) {
-        return this.recipes.has(recipe)
-    }
-    getWeight(recipe) {
-        return this.recipes.get(recipe)
-    }
-    // Exactly the same as add(), but I feel like this deserves a distinct name.
-    setWeight(recipe, weight) {
-        this.recipes.set(recipe, weight)
+    // Removes this level (and its 'middle' divider) from the PriorityList.
+    // It is an error to call this if the level is not empty.
+    remove() {
+        if (this.resources.length !== 0) {
+            throw new Error("cannot remove non-empty PriorityLevel")
+        }
+        if (this.middle) {
+            this.middle.remove()
+            this.middle = null
+        }
+        this.div.remove()
+        this.list.removeEmptyLevels()
     }
     isEmpty() {
-        return this.recipes.size == 0
+        return this.resources.length === 0
+    }
+    // Moves the given resource to this level. Removes it from its old level.
+    // If the old level is left empty as a result, it will be removed.
+    //
+    // If the resource is already in this level, it will be re-inserted in
+    // sorted order.
+    insertSorted(resource) {
+        if (resource.level === this && this.resources.length === 1) {
+            // If it's the only resource on this level, then no re-sorting is
+            // required.
+            return
+        } else if (resource.level !== null) {
+            resource.remove()
+        }
+        resource.level = this
+        for (let i = 0; i < this.resources.length; i++) {
+            let r = this.resources[i]
+            if (r.weight.less(resource.weight)) {
+                this.resources.splice(i, 0, resource)
+                this.div.node().insertBefore(resource.div.node(), r.div.node())
+                return
+            }
+        }
+        this.resources.push(resource)
+        this.div.node().appendChild(resource.div.node())
     }
 }
 
 export class PriorityList {
     constructor() {
-        this.priority = []
-        //this.defaultPriority = null
+        this.priorities = []
+        this.dragItem = null
+        this.div = d3.select("#resource_settings")
+        this.renderEmpty()
     }
     [Symbol.iterator]() {
-        return this.priority[Symbol.iterator]()
+        return this.priorities[Symbol.iterator]()
     }
-    copy() {
-        let p = new PriorityList()
-        for (let level of this.priority) {
-            p.priority.push(level.copy())
-        }
-        return p
-    }
-    equal(other) {
-        if (this.priority.length !== other.priority.length) {
-            return false
-        }
-        for (let i=0; i < this.priority.length; i++) {
-            if (!this.priority[i].equal(other.priority[i])) {
-                return false
-            }
-        }
-        return true
-    }
-    static getDefault(recipes) {
-        let p = new PriorityList()
+    static getDefaultArray(recipe) {
+        let a = []
         for (let [recipeKey, recipe] of recipes) {
             if (recipe.isResource()) {
                 let pri = recipe.defaultPriority
-                while (p.priority.length < pri + 1) {
-                    p.priority.push(new PriorityLevel())
+                while (a.length < pri + 1) {
+                    a.push(new Map())
                 }
-                p.priority[pri].add(recipe, recipe.defaultWeight)
+                a.set(recipe, recipe.defaultWeight)
+            }
+        }
+        return a
+    }
+    static fromArray(a) {
+        let p = new PriorityList()
+        for (let m of a) {
+            let level = p.addPriorityBefore(null)
+            for (let [recipe, weight] of m) {
+                p.addRecipe(recipe, weight, level)
             }
         }
         return p
     }
-    /*static fromKeys(tiers, recipes) {
-        let p = new PriorityList()
-        for (let tier of tiers) {
-            let tierList = new PriorityLevel()
-            for (let key of tier) {
-                let recipe = recipes.get(key)
-                if (!recipe) {
-                    throw new Error("bad resource key: " + key)
-                }
-                tierList.add(recipe)
+    applyArray(a) {
+        for (let i = 0; i < a.length; i++) {
+            let m = a[i]
+            while (this.priorities.length < i + 1) {
+                this.addPriorityBefore(null)
             }
-            this.priority.push(tierList)
+            let level = this.priorities[i]
+            for (let [recipe, weight] of m) {
+                let resource = this.getResource(recipe)
+                if (resource === null) {
+                    this.addRecipe(recipe, weight, level)
+                } else {
+                    level.insertSorted(resource)
+                }
+            }
         }
+    }
+    /*makeArray() {
+        let result = []
+        for (let level of this) {
+            let levelMap = new Map()
+            for (let {recipe, weight} of level) {
+                levelMap.set(recipe, weight)
+            }
+            result.push(levelMap)
+        }
+        return result
     }*/
-    removeEmpty() {
-        let newPriority = []
-        for (let p of this.priority) {
-            if (!p.isEmpty()) {
-                newPriority.push(p)
-            }
-        }
-        this.priority = newPriority
-    }
-    applyKeys(tiers, recipes) {
-        for (let i=0; i < tiers.length; i++) {
-            while (this.priority.length < i + 1) {
-                this.priority.push(new PriorityLevel())
-            }
-            let p = this.priority[i]
-            for (let [key, weight] of tiers[i]) {
-                let recipe = recipes.get(key)
-                if (recipe === undefined) {
-                    console.log("unknown recipe:", key)
-                    continue
-                }
-                this.setPriority(recipe, weight, p, true)
-            }
-        }
-        this.removeEmpty()
-    }
-    /*isDefaultPriority() {
-        if (this.priority.length !== DEFAULT_PRIORITY.length) {
+    equalArray(a) {
+        if (a.length !== this.priorities.length) {
             return false
         }
-        for (let i = 0; i < this.priority.length; i++) {
-            let pri = this.priority[i]
-            let def = DEFAULT_PRIORITY[i]
-            if (pri.recipes.size !== def.length) {
+        for (let i = 0; i < a.length; i++) {
+            if (!this.priorities[i].equalMap(a[i])) {
                 return false
-            }
-            for (let name of def) {
-                if (!pri.has(this.resourceNameMap.get(name))) {
-                    return false
-                }
             }
         }
         return true
-    }*/
-    getPriority(recipe) {
-        for (let p of this.priority) {
-            if (p.has(recipe)) {
-                return p
-            }
-        }
-        return null
-    }
-    remove(recipe) {
-        for (let p of this.priority) {
-            if (p.has(recipe)) {
-                p.remove(recipe)
-                if (p.isEmpty()) {
-                    this.removeEmpty()
-                }
-                return
-            }
-        }
-    }
-    // Moves recipe to the given priority level. Optionally sets its weight, as
-    // well; preserves the existing weight if `weight` is null. If the recipe's
-    // old priority is empty as a result, removes it and returns true (unless
-    // preserveEmpty is given and true). Returns false otherwise.
-    setPriority(recipe, weight, priority, preserveEmpty) {
-        let oldPriority = null
-        let oldWeight = null
-        let i = 0
-        for (; i < this.priority.length; i++) {
-            let p = this.priority[i]
-            if (p.has(recipe)) {
-                oldPriority = p
-                oldWeight = p.getWeight(recipe)
-                break
-            }
-        }
-        if (weight === null) {
-            weight = oldWeight
-        }
-        priority.add(recipe, weight)
-        if (oldPriority !== null && oldPriority !== priority) {
-            oldPriority.remove(recipe)
-            if (!preserveEmpty && oldPriority.isEmpty()) {
-                this.priority.splice(i, 1)
-                return true
-            }
-        }
-        return false
-    }
-    getWeight(recipe) {
-        let p = this.getPriority(recipe)
-        if (p === null) {
-            return null
-        }
-        return p.getWeight(recipe)
-    }
-    setWeight(recipe, weight) {
-        let p = this.getPriority(recipe)
-        if (p === null) {
-            return
-        }
-        p.setWeight(recipe, weight)
     }
     // Creates a new priority level immediately preceding the given one.
     // If the given priority is null, adds the new priority to the end of
     // the priority list.
     //
     // Returns the new PriorityLevel.
-    addPriorityBefore(priority) {
-        let newPriority = new PriorityLevel()
-        if (priority === null) {
-            this.priority.push(newPriority)
+    addPriorityBefore(level) {
+        let newLevel = new PriorityLevel(this)
+        let successorNode = null
+        let isFirst = null
+        if (level === null) {
+            this.priorities.push(newLevel)
+            successorNode = this.div.node().lastChild
+            isFirst = this.priorities.length === 1
         } else {
-            for (let i = 0; i < this.priority.length; i++) {
-                if (this.priority[i] === priority) {
-                    this.priority.splice(i, 0, newPriority)
+            for (let i = 0; i < this.priorities.length; i++) {
+                if (this.priorities[i] === level) {
+                    this.priorities.splice(i, 0, newLevel)
+                    isFirst = i === 0
+                    if (isFirst) {
+                        successorNode = level.div.node()
+                    } else {
+                        successorNode = level.middle.node()
+                    }
                     break
                 }
             }
         }
-        return newPriority
+        if (!isFirst) {
+            let middle = this._makeMiddle(newLevel)
+            newLevel.middle = middle
+            this.div.node().insertBefore(middle.node(), successorNode)
+        }
+        this.div.node().insertBefore(newLevel.div.node(), successorNode)
+        if (isFirst && level !== null) {
+            let middle = this._makeMiddle(level)
+            level.middle = middle
+            this.div.node().insertBefore(middle.node(), successorNode)
+        }
+        return newLevel
     }
-}
-
-export class PriorityUI {
-    constructor() {
-        this.dragitem = null
-        this.dragElement = null
-
-        this.div = d3.select("#resource_settings")
-        this.elementMap = new Map()
+    getFirstLevel() {
+        if (this.priorities.length === 0) {
+            return null
+        }
+        return this.priorities[0]
     }
-
-    render() {
+    getLastLevel() {
+        if (this.priorities.length === 0) {
+            return null
+        }
+        return this.priorities[this.priorities.length - 1]
+    }
+    // Moves resource from its current level to the given level.
+    // If the resource's previous level is left empty as a result, it will be
+    // removed.
+    setPriority(resource, level) {
+        level.insertSorted(resource)
+    }
+    addRecipe(recipe, weight, level) {
+        let resource = new Resource(recipe, weight)
+        level.insertSorted(resource)
+    }
+    getResource(recipe) {
+        for (let level of this.priorities) {
+            for (let resource of level.resources) {
+                if (resource.recipe === recipe) {
+                    return resource
+                }
+            }
+        }
+        return null
+    }
+    getWeight(recipe) {
+        return this.getResource(recipe).weight
+    }
+    removeRecipe(recipe) {
+        let resource = this.getResource(recipe)
+        resource.remove()
+    }
+    renderEmpty() {
         let self = this
         this.div.selectAll("*").remove()
         let less = this.div.append("div")
             .classed("resource-tier bookend", true)
-        this.dropTargetBoilerplate(less, function(event, d) {
-            let first = spec.priority.priority[0]
-            let firstTier = this.nextSibling
-            let p = spec.priority.addPriorityBefore(first)
-            let oldTier = self.dragElement.parentNode
-            let newTier = self.makeTier(p)
-            self.div.node().insertBefore(newTier, firstTier)
-            self.div.node().insertBefore(self.makeMiddle(first), firstTier)
-            let remove = spec.priority.setPriority(self.dragitem, null, p)
-            newTier.appendChild(self.dragElement)
-            if (remove) {
-                self.removeTier(oldTier)
-            }
+        this._dropTargetBoilerplate(less, function(event, d) {
+            let first = self.priorities[0]
+            let p = self.addPriorityBefore(first)
+            self.setPriority(self.dragItem, p)
         })
         less.append("span")
             .text("less valuable")
-        let first = true
-        for (let p of spec.priority.priority) {
-            if (!first) {
-                this.div.append(() => self.makeMiddle(p))
-            }
-            first = false
-            this.div.append(() => self.makeTier(p))
-        }
         let more = this.div.append("div")
             .classed("resource-tier bookend", true)
-        this.dropTargetBoilerplate(more, function(event, d) {
-            let p = spec.priority.addPriorityBefore(null)
-            let oldTier = self.dragElement.parentNode
-            self.div.node().insertBefore(self.makeMiddle(p), this)
-            let newTier = self.makeTier(p)
-            self.div.node().insertBefore(newTier, this)
-            let remove = spec.priority.setPriority(self.dragitem, null, p)
-            newTier.appendChild(self.dragElement)
-            if (remove) {
-                self.removeTier(oldTier)
-            }
+        this._dropTargetBoilerplate(more, function(event, d) {
+            let p = self.addPriorityBefore(null)
+            self.setPriority(self.dragItem, p)
         })
         more.append("span")
             .text("more valuable")
     }
-
-    dropTargetBoilerplate(s, drop) {
+    removeEmptyLevels() {
+        let newLevels = []
+        for (let level of this) {
+            if (!level.isEmpty()) {
+                newLevels.push(level)
+            }
+        }
+        if (newLevels.length > 0 && newLevels[0].middle !== null) {
+            newLevels[0].middle.remove()
+            newLevels[0].middle = null
+        }
+        this.priorities = newLevels
+    }
+    _dropTargetBoilerplate(s, drop) {
         let self = this
         s.on("dragover", function(event, d) {
             event.preventDefault()
@@ -316,108 +337,26 @@ export class PriorityUI {
             }
         })
         s.on("drop", function(event, d) {
-            if (self.dragitem === null) {
+            if (self.dragItem === null) {
                 return
             }
             event.preventDefault()
             this.classList.remove("highlight")
             drop.call(this, event, d)
-            self.dragitem = null
-            self.dragElement = null
+            self.dragItem = null
             spec.updateSolution()
         })
     }
-
-    _getWeightFromElement(resource) {
-        return spec.priority.getWeight(this.elementMap.get(resource))
-    }
-    insertSorted(tier, resource) {
-        let weight = this._getWeightFromElement(resource)
-        for (let element of tier.childNodes) {
-            if (element === resource) {
-                continue
-            }
-            let value = this._getWeightFromElement(element)
-            if (value.less(weight)) {
-                tier.insertBefore(resource, element)
-                return
-            }
-        }
-        tier.appendChild(resource)
-    }
-
-    removeTier(tier) {
-        let oldMiddle = tier.previousSibling
-        if (oldMiddle.classList.contains("middle")) {
-            d3.select(oldMiddle).remove()
-        } else {
-            d3.select(tier.nextSibling).remove()
-        }
-        d3.select(tier).remove()
-    }
-
-    makeTier(p) {
-        let self = this
-        let tier = d3.create("div")
-            .datum(p)
-            .classed("resource-tier", true)
-        this.dropTargetBoilerplate(tier, function(event, d) {
-            if (self.dragElement.parentNode !== this) {
-                let remove = spec.priority.setPriority(self.dragitem, null, d)
-                let oldTier = self.dragElement.parentNode
-                //this.appendChild(self.dragElement)
-                self.insertSorted(this, self.dragElement)
-                if (remove) {
-                    self.removeTier(oldTier)
-                }
-            }
-        })
-        let resource = tier.selectAll("div")
-            .data(d => d.getRecipeArray())
-            .join("div")
-        resource.classed("resource", true)
-            //.attr("draggable", "true")
-            .on("dragstart", function(event, d) {
-                self.div.classed("dragging", true)
-                self.dragitem = d
-                self.dragElement = this
-            })
-            .on("dragend", function(event, d) {
-                self.div.classed("dragging", false)
-            })
-        resource.append(d => d.icon.make(48))
-        resource.append("input")
-            .attr("type", "text")
-            .attr("size", 4)
-            .attr("value", d => spec.priority.getWeight(d).toString())
-            .on("change", function(event, d) {
-                spec.priority.setWeight(d, Rational.from_string(this.value))
-                self.insertSorted(this.parentNode.parentNode, this.parentNode)
-                spec.updateSolution()
-            })
-        resource.each(function(d) {
-            self.elementMap.set(this, d)
-        })
-        return tier.node()
-    }
-
-    makeMiddle(p) {
+    // Creates a divider to insert before the given priority level.
+    _makeMiddle(level) {
         let self = this
         let middle = d3.create("div")
-            .datum(p)
+            .datum(level)
             .classed("middle", true)
-        this.dropTargetBoilerplate(middle, function(event, d) {
-            let p = spec.priority.addPriorityBefore(d)
-            let oldTier = self.dragElement.parentNode
-            self.div.node().insertBefore(self.makeMiddle(p), this)
-            let newTier = self.makeTier(p)
-            self.div.node().insertBefore(newTier, this)
-            let remove = spec.priority.setPriority(self.dragitem, null, p)
-            newTier.appendChild(self.dragElement)
-            if (remove) {
-                self.removeTier(oldTier)
-            }
+        this._dropTargetBoilerplate(middle, function(event, d) {
+            let p = self.addPriorityBefore(d)
+            self.setPriority(self.dragItem, p)
         })
-        return middle.node()
+        return middle
     }
 }

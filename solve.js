@@ -130,15 +130,6 @@ export function solve(spec, outputs) {
     let itemColumns = new Map()
     let recipeArray = []
     let recipeRows = new Map()
-    /*
-    // A subtlety: If all recipes for an item are disabled, we still need to
-    // include the item in the tableau. We represent this with a pseudo-recipe
-    // that produces the item at no cost, but placed at the highest-possible
-    // priority, so that any solution which does not involve it is considered
-    // first.
-    //let disabledItems = []
-    */
-    let maxPriorityRecipes = []
 
     for (let recipe of recipes) {
         recipeRows.set(recipe, recipeArray.length)
@@ -149,9 +140,6 @@ export function solve(spec, outputs) {
                 items.push(ing.item)
             }
             products.add(ing.item)
-        }
-        if (recipe.maxPriority()) {
-            maxPriorityRecipes.push(recipe)
         }
     }
     /*for (let recipe of recipes) {
@@ -226,12 +214,12 @@ export function solve(spec, outputs) {
     for (let p of spec.priority) {
         let N = zero
         let maxWeight = null
-        for (let [recipe, weight] of p.recipes) {
+        for (let {recipe, weight} of p) {
             if (maxWeight === null || maxWeight.less(weight)) {
                 maxWeight = weight
             }
         }
-        for (let [recipe, weight] of p.recipes) {
+        for (let {recipe, weight} of p) {
             if (recipeRows.has(recipe)) {
                 let normalizedWeight = maxWeight.div(weight)
                 N = N.add(normalizedWeight)
@@ -241,11 +229,6 @@ export function solve(spec, outputs) {
         if (!N.isZero()) {
             P = P.mul(cost_ratio).mul(N)
         }
-    }
-    //for (let i = recipeArray.length; i < recipeArray.length + disabledItems.length; i++) {
-    for (let recipe of maxPriorityRecipes) {
-        let i = recipeRows.get(recipe)
-        A.setIndex(i, columns - 1, P)
     }
 
     spec.lastTableau = A.copy()

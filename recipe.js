@@ -63,20 +63,22 @@ class Recipe {
     isReal() {
         return true
     }
-    maxPriority() {
+    isDisable() {
         return false
     }
 }
 
+export const DISABLED_RECIPE_PREFIX = "D-"
+
 // Pseudo-recipe representing the ex nihilo production of items with all
 // recipes disabled.
 export class DisabledRecipe {
-    constructor(item, max) {
+    constructor(item) {
+        this.key = DISABLED_RECIPE_PREFIX + item.key
         this.name = item.name
         this.category = null
         this.ingredients = []
         this.products = [new Ingredient(item, one)]
-        this.max = max
         this.icon = new Icon(this.name)
     }
     gives(item) {
@@ -93,8 +95,8 @@ export class DisabledRecipe {
     isReal() {
         return true
     }
-    maxPriority() {
-        return this.max
+    isDisable() {
+        return true
     }
 }
 

@@ -17,7 +17,7 @@ import { displayItems } from "./display.js"
 import { formatSettings } from "./fragment.js"
 import { PriorityList } from "./priority.js"
 import { Rational, zero, half, one } from "./rational.js"
-import { DisabledRecipe } from "./recipe.js"
+import { DISABLED_RECIPE_PREFIX } from "./recipe.js"
 import { solve } from "./solve.js"
 import { BuildTarget } from "./target.js"
 import { renderTotals } from "./visualize.js"
@@ -138,7 +138,7 @@ class FactorySpecification {
         this.belts = belts
         this.belt = belts.get(DEFAULT_BELT)
         this.initMinerSettings()
-        this.defaultPriority = PriorityList.getDefault(recipes)
+        this.defaultPriority = this.getDefaultPriorityArray()
         this.priority = null
     }
     setDefaultDisable() {
@@ -159,19 +159,93 @@ class FactorySpecification {
         return true
     }
     setDisable(recipe) {
+        let candidates = new Set()
+        for (let ing of recipe.products) {
+            let item = ing.item
+            if (!this.isItemDisabled(item) && !this.ignore.has(item)) {
+                candidates.add(item)
+            }
+        }
         this.disable.add(recipe)
+        for (let item of candidates) {
+            if (this.isItemDisabled(item)) {
+                let resource = this.priority.getResource(item.disableRecipe)
+                // The item might already be in the priority list due to being
+                // ignored. In this case, do nothing.
+                if (resource === null) {
+                    let level = this.priority.getLastLevel()
+                    let makeNew = true
+                    for (let r of level) {
+                        if (r.recipe.isDisable()) {
+                            makeNew = false
+                            break
+                        }
+                    }
+                    if (makeNew) {
+                        level = this.priority.addPriorityBefore(null)
+                    }
+                    let hundred = Rational.from_float(100)
+                    this.priority.addRecipe(item.disableRecipe, hundred, level)
+                }
+            }
+        }
     }
     setEnable(recipe) {
+        // Enabling this recipe could potentially remove these items'
+        // disableRecipe from the priority list. The item is only removed if it
+        // goes from being disabled to not disabled, and is not ignored.
+        //
+        // Note that enabling a recipe for an item does not inherently mean the
+        // item is not considered "disabled" in this sense. For example, if the
+        // enabled recipe is net-negative in its use of the item.
+        let candidates = new Set()
+        for (let ing of recipe.products) {
+            let item = ing.item
+            if (this.isItemDisabled(item) && !this.ignore.has(item)) {
+                candidates.add(item)
+            }
+        }
         this.disable.delete(recipe)
+        for (let item of candidates) {
+            if (!this.isItemDisabled(item)) {
+                this.priority.removeRecipe(item.disableRecipe)
+            }
+        }
+    }
+    getDefaultPriorityArray() {
+        let a = []
+        for (let [recipeKey, recipe] of this.recipes) {
+            if (recipe.isResource()) {
+                let pri = recipe.defaultPriority
+                while (a.length < pri + 1) {
+                    a.push(new Map())
+                }
+                a[pri].set(recipe, recipe.defaultWeight)
+            }
+        }
+        return a
     }
     setDefaultPriority() {
-        this.priority = this.defaultPriority.copy()
+        this.priority = PriorityList.fromArray(this.defaultPriority)
     }
     setPriorities(tiers) {
-        this.priority.applyKeys(tiers, this.recipes)
+        let a = []
+        for (let tier of tiers) {
+            let m = new Map()
+            for (let [recipeKey, weight] of tier) {
+                let recipe = this.recipes.get(recipeKey)
+                if (recipe === undefined && recipeKey.startsWith(DISABLED_RECIPE_PREFIX)) {
+                    let itemKey = recipeKey.slice(DISABLED_RECIPE_PREFIX.length)
+                    recipe = this.items.get(itemKey).disableRecipe
+                }
+                m.set(recipe, weight)
+            }
+            a.push(m)
+        }
+        this.priority.applyArray(a)
     }
     isDefaultPriority() {
-        return this.priority.equal(this.defaultPriority)
+        return this.priority.equalArray(this.defaultPriority)
     }
     initMinerSettings() {
         this.minerSettings = new Map()
@@ -195,6 +269,25 @@ class FactorySpecification {
         }
         return recipes
     }
+    // Returns whether the current item requires the use of its DisabledRecipe
+    // as a consequence of its recipes being disabled. (It may still require it
+    // as a consequence of the item being ignored, independent of this.)
+    //
+    // It's worth mentioning that this is insufficent to guarantee that no
+    // infeasible solutions exist. Catching net-negative single recipes ought
+    // to account for the most common cases, but net-negative recipe loops are
+    // still possible.
+    isItemDisabled(item) {
+        for (let recipe of item.recipes) {
+            if (!this.disable.has(recipe)) {
+                let net = recipe.netGives(item)
+                if (net && zero.less(net)) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
     getRecipes(item) {
         let recipes = []
         for (let recipe of item.recipes) {
@@ -202,26 +295,23 @@ class FactorySpecification {
                 recipes.push(recipe)
             }
         }
-        // The logic here is complicated, but has to do with which recipes we
-        // want to be present in the solution, related to ignored items.
-        if (recipes.length === 0) {
-            let recipe = item.disableRecipe
-            if (recipe === null) {
-                recipe = new DisabledRecipe(item, true)
-                item.disableRecipe = recipe
+        // The disableRecipe's purpose is to provide an item ex nihilo, in
+        // cases where solutions are infeasible otherwise. This happens in two
+        // cases: When enough recipes have been disabled to prevent its
+        // production in any other way, and when the item is being ignored.
+        if (this.isItemDisabled(item) || this.ignore.has(item)) {
+            let result = [item.disableRecipe]
+            // Still consider any recipes which produce both this item and any
+            // other un-ignored items.
+            for (let r of recipes) {
+                for (let ing of r.products) {
+                    if (!this.ignore.has(ing.item)) {
+                        result.push(r)
+                        break
+                    }
+                }
             }
-            return [recipe]
-        }
-        if (this.ignore.has(item)) {
-            let recipe = item.ignoreRecipe
-            if (recipe === null) {
-                recipe = new DisabledRecipe(item, false)
-                item.ignoreRecipe = recipe
-            }
-            if (recipes.length !== 1 || recipes[0].products.length !== 1) {
-                return [recipe, ...recipes]
-            }
-            return [recipe]
+            return result
         }
         return recipes
     }
@@ -337,11 +427,29 @@ class FactorySpecification {
         }
         d3.select(target.element).remove()
     }
-    toggleIgnore(recipe) {
-        if (this.ignore.has(recipe)) {
-            this.ignore.delete(recipe)
+    toggleIgnore(item) {
+        if (this.ignore.has(item)) {
+            this.ignore.delete(item)
+            if (!this.isItemDisabled(item)) {
+                this.priority.removeRecipe(item.disableRecipe)
+            }
         } else {
-            this.ignore.add(recipe)
+            this.ignore.add(item)
+            if (!this.isItemDisabled(item)) {
+                let level = this.priority.getFirstLevel()
+                let makeNew = true
+                for (let r of level) {
+                    if (r.recipe.isDisable()) {
+                        makeNew = false
+                        break
+                    }
+                }
+                if (makeNew) {
+                    level = this.priority.addPriorityBefore(level)
+                }
+                let hundred = Rational.from_float(100)
+                this.priority.addRecipe(item.disableRecipe, hundred, level)
+            }
         }
     }
     solve() {

@@ -16,7 +16,6 @@ import { dropdown } from "./dropdown.js"
 import { DEFAULT_TAB, clickTab, DEFAULT_VISUALIZER, visualizerType, setVisualizerType, DEFAULT_RENDER, visualizerRender, setVisualizerRender } from "./events.js"
 import { spec, resourcePurities, DEFAULT_BELT } from "./factory.js"
 import { getRecipeGroups } from "./groups.js"
-import { PriorityUI } from "./priority.js"
 import { Rational } from "./rational.js"
 
 // There are several things going on with this control flow. Settings should
@@ -359,8 +358,6 @@ function renderResources(settings) {
 
 // resource priority
 
-let priorityUI = null
-
 function renderResourcePriorities(settings) {
     spec.setDefaultPriority()
     if (settings.has("priority")) {
@@ -385,8 +382,6 @@ function renderResourcePriorities(settings) {
             spec.setPriorities(tiers)
         }
     }
-    priorityUI = new PriorityUI()
-    priorityUI.render()
 }
 
 export function renderSettings(settings) {

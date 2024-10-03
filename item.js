@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 import { Icon } from "./icon.js"
+import { DisabledRecipe } from "./recipe.js"
 import { Totals } from "./totals.js"
 
 export class Item {
@@ -24,8 +25,7 @@ export class Item {
         this.uses = []
         this.icon = new Icon(name)
 
-        this.ignoreRecipe = null
-        this.disableRecipe = null
+        this.disableRecipe = new DisabledRecipe(this)
     }
     addRecipe(recipe) {
         this.recipes.push(recipe)
