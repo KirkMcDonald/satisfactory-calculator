@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION } from "./align.js"
 import { DEFAULT_TAB, currentTab, DEFAULT_VISUALIZER, visualizerType, DEFAULT_RENDER, visualizerRender } from "./events.js"
-import { spec, DEFAULT_PURITY, DEFAULT_BELT } from "./factory.js"
+import { spec, DEFAULT_PURITY, DEFAULT_BELT, DEFAULT_PIPE } from "./factory.js"
 import { Rational } from "./rational.js"
 
 export function formatSettings() {
@@ -32,6 +32,9 @@ export function formatSettings() {
     }
     if (spec.belt.key !== DEFAULT_BELT) {
         settings += "belt=" + spec.belt.key + "&"
+    }
+    if (spec.pipe.key !== DEFAULT_PIPE) {
+        settings += "pipe=" + spec.pipe.key + "&"
     }
     if (visualizerType !== DEFAULT_VISUALIZER) {
         settings += "vt=" + visualizerType + "&"

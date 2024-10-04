@@ -35,6 +35,7 @@ export let resourcePurities = [
 export let DEFAULT_PURITY = resourcePurities[1]
 
 export let DEFAULT_BELT = "belt1"
+export let DEFAULT_PIPE = "pipe1"
 
 const OVERCLOCK_POWER_EXPONENT = Math.log2(2.5)
 
@@ -45,6 +46,7 @@ class FactorySpecification {
         this.recipes = null
         this.buildings = null
         this.belts = null
+        this.pipes = null
 
         this.itemTiers = []
 
@@ -73,7 +75,7 @@ class FactorySpecification {
         this.lastMetadata = null
         this.lastSolution = null
     }
-    setData(items, recipes, buildings, belts) {
+    setData(items, recipes, buildings, belts, pipes) {
         this.items = items
         let tierMap = new Map()
         this.defaultDisable = new Set()
@@ -139,6 +141,8 @@ class FactorySpecification {
         }
         this.belts = belts
         this.belt = belts.get(DEFAULT_BELT)
+        this.pipes = pipes
+        this.pipe = belts.get(DEFAULT_PIPE)
         this.initMinerSettings()
         this.defaultPriority = this.getDefaultPriorityArray()
         this.priority = null
@@ -390,6 +394,9 @@ class FactorySpecification {
     }
     getBeltCount(rate) {
         return rate.div(this.belt.rate)
+    }
+    getPipeCount(rate) {
+        return rate.div(this.pipe.rate)
     }
     getPowerUsage(recipe, rate) {
         let building = this.getBuilding(recipe)

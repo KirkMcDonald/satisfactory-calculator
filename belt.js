@@ -23,9 +23,9 @@ class Belt {
     }
 }
 
-export function getBelts(data) {
+function _getBeltsImpl(d) {
     let belts = new Map()
-    for (let belt of data.belts) {
+    for (let belt of d) {
         belts.set(belt.key_name, new Belt(
             belt.key_name,
             belt.name,
@@ -33,4 +33,12 @@ export function getBelts(data) {
         ))
     }
     return belts
+}
+
+export function getBelts(data) {
+    return _getBeltsImpl(data.belts)
+}
+
+export function getPipes(data) {
+    return _getBeltsImpl(data.pipes)
 }

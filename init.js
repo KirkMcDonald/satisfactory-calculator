@@ -11,7 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
-import { getBelts } from "./belt.js"
+import { getBelts, getPipes } from "./belt.js"
 import { getBuildings } from "./building.js"
 import { spec } from "./factory.js"
 import { loadSettings } from "./fragment.js"
@@ -25,7 +25,8 @@ function loadData(settings) {
         let recipes = getRecipes(data, items)
         let buildings = getBuildings(data)
         let belts = getBelts(data)
-        spec.setData(items, recipes, buildings, belts)
+        let pipes = getPipes(data)
+        spec.setData(items, recipes, buildings, belts, pipes)
 
         renderSettings(settings)
 

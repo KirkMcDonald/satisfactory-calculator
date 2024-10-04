@@ -14,7 +14,7 @@ limitations under the License.*/
 import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION, longRateNames } from "./align.js"
 import { dropdown } from "./dropdown.js"
 import { DEFAULT_TAB, clickTab, DEFAULT_VISUALIZER, visualizerType, setVisualizerType, DEFAULT_RENDER, visualizerRender, setVisualizerRender } from "./events.js"
-import { spec, resourcePurities, DEFAULT_BELT } from "./factory.js"
+import { spec, resourcePurities, DEFAULT_BELT, DEFAULT_PIPE } from "./factory.js"
 import { getRecipeGroups } from "./groups.js"
 import { Rational } from "./rational.js"
 
@@ -153,12 +153,23 @@ function beltHandler(event, belt) {
     spec.updateSolution()
 }
 
+function pipeHandler(event, pipe) {
+    spec.pipe = pipe
+    spec.updateSolution()
+}
+
 function renderBelts(settings) {
     let beltKey = DEFAULT_BELT
     if (settings.has("belt")) {
         beltKey = settings.get("belt")
     }
     spec.belt = spec.belts.get(beltKey)
+
+    let pipeKey = DEFAULT_PIPE
+    if (settings.has("pipe")) {
+        pipeKey = settings.get("pipe")
+    }
+    spec.pipe = spec.pipes.get(pipeKey)
 
     let belts = []
     for (let [beltKey, belt] of spec.belts) {
@@ -178,6 +189,26 @@ function renderBelts(settings) {
         .on("change", beltHandler)
     beltOption.append("label")
         .attr("for", d => "belt." + d.key)
+        .append(d => d.icon.make(32))
+
+    let pipes = []
+    for (let [pipeKey, pipe] of spec.pipes) {
+        pipes.push(pipe)
+    }
+    form = d3.select("#pipe_selector")
+    form.selectAll("*").remove()
+    let pipeOption = form.selectAll("span")
+        .data(pipes)
+        .join("span")
+    pipeOption.append("input")
+        .attr("id", d => "pipe." + d.key)
+        .attr("type", "radio")
+        .attr("name", "pipe")
+        .attr("value", d => d.key)
+        .attr("checked", d => d === spec.pipe ? "" : null)
+        .on("change", pipeHandler)
+    pipeOption.append("label")
+        .attr("for", d => "pipe." + d.key)
         .append(d => d.icon.make(32))
 }
 

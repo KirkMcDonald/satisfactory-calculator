@@ -31,12 +31,25 @@
             "rate": 1200
         }
     ],
+    "pipes": [
+        {
+            "name": "Pipeline Mk.1",
+            "key_name": "pipe1",
+            "rate": 300
+        },
+        {
+            "name": "Pipeline Mk.2",
+            "key_name": "pipe2",
+            "rate": 600
+        }
+    ],
     "buildings": [
         {
             "name": "Constructor",
             "key_name": "constructor",
             "category": "crafting1",
             "power": 4,
+            "somersloop_slots": 1,
             "max": 1
         },
         {
@@ -44,6 +57,7 @@
             "key_name": "assembler",
             "category": "crafting2",
             "power": 15,
+            "somersloop_slots": 2,
             "max": 2
         },
         {
@@ -51,6 +65,7 @@
             "key_name": "manufacturer",
             "category": "crafting3",
             "power": 55,
+            "somersloop_slots": 4,
             "max": 4
         },
         {
@@ -58,6 +73,7 @@
             "key_name": "smelter",
             "category": "smelting1",
             "power": 4,
+            "somersloop_slots": 1,
             "max": 1
         },
         {
@@ -65,6 +81,7 @@
             "key_name": "foundry",
             "category": "smelting2",
             "power": 16,
+            "somersloop_slots": 2,
             "max": 2
         },
         {
@@ -72,6 +89,7 @@
             "key_name": "oil-refinery",
             "category": "refining",
             "power": 30,
+            "somersloop_slots": 2,
             "max": 1
         },
         {
@@ -79,6 +97,7 @@
             "key_name": "packager",
             "category": "packaging",
             "power": 10,
+            "somersloop_slots": null,
             "max": 2
         },
         {
@@ -86,6 +105,7 @@
             "key_name": "blender",
             "category": "blending",
             "power": 75,
+            "somersloop_slots": 4,
             "max": 4
         },
         {
@@ -93,6 +113,7 @@
             "key_name": "accelerator",
             "category": "accelerating",
             "power": 0,
+            "somersloop_slots": 4,
             "max": 3
         },
         {
@@ -100,6 +121,8 @@
             "key_name": "converter",
             "category": "converting",
             "power": 0,
+            "power_range": [100, 400],
+            "somersloop_slots": 2,
             "max": 2
         },
         {
@@ -107,6 +130,8 @@
             "key_name": "quantum-encoder",
             "category": "encoding",
             "power": 0,
+            "power_range": [0, 2000],
+            "somersloop_slots": 4,
             "max": 4
         },
         {
@@ -114,6 +139,7 @@
             "key_name": "nuclear-power-plant",
             "category": "nuke-reacting",
             "power": 0,
+            "somersloop_slots": null,
             "max": 2
         }
     ],
@@ -3063,6 +3089,7 @@
             "key_name": "plutonium-pellet",
             "category": "accelerating",
             "time": 60,
+            "power_range": [250, 750],
             "ingredients": [
                 ["non-fissile-uranium", 100],
                 ["uranium-waste", 25]
@@ -3089,6 +3116,7 @@
             "key_name": "alt-plutonium-cell",
             "category": "accelerating",
             "time": 120,
+            "power_range": [250, 750],
             "ingredients": [
                 ["non-fissile-uranium", 150],
                 ["aluminum-casing", 20]
@@ -3874,6 +3902,7 @@
             "key_name": "nuclear-pasta",
             "category": "accelerating",
             "time": 120,
+            "power_range": [500, 1500],
             "ingredients": [
                 ["copper-powder", 200],
                 ["pressure-conversion-cube", 1]
@@ -3978,6 +4007,7 @@
             "key_name": "diamonds",
             "category": "accelerating",
             "time": 2,
+            "power_range": [250, 750],
             "ingredients": [
                 ["coal", 20]
             ],
@@ -3990,6 +4020,7 @@
             "key_name": "alt-diamonds-petroleum",
             "category": "accelerating",
             "time": 2,
+            "power_range": [250, 750],
             "ingredients": [
                 ["petroleum-coke", 24]
             ],
@@ -4002,6 +4033,7 @@
             "key_name": "alt-diamonds-turbo",
             "category": "accelerating",
             "time": 3,
+            "power_range": [250, 750],
             "ingredients": [
                 ["coal", 30],
                 ["packaged-turbofuel", 2]
@@ -4015,6 +4047,7 @@
             "key_name": "alt-diamonds-oil",
             "category": "accelerating",
             "time": 3,
+            "power_range": [250, 750],
             "ingredients": [
                 ["crude-oil", 10]
             ],
@@ -4027,6 +4060,7 @@
             "key_name": "alt-diamonds-cloudy",
             "category": "accelerating",
             "time": 3,
+            "power_range": [250, 750],
             "ingredients": [
                 ["coal", 12],
                 ["limestone", 24]
@@ -4038,7 +4072,7 @@
         {
             "name": "Alternate: Pink Diamonds",
             "key_name": "alt-diamonds-pink",
-            "category": "accelerating",
+            "category": "converting",
             "time": 4,
             "ingredients": [
                 ["coal", 8],
@@ -4139,6 +4173,7 @@
             "key_name": "dark-matter-crystal",
             "category": "accelerating",
             "time": 2,
+            "power_range": [500, 1500],
             "ingredients": [
                 ["diamonds", 1],
                 ["dark-matter-residue", 5]
@@ -4152,6 +4187,7 @@
             "key_name": "alt-dark-matter-crystal",
             "category": "accelerating",
             "time": 3,
+            "power_range": [500, 1500],
             "ingredients": [
                 ["dark-matter-residue", 10]
             ],
@@ -4164,6 +4200,7 @@
             "key_name": "alt-dark-matter-trap",
             "category": "accelerating",
             "time": 2,
+            "power_range": [500, 1500],
             "ingredients": [
                 ["time-crystal", 1],
                 ["dark-matter-residue", 5]
@@ -4177,6 +4214,7 @@
             "key_name": "ficsonium",
             "category": "accelerating",
             "time": 6,
+            "power_range": [500, 1500],
             "ingredients": [
                 ["plutonium-waste", 1],
                 ["singularity-cell", 1],
