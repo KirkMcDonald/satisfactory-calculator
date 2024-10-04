@@ -163,7 +163,12 @@ function makeGraph(totals, ignore) {
 
     let links = []
     for (let {item, from, to, rate} of totals.proportionate) {
-        let beltCount = rate.div(spec.belt.rate)
+        let beltCount
+        if (item.phase === "solid") {
+            beltCount = rate.div(spec.belt.rate)
+        } else {
+            beltCount = rate.div(spec.pipe.rate)
+        }
         let extra = from.products.length > 1
         links.push(new GraphEdge(
             nodeMap.get(from),
