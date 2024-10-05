@@ -45,6 +45,7 @@ class Result {
     constructor() {
         this.recipeRates = new Map()
         this.remaining = new Map()
+        this.targets = []
     }
     add(recipe, rate) {
         let x = this.recipeRates.get(recipe) || zero
@@ -54,6 +55,9 @@ class Result {
         let x = this.remaining.get(item) || zero
         this.remaining.set(item, x.add(rate))
     }
+    unfinishedTarget(item, rate, recipe) {
+        this.targets.push({item, rate, recipe})
+    }
     combine(other) {
         for (let [recipe, rate] of other.recipeRates) {
             this.add(recipe, rate)
@@ -61,17 +65,27 @@ class Result {
         for (let [item, rate] of other.remaining) {
             this.remainder(item, rate)
         }
+        this.targets = this.targets.concat(other.targets)
     }
 }
 
-function traverse(spec, cyclic, item, rate) {
+function traverse(spec, cyclic, item, rate, forceRecipe) {
     let result = new Result()
-    let itemRecipes = spec.getRecipes(item)
-    if (itemRecipes.length > 1 || itemRecipes[0].products.length > 1 || cyclic.has(itemRecipes[0])) {
-        result.remainder(item, rate)
-        return result
+    let recipe = forceRecipe
+    if (recipe === undefined || recipe === null) {
+        let itemRecipes = spec.getRecipes(item)
+        if (itemRecipes.length > 1 || itemRecipes[0].products.length > 1 || cyclic.has(itemRecipes[0])) {
+            result.remainder(item, rate)
+            return result
+        }
+        recipe = itemRecipes[0]
+    } else {
+        if (recipe.products.length > 1 || cyclic.has(recipe)) {
+            result.remainder(item, rate)
+            result.unfinishedTarget(item, rate, recipe)
+            return result
+        }
     }
-    let recipe = itemRecipes[0]
     let gives = recipe.gives(item)
     let recipeRate = rate.div(gives)
     result.add(recipe, recipeRate)
@@ -88,8 +102,8 @@ function traverse(spec, cyclic, item, rate) {
 
 function recursiveSolve(spec, cyclic, outputs) {
     let result = new Result()
-    for (let [item, rate] of outputs) {
-        let sub = traverse(spec, cyclic, item, rate)
+    for (let {item, rate, recipe} of outputs) {
+        let sub = traverse(spec, cyclic, item, rate, recipe)
         result.combine(sub)
     }
     return result
@@ -98,7 +112,7 @@ function recursiveSolve(spec, cyclic, outputs) {
 /* Tableau layout:
 
 Columns:
-[surplus items] [tax] [recipes] [result] [cost]
+[surplus items] [pseudo] [tax] [recipes] [result] [cost]
 
 Rows:
 [recipes]
@@ -106,10 +120,15 @@ Rows:
 [result]
 */
 
-export function solve(spec, outputs) {
+export function solve(spec, fullOutputs) {
+    let outputs = new Map()
+    for (let {item, rate, recipe} of fullOutputs) {
+        rate = rate.add(outputs.get(item) || zero)
+        outputs.set(item, rate)
+    }
     let recipes = spec.getRecipeGraph(outputs)
     let cyclic = getCycleRecipes(recipes)
-    let partialSolution = recursiveSolve(spec, cyclic, outputs)
+    let partialSolution = recursiveSolve(spec, cyclic, fullOutputs)
     let solution = partialSolution.recipeRates
     spec.lastPartial = partialSolution
 
@@ -124,7 +143,7 @@ export function solve(spec, outputs) {
     recipes = spec.getRecipeGraph(partialSolution.remaining)
 
     let products = new Set()
-    let ingredients = new Set()
+    //let ingredients = new Set()
 
     let items = []
     let itemColumns = new Map()
@@ -142,6 +161,17 @@ export function solve(spec, outputs) {
             products.add(ing.item)
         }
     }
+
+    // If a build target requests a number of buildings for a recipe that is
+    // involved in a cycle, or which has multiple products, then we need to
+    // include that target in the tableau, with pseudo-items that stand in for
+    // the requested building count. We don't need any fancy math: The
+    // production amount for the corresponding real item can simply be copied.
+    for (let i = 0; i < partialSolution.targets.length; i++) {
+        let t = partialSolution.targets[i]
+        t.column = items.length + i
+    }
+
     /*for (let recipe of recipes) {
         for (let ing of recipe.ingredients) {
             if (!products.has(ing.item) && !ingredients.has(ing.item)) {
@@ -153,11 +183,11 @@ export function solve(spec, outputs) {
         }
     }*/
 
-    let columns = items.length + recipeArray.length + /*disabledItems.length +*/ 3
+    let columns = items.length + partialSolution.targets.length + recipeArray.length + /*disabledItems.length +*/ 3
     let rows = recipeArray.length + /*disabledItems.length +*/ 2
     let A = new Matrix(rows, columns)
 
-    let tax = items.length
+    let tax = items.length + partialSolution.targets.length
 
     // Set recipe inputs/outputs
     for (let i = 0; i < recipeArray.length; i++) {
@@ -172,6 +202,16 @@ export function solve(spec, outputs) {
         }
         A.setIndex(i, tax, minusOne)
         A.setIndex(i, tax + i + 1, one)
+    }
+    // Set psuedo-items corresponding to remaining building-count targets.
+    for (let i = 0; i < partialSolution.targets.length; i++) {
+        let {recipe, item, rate} = partialSolution.targets[i]
+        let row = recipeRows.get(recipe)
+        let col = items.length + i
+        let itemCol = itemColumns.get(item)
+        let product = A.index(row, itemCol)
+        A.setIndex(row, col, product)
+        A.setIndex(rows - 1, col, zero.sub(rate))
     }
     /*for (let i = 0; i < disabledItems.length; i++) {
         let row = recipeArray.length + i
@@ -246,7 +286,7 @@ export function solve(spec, outputs) {
     // Convert result to map of recipe to recipe-rate.
     //let solution = new Map()
     for (let i = 0; i < recipeArray.length; i++) {
-        let col = items.length + i + 1
+        let col = tax + i + 1
         let rate = A.index(A.rows - 1, col)
         if (zero.less(rate)) {
             let recipe = recipeArray[i]

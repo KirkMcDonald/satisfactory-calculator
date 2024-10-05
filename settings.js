@@ -52,7 +52,13 @@ function renderTargets(settings) {
             let target = spec.addTarget(itemKey)
             let type = parts[1]
             if (type === "f") {
-                target.setBuildings(parts[2])
+                let recipe = null
+                if (parts.length > 3) {
+                    let recipeKey = parts[3]
+                    recipe = spec.recipes.get(recipeKey)
+                }
+                target.setBuildings(parts[2], recipe)
+                target.displayRecipes()
             } else if (type === "r") {
                 target.setRate(parts[2])
             } else {
@@ -416,7 +422,6 @@ function renderResourcePriorities(settings) {
 }
 
 export function renderSettings(settings) {
-    renderTargets(settings)
     renderIgnore(settings)
     renderOverclock(settings)
     renderRateOptions(settings)
@@ -426,5 +431,6 @@ export function renderSettings(settings) {
     renderResources(settings)
     renderResourcePriorities(settings)
     renderRecipes(settings)
+    renderTargets(settings)
     renderTab(settings)
 }

@@ -150,7 +150,7 @@ class FactorySpecification {
     setDefaultDisable() {
         this.disable.clear()
         for (let recipe of this.defaultDisable) {
-            this.disable.add(recipe)
+            this.setDisable(recipe)
         }
     }
     isDefaultDisable() {
@@ -166,8 +166,10 @@ class FactorySpecification {
     }
     setDisable(recipe) {
         let candidates = new Set()
+        let items = new Set()
         for (let ing of recipe.products) {
             let item = ing.item
+            items.add(item)
             if (!this.isItemDisabled(item) && !this.ignore.has(item)) {
                 candidates.add(item)
             }
@@ -195,6 +197,12 @@ class FactorySpecification {
                 }
             }
         }
+        // Update build targets.
+        for (let target of this.buildTargets) {
+            if (items.has(target.item)) {
+                target.displayRecipes()
+            }
+        }
     }
     setEnable(recipe) {
         // Enabling this recipe could potentially remove these items'
@@ -205,8 +213,10 @@ class FactorySpecification {
         // item is not considered "disabled" in this sense. For example, if the
         // enabled recipe is net-negative in its use of the item.
         let candidates = new Set()
+        let items = new Set()
         for (let ing of recipe.products) {
             let item = ing.item
+            items.add(item)
             if (this.isItemDisabled(item) && !this.ignore.has(item)) {
                 candidates.add(item)
             }
@@ -215,6 +225,12 @@ class FactorySpecification {
         for (let item of candidates) {
             if (!this.isItemDisabled(item)) {
                 this.priority.removeRecipe(item.disableRecipe)
+            }
+        }
+        // Update build targets.
+        for (let target of this.buildTargets) {
+            if (items.has(target.item)) {
+                target.displayRecipes()
             }
         }
     }
@@ -341,9 +357,6 @@ class FactorySpecification {
         }
         return graph
     }
-    getRecipe(item) {
-        return item.recipes[0]
-    }
     getBuilding(recipe) {
         if (recipe.category === null) {
             return null
@@ -462,13 +475,37 @@ class FactorySpecification {
         }
     }
     solve() {
-        let outputs = new Map()
+        let outputs = []
         for (let target of this.buildTargets) {
+            let item = target.item
             let rate = target.getRate()
-            rate = rate.add(outputs.get(target.item) || zero)
-            outputs.set(target.item, rate)
+            let recipe
+            if (target.changedBuilding) {
+                recipe = target.recipe
+            } else {
+                recipe = null
+            }
+            outputs.push([item, rate, recipe])
         }
-        let totals = solve(this, outputs)
+        // JS isn't good at using tuples as Map keys/Set items, so just do this
+        // quadratically. It's fine.
+        let dedupedOutputs = []
+        outer: for (let [origItem, origRate, origRecipe] of outputs) {
+            for (let i = 0; i < dedupedOutputs.length; i++) {
+                let {item, rate, recipe} = dedupedOutputs[i]
+                if (recipe === origRecipe && item === origItem) {
+                    rate = rate.add(origRate)
+                    dedupedOutputs[i] = {item, rate, recipe}
+                    continue outer
+                }
+            }
+            dedupedOutputs.push({
+                item: origItem,
+                rate: origRate,
+                recipe: origRecipe,
+            })
+        }
+        let totals = solve(this, dedupedOutputs)
         return totals
     }
     setHash() {

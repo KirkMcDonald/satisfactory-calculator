@@ -23,6 +23,7 @@ function itemHandler(target) {
     return function(item) {
         target.itemKey = item.key
         target.item = item
+        target.displayRecipes()
         spec.updateSolution()
     }
 }
@@ -49,12 +50,16 @@ function changeRateHandler(target) {
 }
 
 let targetCount = 0
+let recipeSelectorCount = 0
 
 export class BuildTarget {
     constructor(index, itemKey, item, tiers) {
         this.index = index
         this.itemKey = itemKey
         this.item = item
+        // When item has multiple recipes.
+        this.recipe = null
+        this.defaultRecipe = null
         this.changedBuilding = true
         this.buildings = one
         this.rate = zero
@@ -96,6 +101,8 @@ export class BuildTarget {
             .text(" Buildings: ")
             .node()
 
+        this.recipeSelector = element.append("span")
+
         this.buildingInput = element.append("input")
             .on("change", changeBuildingCountHandler(this))
             .attr("type", "text")
@@ -115,20 +122,72 @@ export class BuildTarget {
             .attr("size", 5)
             .attr("title", "Enter a value to specify the rate. The number of buildings will be determined based on the rate.")
             .node()
+        this.displayRecipes()
     }
     setRateLabel() {
         this.rateLabel.textContent = " Items/" + spec.format.longRate + ": "
     }
+    displayRecipes() {
+        this.recipeSelector.selectAll("*").remove()
+        let recipes = []
+        let found = false
+        for (let recipe of this.item.recipes) {
+            if (spec.disable.has(recipe) || recipe.netGives(this.item).less(zero)) {
+                continue
+            }
+            if (recipe === this.recipe) {
+                found = true
+            }
+            recipes.push(recipe)
+        }
+        if (!found) {
+            this.recipe = null
+        }
+        if (recipes.length > 0) {
+            this.defaultRecipe = recipes[0]
+        }
+        if (recipes.length === 0) {
+            this.defaultRecipe = null
+            return
+        } else if (recipes.length === 1) {
+            this.recipe = recipes[0]
+            return
+        }
+        // If there are multiple valid recipes, render the recipe dropdown.
+        if (this.recipe === null) {
+            this.recipe = recipes[0]
+        }
+        let self = this
+        let dropdown = makeDropdown(this.recipeSelector)
+        let inputs = dropdown.selectAll("div").data(recipes).join("div")
+        let labels = addInputs(
+            inputs,
+            "target-recipe-" + recipeSelectorCount,
+            d => self.recipe === d,
+            d => {
+                self.recipe = d
+                spec.updateSolution()
+            },
+        )
+        // XXX: Alt-recipes in Satisfactory don't have icons.
+        labels.append(d => new Text(d.name))
+        recipeSelectorCount++
+        this.recipeSelector.append("span")
+            .text(" \u00d7 ")
+    }
     getRate() {
         this.setRateLabel()
         let rate = zero
-        let recipe = spec.getRecipe(this.item)
-        if (recipe.category === null && this.changedBuilding) {
+        let recipe = this.recipe
+        if ((recipe === null || recipe.category === null) && this.changedBuilding) {
             this.rateChanged()
         }
-        let baseRate = spec.getRecipeRate(recipe)
-        if (baseRate !== null) {
-            baseRate = baseRate.mul(recipe.gives(this.item))
+        let baseRate = null
+        if (recipe !== null) {
+            baseRate = spec.getRecipeRate(recipe)
+            if (baseRate !== null) {
+                baseRate = baseRate.mul(recipe.gives(this.item))
+            }
         }
         if (this.changedBuilding) {
             rate = baseRate.mul(this.buildings)
@@ -153,8 +212,9 @@ export class BuildTarget {
         this.rate = zero
         this.rateInput.value = ""
     }
-    setBuildings(count) {
+    setBuildings(count, recipe) {
         this.buildingInput.value = count
+        this.recipe = recipe
         this.buildingsChanged()
     }
     rateChanged() {

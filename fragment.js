@@ -49,6 +49,9 @@ export function formatSettings() {
         let targetString = ""
         if (target.changedBuilding) {
             targetString = `${target.itemKey}:f:${target.buildingInput.value}`
+            if (target.recipe !== null && target.recipe !== target.defaultRecipe) {
+                targetString += `:${target.recipe.key}`
+            }
         } else {
             targetString = `${target.itemKey}:r:${target.rate.mul(spec.format.rateFactor).toString()}`
         }
