@@ -24,6 +24,12 @@ function renderMatrix(d, A, m) {
         th.append(() => item.icon.make(32))
             .classed("item-icon", true)
     }
+    for (let t of m.targets) {
+        let th = header.append("th")
+        th.append(() => t.item.icon.make(32))
+        th.append(() => new Text("\u21d0"))
+        th.append(() => t.recipe.icon.make(32))
+    }
     header.append("th")
         .text("tax")
     for (let recipe of m.recipes) {

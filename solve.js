@@ -286,6 +286,7 @@ export function solve(spec, fullOutputs) {
     spec.lastMetadata = {
         "items": items,
         "recipes": recipeArray,
+        "targets": partialSolution.targets,
         //"disabledItems": disabledItems,
     }
 
