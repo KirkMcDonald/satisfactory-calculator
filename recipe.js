@@ -11,6 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
+import { spec } from "./factory.js"
 import { Icon } from "./icon.js"
 import { Rational, zero, one } from "./rational.js"
 
@@ -38,24 +39,36 @@ class Recipe {
         this.icon = new Icon(products[0].item.name, name)
     }
     gives(item) {
+        let sloopFraction = spec.getSomersloop(this)
         for (let ing of this.products) {
+            if (ing.item === item) {
+                if (!sloopFraction.isZero()) {
+                    // The prod bonus is based on the *net* output from the
+                    // recipe, not the bare yield.
+                    let net = ing.amount.sub(this.uses(item))
+                    if (net.less(zero)) {
+                        return ing.amount
+                    }
+                    return ing.amount.add(net.mul(sloopFraction))
+                }
+                return ing.amount
+            }
+        }
+        throw new Error("recipe does not give item")
+    }
+    // There's an asymmetry with gives() here: It returns zero if the recipe
+    // does not have this item as an ingredient.
+    uses(item) {
+        for (let ing of this.ingredients) {
             if (ing.item === item) {
                 return ing.amount
             }
         }
-        return null
+        return zero
     }
-    netGives(item) {
+    isNetProducer(item) {
         let amount = this.gives(item)
-        if (amount === null) {
-            return null
-        }
-        for (let ing of this.ingredients) {
-            if (ing.item === item) {
-                return amount.sub(ing.amount)
-            }
-        }
-        return amount
+        return zero.less(amount.sub(this.uses(item)))
     }
     isResource() {
         return false

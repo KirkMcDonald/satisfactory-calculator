@@ -59,6 +59,9 @@ class FactorySpecification {
         // Map recipe to overclock factor
         this.overclock = new Map()
 
+        // Map recipe to somersloop count
+        this.somersloop = new Map()
+
         this.belt = null
 
         this.ignore = new Set()
@@ -302,8 +305,7 @@ class FactorySpecification {
     isItemDisabled(item) {
         for (let recipe of item.recipes) {
             if (!this.disable.has(recipe)) {
-                let net = recipe.netGives(item)
-                if (net && zero.less(net)) {
+                if (recipe.isNetProducer(item)) {
                     return false
                 }
             }
@@ -378,6 +380,26 @@ class FactorySpecification {
             this.overclock.set(recipe, overclock)
         }
     }
+    // Returns somersloop factor as a fraction from 0 (no somersloops) to 1
+    // (all possible somersloops).
+    getSomersloop(recipe) {
+        let building = this.getBuilding(recipe)
+        if (building === null || building.maxSomersloop === null) {
+            return zero
+        }
+        let sloops = this.somersloop.get(recipe)
+        if (sloops === undefined) {
+            return zero
+        }
+        return sloops.div(building.maxSomersloop)
+    }
+    setSomersloop(recipe, count) {
+        if (count.equal(zero)) {
+            this.somersloop.delete(recipe)
+        } else {
+            this.somersloop.set(recipe, count)
+        }
+    }
     // Returns the recipe-rate at which a single building can produce a recipe.
     // Returns null for recipes that do not have a building.
     getRecipeRate(recipe) {
@@ -417,8 +439,10 @@ class FactorySpecification {
             return {average: zero, peak: zero}
         }
         let count = this.getCount(recipe, rate)
-        let average = building.power.mul(count)
-        let peak = building.power.mul(count.ceil())
+        let sloop = one.add(this.getSomersloop(recipe))
+        sloop = sloop.mul(sloop)
+        let average = building.power.mul(count).mul(sloop)
+        let peak = building.power.mul(count.ceil()).mul(sloop)
         let overclock = this.overclock.get(recipe)
         if (overclock !== undefined) {
             // The result of this exponent will typically be irrational, so

@@ -167,10 +167,10 @@ export function solve(spec, fullOutputs) {
     // include that target in the tableau, with pseudo-items that stand in for
     // the requested building count. We don't need any fancy math: The
     // production amount for the corresponding real item can simply be copied.
-    for (let i = 0; i < partialSolution.targets.length; i++) {
+    /*for (let i = 0; i < partialSolution.targets.length; i++) {
         let t = partialSolution.targets[i]
         t.column = items.length + i
-    }
+    }*/
 
     /*for (let recipe of recipes) {
         for (let ing of recipe.ingredients) {
@@ -199,6 +199,17 @@ export function solve(spec, fullOutputs) {
         for (let ing of recipe.ingredients) {
             let j = itemColumns.get(ing.item)
             A.addIndex(i, j, zero.sub(ing.amount))
+        }
+        // Apply prod bonus
+        let prodBonus = one.add(spec.getSomersloop(recipe))
+        if (one.less(prodBonus)) {
+            for (let ing of recipe.products) {
+                let j = itemColumns.get(ing.item)
+                let n = A.index(i, j)
+                if (zero.less(n)) {
+                    A.setIndex(i, j, n.mul(prodBonus))
+                }
+            }
         }
         A.setIndex(i, tax, minusOne)
         A.setIndex(i, tax + i + 1, one)

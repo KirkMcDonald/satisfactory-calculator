@@ -348,6 +348,43 @@ tr.nobuilding td.building {
 tr.noitem td.item > * {
     display: none;
 }
+td.sloopcell {
+    text-align: center;
+}
+.sloop {
+    position: relative;
+    display: inline-block;
+}
+tr.nosloop .sloop {
+    display: none;
+}
+.sloop .meter {
+    position: absolute;
+    display: block;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    backdrop-filter: grayscale(90%);
+}
+.sloop .count {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    font-size: 12px;
+    color: var(--foreground);
+    background-color: rgb(from var(--light) r g b / 50%);
+    border-top-left-radius: 4px;
+    padding-left: 2px;
+    padding-top: 2px;
+}
+.sloop .sloopclick {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
 /* breakdowns */
 .breakdown-open .breakdown-arrow {
     transform: rotate(90deg);

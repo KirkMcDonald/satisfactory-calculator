@@ -39,6 +39,19 @@ function changeOverclock(event, d) {
     spec.updateSolution()
 }
 
+function clickSloop(event, d) {
+    event.preventDefault()
+    let count = d.sloop
+    let max = d.building.maxSomersloop
+    if (count.equal(zero)) {
+        count = max
+    } else {
+        count = count.sub(one)
+    }
+    spec.setSomersloop(d.recipe, count)
+    spec.updateSolution()
+}
+
 function setlen(a, len, callback) {
     if (a.length > len) {
         a.length = len
@@ -108,9 +121,16 @@ class DisplayGroup {
             let recipe = recipes[i] || null
             let building = null
             let overclock = null
+            let sloop = null
             if (recipe !== null) {
                 building = spec.getBuilding(recipe)
                 overclock = spec.getOverclock(recipe).mul(hundred).toString()
+                if (building !== null && building.maxSomersloop !== null) {
+                    sloop = spec.somersloop.get(recipe)
+                    if (sloop === undefined) {
+                        sloop = zero
+                    }
+                }
             }
             let single = item !== null && recipe !== null && item.name === recipe.name
             let breakdown = null
@@ -122,6 +142,7 @@ class DisplayGroup {
                 recipe,
                 building,
                 overclock,
+                sloop,
                 single,
                 breakdown,
             })
@@ -170,6 +191,7 @@ export function displayItems(spec, totals) {
         new Header("belts", 2),
         new Header("buildings", 2),
         new Header("overclock", 1),
+        new Header("somersloop", 1),
         new Header("power", 1),
     ]
     let totalCols = 0
@@ -264,7 +286,24 @@ export function displayItems(spec, totals) {
             overclockCell.append("span")
                 .text("%")
 
-            // cell 10: power
+            // cell 10: somersloop
+            let sloopCell = row.append("td")
+                .classed("pad building sloopcell", true)
+                .append("div")
+                    .classed("sloop", true)
+            sloopCell.append("img")
+                .attr("src", "images/Somersloop.png")
+                .attr("width", 32)
+                .attr("height", 32)
+            sloopCell.append("div")
+                .classed("meter", true)
+            sloopCell.append("div")
+                .classed("count", true)
+            sloopCell.append("div")
+                .classed("sloopclick", true)
+                .on("click", clickSloop)
+
+            // cell 11: power
             row.append("td")
                 .classed("right-align pad building", true)
                 .append("tt")
@@ -303,6 +342,7 @@ export function displayItems(spec, totals) {
     pipeRow.selectAll("tt.belt-count")
         .text(d => spec.format.alignCount(spec.getPipeCount(totals.items.get(d.item))))
     let buildingRow = row.filter(d => d.building !== null)
+        .classed("nosloop", d => d.sloop === null)
     let buildingCell = buildingRow.selectAll("td.building-icon")
     buildingCell.selectAll("*").remove()
     let buildingExtra = buildingCell.filter(d => !d.single)
@@ -316,6 +356,14 @@ export function displayItems(spec, totals) {
         .text(d => spec.format.alignCount(spec.getCount(d.recipe, totals.rates.get(d.recipe))))
     buildingRow.selectAll("input.overclock")
         .attr("value", d => d.overclock)
+    let hundred = Rational.from_float(100)
+    let sloopRow = buildingRow.filter(d => d.sloop !== null)
+    sloopRow.selectAll(".meter")
+        .style("height", d => {
+            return one.sub(d.sloop.div(d.building.maxSomersloop)).mul(hundred).floor().toString() + "%"
+        })
+    sloopRow.selectAll(".count")
+        .text(d => `${d.sloop.toString()}/${d.building.maxSomersloop.toString()}`)
     let totalAveragePower = zero
     let totalPeakPower = zero
     buildingRow.selectAll("tt.power")

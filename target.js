@@ -132,7 +132,7 @@ export class BuildTarget {
         let recipes = []
         let found = false
         for (let recipe of this.item.recipes) {
-            if (spec.disable.has(recipe) || recipe.netGives(this.item).less(zero)) {
+            if (spec.disable.has(recipe) || !recipe.isNetProducer(this.item)) {
                 continue
             }
             if (recipe === this.recipe) {

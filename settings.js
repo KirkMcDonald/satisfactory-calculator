@@ -102,6 +102,22 @@ function renderOverclock(settings) {
     }
 }
 
+// somersloop
+
+function renderSomersloop(settings) {
+    spec.somersloop.clear()
+    let sloopSetting = settings.get("sloop")
+    if (sloopSetting !== undefined && sloopSetting !== "") {
+        let sloop = sloopSetting.split(",")
+        for (let pair of sloop) {
+            let [recipeKey, countString] = pair.split(":")
+            let recipe = spec.recipes.get(recipeKey)
+            let count = Rational.from_string(countString)
+            spec.setSomersloop(recipe, count)
+        }
+    }
+}
+
 // display rate
 
 function rateHandler() {
@@ -424,6 +440,7 @@ function renderResourcePriorities(settings) {
 export function renderSettings(settings) {
     renderIgnore(settings)
     renderOverclock(settings)
+    renderSomersloop(settings)
     renderRateOptions(settings)
     renderPrecisions(settings)
     renderBelts(settings)

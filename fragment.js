@@ -96,6 +96,14 @@ export function formatSettings() {
         settings += "&overclock=" + overclock.join(",")
     }
 
+    let sloop = []
+    for (let [recipe, count] of spec.somersloop) {
+        sloop.push(`${recipe.key}:${count.toString()}`)
+    }
+    if (sloop.length > 0) {
+        settings += "&sloop=" + sloop.join(",")
+    }
+
     let minerStrings = []
     for (let [recipe, {miner, purity}] of spec.minerSettings.entries()) {
         let miners = spec.buildings.get(recipe.category)

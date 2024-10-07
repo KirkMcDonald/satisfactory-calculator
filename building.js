@@ -15,11 +15,12 @@ import { Icon } from "./icon.js"
 import { Rational } from "./rational.js"
 
 class Building {
-    constructor(key, name, category, power, max) {
+    constructor(key, name, category, power, maxSomersloop, max) {
         this.key = key
         this.name = name
         this.category = category
         this.power = power
+        this.maxSomersloop = maxSomersloop
         this.max = max
         this.icon = new Icon(name)
     }
@@ -34,7 +35,7 @@ class Building {
 
 class Miner extends Building {
     constructor(key, name, category, power, baseRate) {
-        super(key, name, category, power, null)
+        super(key, name, category, power, null, null)
         this.baseRate = baseRate
     }
     getRecipeRate(spec, recipe) {
@@ -52,6 +53,7 @@ export function getBuildings(data) {
             d.name,
             d.category,
             Rational.from_float(d.power),
+            Rational.from_float(d.somersloop_slots),
             d.max,
         ))
     }
