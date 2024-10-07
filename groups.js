@@ -16,7 +16,7 @@ function neighbors(groupMap, group) {
     let result = new Set()
     for (let recipe of group) {
         for (let ing of recipe.ingredients) {
-            for (let subRecipe of ing.item.recipes) {
+            for (let subRecipe of ing.item.allRecipes()) {
                 if (groupMap.has(subRecipe)) {
                     result.add(groupMap.get(subRecipe))
                 }
@@ -71,7 +71,7 @@ export function getRecipeGroups(recipes) {
     }
     for (let item of items) {
         let itemRecipes = []
-        for (let recipe of item.recipes) {
+        for (let recipe of item.allRecipes()) {
             if (recipes.has(recipe)) {
                 itemRecipes.push(recipe)
             }

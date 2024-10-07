@@ -27,6 +27,9 @@ export class Item {
 
         this.disableRecipe = new DisabledRecipe(this)
     }
+    allRecipes() {
+        return this.recipes.concat([this.disableRecipe])
+    }
     addRecipe(recipe) {
         this.recipes.push(recipe)
     }
