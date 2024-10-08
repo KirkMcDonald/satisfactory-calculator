@@ -17,6 +17,7 @@ import { DEFAULT_TAB, clickTab, DEFAULT_VISUALIZER, visualizerType, setVisualize
 import { spec, resourcePurities, DEFAULT_BELT, DEFAULT_PIPE } from "./factory.js"
 import { getRecipeGroups } from "./groups.js"
 import { Rational } from "./rational.js"
+import { renderRecipe } from "./recipe.js"
 
 // There are several things going on with this control flow. Settings should
 // work like this:
@@ -253,15 +254,6 @@ function renderVisualizer(settings) {
 
 // recipe disabling
 
-function renderIngredient(ingSpan) {
-    ingSpan.classed("ingredient", true)
-        .attr("title", d => d.item.name)
-        .append(d => d.item.icon.make(32))
-    ingSpan.append("span")
-        .classed("count", true)
-        .text(d => spec.format.count(d.amount))
-}
-
 function renderRecipes(settings) {
     if (settings.has("disable")) {
         let keys = settings.get("disable").split(",")
@@ -292,7 +284,7 @@ function renderRecipes(settings) {
             .selectAll("div")
             .data(d => d)
             .join("div")
-                .classed("toggle", true)
+                .classed("toggle recipe", true)
                 .classed("selected", d => !spec.disable.has(d))
                 .attr("title", d => d.name)
                 .on("click", function(event, d) {
@@ -305,23 +297,7 @@ function renderRecipes(settings) {
                     }
                     spec.updateSolution()
                 })
-    recipe.append("span")
-        .classed("title", true)
-        .text(d => d.name)
-    recipe.append("br")
-    let productSpan = recipe.append("span")
-        .selectAll("span")
-        .data(d => d.products)
-        .join("span")
-    renderIngredient(productSpan)
-    recipe.append("span")
-        .classed("arrow", true)
-        .text("\u21d0")
-    let ingredientSpan = recipe.append("span")
-        .selectAll("span")
-        .data(d => d.ingredients)
-        .join("span")
-    renderIngredient(ingredientSpan)
+    renderRecipe(recipe)
 }
 
 // miners

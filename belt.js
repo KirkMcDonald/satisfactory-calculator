@@ -19,7 +19,19 @@ class Belt {
         this.key = key
         this.name = name
         this.rate = rate
-        this.icon = new Icon(name)
+        this.icon = new Icon(this)
+    }
+    renderTooltip() {
+        let self = this
+        let t = d3.create("div")
+            .classed("frame", true)
+        let header = t.append("h3")
+        header.append(() => self.icon.make(32, true))
+        header.append(() => new Text(self.name))
+        t.append("b")
+            .text(`Max throughput: `)
+        t.append(() => new Text(`${spec.format.rate(this.rate)}/${spec.format.longRate}`))
+        return t.node()
     }
 }
 

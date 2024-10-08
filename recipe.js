@@ -36,7 +36,7 @@ class Recipe {
         for (let ing of products) {
             ing.item.addRecipe(this)
         }
-        this.icon = new Icon(products[0].item.name, name)
+        this.icon = new Icon(this, products[0].item.name)
     }
     gives(item) {
         let sloopFraction = spec.getSomersloop(this)
@@ -79,6 +79,43 @@ class Recipe {
     isDisable() {
         return false
     }
+    renderTooltip() {
+        let t = d3.create("div")
+            .classed("frame recipe", true)
+            .datum(this)
+        renderRecipe(t)
+        return t.node()
+    }
+}
+
+function renderIngredient(ingSpan) {
+    ingSpan.classed("ingredient", true)
+        .attr("title", d => d.item.name)
+        .append(d => d.item.icon.make(32))
+    ingSpan.append("span")
+        .classed("count", true)
+        .text(d => spec.format.count(d.amount))
+}
+
+export function renderRecipe(div) {
+    div.classed("recipe", true)
+    div.append("span")
+        .classed("title", true)
+        .text(d => d.name)
+    div.append("br")
+    let productSpan = div.append("span")
+        .selectAll("span")
+        .data(d => d.products)
+        .join("span")
+    renderIngredient(productSpan)
+    div.append("span")
+        .classed("arrow", true)
+        .text("\u21d0")
+    let ingredientSpan = div.append("span")
+        .selectAll("span")
+        .data(d => d.ingredients)
+        .join("span")
+    renderIngredient(ingredientSpan)
 }
 
 export const DISABLED_RECIPE_PREFIX = "D-"
@@ -92,7 +129,7 @@ export class DisabledRecipe {
         this.category = null
         this.ingredients = []
         this.products = [new Ingredient(item, one)]
-        this.icon = new Icon(this.name)
+        this.icon = new Icon(this)
     }
     gives(item) {
         for (let ing of this.products) {

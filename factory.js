@@ -20,6 +20,7 @@ import { Rational, zero, half, one } from "./rational.js"
 import { DISABLED_RECIPE_PREFIX } from "./recipe.js"
 import { solve } from "./solve.js"
 import { BuildTarget } from "./target.js"
+import { reapTooltips } from "./tooltip.js"
 import { renderTotals } from "./visualize.js"
 
 const DEFAULT_ITEM_KEY = "supercomputer"
@@ -539,6 +540,7 @@ class FactorySpecification {
         let totals = this.solve()
         displayItems(this, totals)
         renderTotals(totals, this.ignore)
+        reapTooltips()
         this.setHash()
 
         //renderDebug()

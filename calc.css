@@ -64,6 +64,44 @@ img.icon {
 .ignore {
     opacity: 0.3;
 }
+/* tooltips */
+div.tooltip {
+    opacity: 1;
+    z-index: 20;
+}
+div.tooltip .frame {
+    border: 2px solid var(--bright);
+    border-radius: 5px;
+    background-color: var(--dark-overlay);
+    padding: 0.4em;
+    text-align: left;
+    opacity: 1;
+    z-index: 20;
+}
+div.tooltip h3 {
+    margin: 0;
+}
+div.tooltip h3:not(:last-child) {
+    margin-bottom: 0.5em;
+}
+/*div.tooltip div.product {
+    position: relative;
+    display: inline-block;
+    background-color: var(--light);
+    margin-top: 5px;
+}
+div.tooltip div.product span.count {
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    font-size: 12px;
+    font-family: monospace;
+    color: var(--bright);
+    text-shadow: -1px -1px 0px var(--dark), -1px 1px 0px var(--dark), 1px -1px 0px var(--dark), 1px 1px 0px var(--dark);
+}
+div.tooltip img.ingredient {
+    background-color: var(--light);
+}*/
 /* build targets */
 .targetButton {
     height: 2em;
@@ -210,16 +248,16 @@ table.resource input[type="radio"] + label:hover {
 table.resource input[type="radio"]:checked + label {
     fill: var(--accent);
 }
-#recipe_toggles .title {
+.recipe .title {
     font-size: 12px;
     color: var(--foreground);
     font-style: italic;
 }
-#recipe_toggles .ingredient {
+.recipe .ingredient {
     position: relative;
     display: inline-block;
 }
-#recipe_toggles .count {
+.recipe .count {
     position: absolute;
     right: 0px;
     bottom: 0px;
@@ -230,15 +268,15 @@ table.resource input[type="radio"]:checked + label {
     padding-left: 2px;
     padding-top: 2px;
 }
-#recipe_toggles .arrow {
+.recipe .arrow {
     font-size: 16px;
 }
-#recipe_toggles .open .count {
+/*#recipe_toggles .open .count {
     font-size: 16px
 }
 #recipe_toggles .open .arrow {
     font-size: 32px;
-}
+}*/
 #recipe_toggles .toggle-row {
     margin: 1em;
 }

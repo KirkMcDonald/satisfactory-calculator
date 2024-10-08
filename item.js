@@ -23,7 +23,7 @@ export class Item {
         this.phase = phase
         this.recipes = []
         this.uses = []
-        this.icon = new Icon(name)
+        this.icon = new Icon(this)
 
         this.disableRecipe = new DisabledRecipe(this)
     }
@@ -35,6 +35,15 @@ export class Item {
     }
     addUse(recipe) {
         this.uses.push(recipe)
+    }
+    renderTooltip() {
+        let self = this
+        let t = d3.create("div")
+            .classed("frame", true)
+        let header = t.append("h3")
+        header.append(() => self.icon.make(32, true))
+        header.append(() => new Text(self.name))
+        return t.node()
     }
 }
 

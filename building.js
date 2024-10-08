@@ -22,7 +22,7 @@ class Building {
         this.power = power
         this.maxSomersloop = maxSomersloop
         this.max = max
-        this.icon = new Icon(name)
+        this.icon = new Icon(this)
     }
     getCount(spec, recipe, rate) {
         return rate.div(this.getRecipeRate(spec, recipe))
@@ -30,6 +30,18 @@ class Building {
     getRecipeRate(spec, recipe) {
         let overclock = spec.getOverclock(recipe)
         return recipe.time.reciprocate().mul(overclock)
+    }
+    renderTooltip() {
+        let self = this
+        let t = d3.create("div")
+            .classed("frame", true)
+        let header = t.append("h3")
+        header.append(() => self.icon.make(32, true))
+        header.append(() => new Text(self.name))
+        t.append("b")
+            .text(`Power usage: `)
+        t.append(() => new Text(`${this.power.toString()} MW`))
+        return t.node()
     }
 }
 
