@@ -61,7 +61,7 @@ export class Totals {
                 add(this.items, ing.item, itemRate)
             }
             for (let ing of recipe.products) {
-                let itemRate = rate.mul(ing.amount)
+                let itemRate = rate.mul(recipe.gives(ing.item))
                 set(this.producers, ing.item, recipe, itemRate)
             }
         }
