@@ -15,26 +15,35 @@ limitations under the License.*/
 let dropdownLocal = d3.local()
 
 function toggleDropdown() {
-    let dropdownNode = dropdownLocal.get(this)
+    let {dropdownNode, onOpen, onClose} = dropdownLocal.get(this)
+    let dropdown = d3.select(dropdownNode)
     let classes = dropdownNode.classList
     if (classes.contains("open")) {
         classes.remove("open")
+        if (onClose) {
+            onClose(dropdown)
+        }
     } else {
-        let dropdown = d3.select(dropdownNode)
         let selected = dropdown.select("input:checked + label")
         dropdown.select(".spacer")
             .style("width", selected.style("width"))
             .style("height", selected.style("height"))
         classes.add("open")
+        if (onOpen) {
+            onOpen(dropdown)
+        }
     }
 }
 
 // Appends a dropdown to the selection, and returns a selection over the div
 // for the content of the dropdown.
-export function makeDropdown(selector) {
+export function makeDropdown(selector, onOpen, onClose) {
     let dropdown = selector.append("div")
         .classed("dropdownWrapper", true)
-        .each(function() { dropdownLocal.set(this, this) })
+        .each(function() {
+            let dropdownNode = this
+            dropdownLocal.set(this, {dropdownNode, onOpen, onClose})
+        })
     dropdown.append("div")
         .classed("clicker", true)
         .on("click", toggleDropdown)

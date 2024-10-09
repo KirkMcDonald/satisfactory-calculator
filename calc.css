@@ -461,6 +461,16 @@ tr.nosloop .sloop {
 .breakdown-first-output td {
     border-top: 1px solid var(--light);
 }
+/* dropdowns */
+.dropdownWrapper .dropdown .search {
+    display: none;
+    width: 100%;
+    padding-left: 0.4em;
+    margin-bottom: 0.4em;
+}
+.dropdownWrapper.open .dropdown .search {
+    display: block;
+}
 /* about */
 .about-content {
     max-width: 40em;

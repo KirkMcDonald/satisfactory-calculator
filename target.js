@@ -49,6 +49,68 @@ function changeRateHandler(target) {
     }
 }
 
+function resetSearch(dropdown) {
+    dropdown.getElementsByClassName("search")[0].value = ""
+
+    // unhide all child nodes
+    let elems = dropdown.querySelectorAll("label, hr")
+    for (let elem of elems) {
+        elem.style.display = ""
+    }
+}
+
+function searchTargets(event) {
+    let search = this
+    let search_text = search.value.toLowerCase().replace(/[^a-z0-9]+/g, "")
+    let dropdown = d3.select(search.parentNode)
+
+    if (!search_text) {
+        resetSearch(search.parentNode)
+        return
+    }
+
+    // handle enter key press (select target if only one is visible)
+    if (event.keyCode === 13) {
+        let labels = dropdown.selectAll("label")
+            .filter(function() {
+                return this.style.display !== "none"
+            })
+        // don't do anything if more than one icon is visible
+        if (labels.size() === 1) {
+            let input = document.getElementById(labels.attr("for"))
+            input.checked = true
+            input.dispatchEvent(new Event("change"))
+        }
+        return
+    }
+
+    // hide non-matching labels & icons
+    let currentHrHasContent = false
+    let lastHrWithContent = null
+    dropdown.selectAll("hr, label").each(function(item) {
+        if (this.tagName === "HR") {
+            if (currentHrHasContent) {
+                this.style.display = ""
+                lastHrWithContent = this
+            } else {
+                this.style.display = "none"
+            }
+            currentHrHasContent = false
+        } else {
+            let title = item.name.toLowerCase().replace(/-/g, "")
+            if (title.indexOf(search_text) === -1) {
+                this.style.display = "none"
+            } else {
+                this.style.display = ""
+                currentHrHasContent = true
+            }
+        }
+    })
+    if (!currentHrHasContent && lastHrWithContent !== null) {
+        lastHrWithContent.style.display = "none"
+    }
+}
+
 let targetCount = 0
 let recipeSelectorCount = 0
 
@@ -73,7 +135,15 @@ export class BuildTarget {
             .on("click", removeHandler(this))
         this.element = element.node()
 
-        let dropdown = makeDropdown(element)
+        let dropdown = makeDropdown(
+            element,
+            d => d.select(".search").node().focus(),
+            d => resetSearch(d.node()),
+        )
+        dropdown.append("input")
+            .classed("search", true)
+            .attr("placeholder", "Search")
+            .on("keyup", searchTargets)
         let itemSpan = dropdown.selectAll("div")
             .data(tiers)
             .join("div")
