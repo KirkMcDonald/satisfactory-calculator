@@ -552,6 +552,10 @@ class FactorySpecification {
     // from changing the speed of a building), then we need merely re-display
     // the existing solution.
     display() {
+        // Update build target text boxes, if needed.
+        for (let target of this.buildTargets) {
+            target.getRate()
+        }
         displayItems(this, this.lastTotals)
         renderTotals(this.lastTotals, this.ignore)
         reapTooltips()
