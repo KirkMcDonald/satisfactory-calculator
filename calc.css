@@ -456,6 +456,7 @@ tr.nosloop .sloop {
 }
 .usage-arrow {
     vertical-align: middle;
+    rotate: 180deg;
 }
 .breakdown-first-output td {
     border-top: 1px solid var(--light);
