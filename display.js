@@ -36,7 +36,7 @@ function changeOverclock(event, d) {
     }
     x = x.div(hundred)
     spec.setOverclock(d.recipe, x)
-    spec.updateSolution()
+    spec.display()
 }
 
 function clickSloop(event, d) {

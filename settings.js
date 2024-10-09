@@ -123,7 +123,7 @@ function renderSomersloop(settings) {
 
 function rateHandler() {
     spec.format.setDisplayRate(this.value)
-    spec.updateSolution()
+    spec.display()
 }
 
 function renderRateOptions(settings) {
@@ -173,12 +173,12 @@ function renderPrecisions(settings) {
 
 function beltHandler(event, belt) {
     spec.belt = belt
-    spec.updateSolution()
+    spec.display()
 }
 
 function pipeHandler(event, pipe) {
     spec.pipe = pipe
-    spec.updateSolution()
+    spec.display()
 }
 
 function renderBelts(settings) {
@@ -304,7 +304,7 @@ function renderRecipes(settings) {
 
 function mineHandler(event, d) {
     spec.setMiner(d.recipe, d.miner, d.purity)
-    spec.updateSolution()
+    spec.display()
 }
 
 function renderResources(settings) {

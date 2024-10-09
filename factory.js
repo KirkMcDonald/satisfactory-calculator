@@ -74,6 +74,8 @@ class FactorySpecification {
 
         this.format = new Formatter()
 
+        this.lastTotals = null
+
         this.lastPartial = null
         this.lastTableau = null
         this.lastMetadata = null
@@ -536,10 +538,22 @@ class FactorySpecification {
     setHash() {
         window.location.hash = "#" + formatSettings()
     }
+    // The top-level calculation function. Called whenever the solution
+    // requires recalculation.
     updateSolution() {
-        let totals = this.solve()
-        displayItems(this, totals)
-        renderTotals(totals, this.ignore)
+        this.lastTotals = this.solve()
+        this.display()
+    }
+    // Re-renders the current solution, without re-computing it.
+    //
+    // This is useful for when settings can be applied without altering the
+    // solution. In general, if something would alter recipe-rate ratios, then
+    // it requires a new solution. If it only alters building counts (e.g.
+    // from changing the speed of a building), then we need merely re-display
+    // the existing solution.
+    display() {
+        displayItems(this, this.lastTotals)
+        renderTotals(this.lastTotals, this.ignore)
         reapTooltips()
         this.setHash()
 

@@ -51,12 +51,12 @@ export function toggleIgnoreHandler(event, d) {
 
 export function changeRatePrecision(event) {
     spec.format.ratePrecision = Number(event.target.value)
-    spec.updateSolution()
+    spec.display()
 }
 
 export function changeCountPrecision(event) {
     spec.format.countPrecision = Number(event.target.value)
-    spec.updateSolution()
+    spec.display()
 }
 
 // visualizer events
@@ -71,7 +71,7 @@ export function setVisualizerType(vt) {
 
 export function changeVisType(event) {
     visualizerType = event.target.value
-    spec.updateSolution()
+    spec.display()
 }
 
 export const DEFAULT_RENDER = "zoom"
@@ -84,7 +84,7 @@ export function setVisualizerRender(vr) {
 
 export function changeVisRender(event) {
     visualizerRender = event.target.value
-    spec.updateSolution()
+    spec.display()
 }
 
 // Number of SVG coordinate points per zoom level.
