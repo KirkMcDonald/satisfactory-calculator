@@ -127,6 +127,10 @@ export function formatSettings(overrideTab, targets) {
         settings += "&miners=" + minerStrings.join(",")
     }
 
+    let zip = "zip=" + window.btoa(String.fromCharCode.apply(null, pako.deflateRaw(settings)))
+    if (zip.length < settings.length) {
+        return zip
+    }
     return settings
 }
 
@@ -142,6 +146,12 @@ export function loadSettings(fragment) {
         let name = pair.substr(0, i)
         let value = pair.substr(i + 1)
         settings.set(name, value)
+    }
+    if (settings.has("zip")) {
+        let z = window.atob(settings.get("zip"))
+        let a = z.split("").map(c => c.charCodeAt(0))
+        let unzip = pako.inflateRaw(a, {to: "string"})
+        return loadSettings("#" + unzip)
     }
     return settings
 }
