@@ -376,14 +376,14 @@ svg#graph text, svg.test text {
 tr.display-row td.pad, th.pad {
     padding-left: 1em;
 }
-tr.display-row td {
+/*tr.display-row td {
     padding-top: 8px;
     padding-bottom: 8px;
-}
+}*/
 input.overclock {
     width: 4em;
 }
-tr.nobuilding td.building {
+tr.nobuilding td.building > *{
     display: none;
 }
 tr.noitem td.item > * {
@@ -425,6 +425,11 @@ tr.nosloop .sloop {
     width: 100%;
     height: 100%;
     cursor: pointer;
+}
+svg.popout {
+    color: var(--accent);
+    width: 16;
+    height: 16;
 }
 /* breakdowns */
 .breakdown-open .breakdown-arrow {

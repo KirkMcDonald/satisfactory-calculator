@@ -13,6 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 import { toggleIgnoreHandler } from "./events.js"
 import { spec } from "./factory.js"
+import { formatSettings } from "./fragment.js"
 import { getRecipeGroups, topoSort } from "./groups.js"
 import { Rational, zero, one } from "./rational.js"
 
@@ -232,6 +233,7 @@ export function displayItems(spec, totals) {
         new Header("overclock", 1),
         new Header("somersloop", 1),
         new Header("power", 1),
+        new Header("", 1),  // pop-out links
     ]
     let totalCols = 0
     for (let header of headers) {
@@ -259,6 +261,7 @@ export function displayItems(spec, totals) {
         .data(d => d.rows)
         .join(enter => {
             let row = enter.append("tr")
+                .classed("display-row", true)
             // cell 1: breakdown toggle
             row.append("td")
                 .classed("item", true)
@@ -337,6 +340,19 @@ export function displayItems(spec, totals) {
                 .append("tt")
                     .classed("power", true)
 
+            row.append("td")
+                .classed("popout pad item", true)
+                .append("a")
+                    .attr("target", "_blank")
+                    .attr("title", "Open this item in separate window.")
+                    .append("svg")
+                        .classed("popout", true)
+                        .attr("viewBox", "0 0 24 24")
+                        .attr("width", 24)
+                        .attr("height", 24)
+                        .append("use")
+                            .attr("href", "images/icons.svg#popout")
+
             return row
         })
         .classed("nobuilding", d => d.building === null)
@@ -406,6 +422,12 @@ export function displayItems(spec, totals) {
             totalAveragePower = totalAveragePower.add(average)
             totalPeakPower = totalPeakPower.add(peak)
             return spec.format.alignCount(average) + " MW"
+        })
+    itemRow.selectAll("td.popout a")
+        .attr("href", d => {
+            let rate = totals.items.get(d.item)
+            let rates = [[d.item, rate]]
+            return "#" + formatSettings("totals", rates)
         })
 
     // Render breakdowns.
@@ -482,7 +504,7 @@ export function displayItems(spec, totals) {
     let totalPower = [totalAveragePower, totalPeakPower]
     let footerRow = table.selectAll("tfoot tr")
     footerRow.select("td.power-label")
-        .attr("colspan", totalCols - 2)
+        .attr("colspan", totalCols - 3)
     footerRow.select("tt")
         .data(totalPower)
         .text(d => spec.format.alignCount(d) + " MW")

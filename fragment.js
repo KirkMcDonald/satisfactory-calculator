@@ -16,10 +16,14 @@ import { DEFAULT_TAB, currentTab, DEFAULT_VISUALIZER, visualizerType, DEFAULT_RE
 import { spec, DEFAULT_PURITY, DEFAULT_BELT, DEFAULT_PIPE } from "./factory.js"
 import { Rational } from "./rational.js"
 
-export function formatSettings() {
+export function formatSettings(overrideTab, targets) {
     let settings = ""
-    if (currentTab !== DEFAULT_TAB) {
-        settings += "tab=" + currentTab + "&"
+    let tab = currentTab
+    if (overrideTab) {
+        tab = overrideTab
+    }
+    if (tab !== DEFAULT_TAB) {
+        settings += "tab=" + tab + "&"
     }
     if (spec.format.rateName !== DEFAULT_RATE) {
         settings += "rate=" + spec.format.rateName + "&"
@@ -45,17 +49,23 @@ export function formatSettings() {
 
     settings += "items="
     let targetStrings = []
-    for (let target of spec.buildTargets) {
-        let targetString = ""
-        if (target.changedBuilding) {
-            targetString = `${target.itemKey}:f:${target.buildingInput.value}`
-            if (target.recipe !== null && target.recipe !== target.defaultRecipe) {
-                targetString += `:${target.recipe.key}`
-            }
-        } else {
-            targetString = `${target.itemKey}:r:${target.rate.mul(spec.format.rateFactor).toString()}`
+    if (targets) {
+        for (let [item, rate] of targets) {
+            targetStrings.push(`${item.key}:r:${rate.mul(spec.format.rateFactor).toString()}`)
         }
-        targetStrings.push(targetString)
+    } else {
+        for (let target of spec.buildTargets) {
+            let targetString = ""
+            if (target.changedBuilding) {
+                targetString = `${target.itemKey}:f:${target.buildingInput.value}`
+                if (target.recipe !== null && target.recipe !== target.defaultRecipe) {
+                    targetString += `:${target.recipe.key}`
+                }
+            } else {
+                targetString = `${target.itemKey}:r:${target.rate.mul(spec.format.rateFactor).toString()}`
+            }
+            targetStrings.push(targetString)
+        }
     }
     settings += targetStrings.join(",")
 
