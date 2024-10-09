@@ -370,6 +370,9 @@ svg#graph text, svg.test text {
 #totals.nosurplus .surplus {
     display: none;
 }
+.pad-right {
+    padding-right: 1em;
+}
 tr.display-row td.pad, th.pad {
     padding-left: 1em;
 }

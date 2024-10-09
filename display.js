@@ -62,11 +62,13 @@ function setlen(a, len, callback) {
 }
 
 class BreakdownRow {
-    constructor(item, destRecipe, rate, building, divider) {
+    constructor(item, destRecipe, rate, building, count, percent, divider) {
         this.item = item
         this.recipe = destRecipe
         this.rate = rate
         this.building = building
+        this.count = count
+        this.percent = percent
         this.divider = divider
     }
 }
@@ -75,20 +77,57 @@ function getBreakdown(item, totals) {
     let rows = []
     let uses = []
     let found = false
+    // The top half of the breakdown gives every ingredient used by every
+    // recipe that produced the given item. If a given ingredient is produced
+    // by a single recipe, then a building count for that recipe is given.
     for (let recipe of item.recipes) {
         if (!totals.rates.has(recipe)) {
             continue
         }
+        //let building = spec.getBuilding(recipe)
         for (let ing of recipe.ingredients) {
             let rate = totals.consumers.get(ing.item).get(recipe)
-            rows.push(new BreakdownRow(ing.item, recipe, rate, false))
+            let building = null
+            let count = null
+            let producers = totals.producers.get(ing.item)
+            if (producers.size === 1) {
+                let r = Array.from(producers.keys())[0]
+                let recipeRate = rate.div(r.gives(ing.item))
+                building = spec.getBuilding(r)
+                count = spec.getCount(r, recipeRate)
+            }
+            rows.push(new BreakdownRow(ing.item, recipe, rate, building, count, null, false))
             found = true
         }
     }
+    // The bottom half of the breakdown gives every recipe which consumes the
+    // given item. If the given item is produced by a single recipe, then the
+    // proportion of that recipe's building count is given.
+    let singleRecipe = null
+    let amount = null
+    let building = null
+    let producers = totals.producers.get(item)
+    let hundred = Rational.from_float(100)
+    if (producers.size === 1) {
+        singleRecipe = Array.from(producers.keys())[0]
+        amount = singleRecipe.gives(item)
+        building = spec.getBuilding(singleRecipe)
+    }
     for (let [recipe, rate] of totals.consumers.get(item)) {
         if (recipe.isReal()) {
-            let building = spec.getBuilding(recipe)
-            rows.push(new BreakdownRow(item, recipe, rate, building, found))
+            let count = null
+            if (singleRecipe !== null) {
+                let recipeRate = rate.div(amount)
+                count = spec.getCount(singleRecipe, recipeRate)
+            }
+            let percent = rate.div(totals.items.get(item)).mul(hundred)
+            let percentStr
+            if (percent.less(one)) {
+                percentStr = "<1%"
+            } else {
+                percentStr = percent.toDecimal(0) + "%"
+            }
+            rows.push(new BreakdownRow(item, recipe, rate, building, count, percentStr, found))
             found = false
         }
     }
@@ -401,7 +440,7 @@ export function displayItems(spec, totals) {
     row.append("td")
         .classed("right-align", true)
         .append("tt")
-            .classed("item-rate", true)
+            .classed("item-rate pad-right", true)
             .text(d => spec.format.alignRate(d.rate))
     let beltCell = row.append("td")
         //.classed("item pad", true)
@@ -411,8 +450,24 @@ export function displayItems(spec, totals) {
     row.append("td")
         //.classed("item right-align", true)
         .append("tt")
-            .classed("belt-count", true)
+            .classed("belt-count pad-right", true)
             .text(d => spec.format.alignCount(d.rate.div(spec.belt.rate)))
+    buildingCell = row.append("td")
+        .filter(d => d.building !== null)
+        .classed("building", true)
+    buildingCell.append(d => d.building.icon.make(32))
+    buildingCell.append("span")
+        .text(" \u00d7")
+    row.append("td")
+        .filter(d => d.count !== null)
+        .classed("building pad-right", true)
+        .append("tt")
+            .text(d => spec.format.alignCount(d.count))
+    row.append("td")
+        .filter(d => d.percent !== null)
+        .classed("right-align", true)
+        .append("tt")
+            .text(d => d.percent)
 
     let totalPower = [totalAveragePower, totalPeakPower]
     let footerRow = table.selectAll("tfoot tr")
