@@ -24,12 +24,13 @@
         var handlers = {}
     </script>
     <script type="module">
-        import { plusHandler, clickTab, changeRatePrecision, changeCountPrecision, changeVisType, changeVisRender } from "./events.js"
+        import { plusHandler, clickTab, changeRatePrecision, changeCountPrecision, changeFormat, changeVisType, changeVisRender } from "./events.js"
         import { init } from "./init.js"
         handlers.plusHandler = plusHandler
         handlers.clickTab = clickTab
         handlers.changeRatePrecision = changeRatePrecision
         handlers.changeCountPrecision = changeCountPrecision
+        handlers.changeFormat = changeFormat
         handlers.changeVisType = changeVisType
         handlers.changeVisRender = changeVisRender
         handlers.init = init
@@ -140,6 +141,14 @@ limitations under the License.-->
             <tr class="setting-row">
             <td class="setting-label">Count precision:</td>
             <td><input id="cprec" class="prec" type="number" value="1" min="0" onchange="handlers.changeCountPrecision(event)"></td>
+            </tr>
+
+            <tr class="setting-row">
+            <td class="setting-label top">Format values as:</td>
+            <td><form id="value_format">
+                <input id="decimal_format" type="radio" name="format" value="decimal" checked onchange="handlers.changeFormat(event)"><label for="decimal_format">Decimals</label><br />
+                <input id="rational_format" type="radio" name="format" value="rational" onchange="handlers.changeFormat(event)"><label for="rational_format">Rationals</label><br />
+            </form></td>
             </tr>
 
         <tr class="setting-section">

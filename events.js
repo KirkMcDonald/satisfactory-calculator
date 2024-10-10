@@ -59,6 +59,11 @@ export function changeCountPrecision(event) {
     spec.display()
 }
 
+export function changeFormat(event) {
+    spec.format.displayFormat = event.target.value
+    spec.display()
+}
+
 // visualizer events
 
 export const DEFAULT_VISUALIZER = "sankey"

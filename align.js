@@ -16,6 +16,7 @@ import { Rational, one } from "./rational.js"
 export const DEFAULT_RATE = "m"
 export const DEFAULT_RATE_PRECISION = 3
 export const DEFAULT_COUNT_PRECISION = 1
+export const DEFAULT_FORMAT = "decimal"
 
 let seconds = one
 let minutes = Rational.from_float(60)

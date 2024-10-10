@@ -11,7 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
-import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION, longRateNames } from "./align.js"
+import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION, DEFAULT_FORMAT, longRateNames } from "./align.js"
 import { dropdown } from "./dropdown.js"
 import { DEFAULT_TAB, clickTab, DEFAULT_VISUALIZER, visualizerType, setVisualizerType, DEFAULT_RENDER, visualizerRender, setVisualizerRender } from "./events.js"
 import { spec, resourcePurities, DEFAULT_BELT, DEFAULT_PIPE } from "./factory.js"
@@ -167,6 +167,22 @@ function renderPrecisions(settings) {
         spec.format.countPrecision = Number(settings.get("cp"))
     }
     d3.select("#cprec").attr("value", spec.format.countPrecision)
+}
+
+// value format
+
+let displayFormats = new Map([
+    ["d", "decimal"],
+    ["r", "rational"],
+])
+
+function renderValueFormat(settings) {
+    spec.format.displayFormat = DEFAULT_FORMAT
+    if (settings.has("vf")) {
+        spec.format.displayFormat = displayFormats.get(settings.get("vf"))
+    }
+    let input = document.getElementById(spec.format.displayFormat + "_format")
+    input.checked = true
 }
 
 // belt
@@ -419,6 +435,7 @@ export function renderSettings(settings) {
     renderSomersloop(settings)
     renderRateOptions(settings)
     renderPrecisions(settings)
+    renderValueFormat(settings)
     renderBelts(settings)
     renderVisualizer(settings)
     renderResources(settings)
