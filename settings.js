@@ -429,6 +429,13 @@ function renderResourcePriorities(settings) {
     }
 }
 
+// debug
+
+function renderDebugCheckbox(settings) {
+    spec.debug = settings.has("debug")
+    d3.select("#render_debug").attr("checked", spec.debug ? true : null)
+}
+
 export function renderSettings(settings) {
     renderIgnore(settings)
     renderOverclock(settings)
@@ -442,5 +449,6 @@ export function renderSettings(settings) {
     renderResourcePriorities(settings)
     renderRecipes(settings)
     renderTargets(settings)
+    renderDebugCheckbox(settings)
     renderTab(settings)
 }

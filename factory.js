@@ -80,6 +80,8 @@ class FactorySpecification {
         this.lastTableau = null
         this.lastMetadata = null
         this.lastSolution = null
+
+        this.debug = false
     }
     setData(items, recipes, buildings, belts, pipes) {
         this.items = items
@@ -561,7 +563,9 @@ class FactorySpecification {
         reapTooltips()
         this.setHash()
 
-        //renderDebug()
+        if (this.debug) {
+            renderDebug()
+        }
     }
 }
 

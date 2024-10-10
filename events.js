@@ -208,3 +208,9 @@ export function installSVGEvents(svg) {
     svg.on("mousemove", mouseMove)
     svg.on("mouseup", mouseUp)
 }
+
+// debug events
+export function toggleDebug(event) {
+    spec.debug = event.target.checked
+    spec.display()
+}

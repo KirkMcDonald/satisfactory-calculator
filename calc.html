@@ -24,7 +24,7 @@
         var handlers = {}
     </script>
     <script type="module">
-        import { plusHandler, clickTab, changeRatePrecision, changeCountPrecision, changeFormat, changeVisType, changeVisRender } from "./events.js"
+        import { plusHandler, clickTab, changeRatePrecision, changeCountPrecision, changeFormat, changeVisType, changeVisRender, toggleDebug } from "./events.js"
         import { init } from "./init.js"
         handlers.plusHandler = plusHandler
         handlers.clickTab = clickTab
@@ -33,6 +33,7 @@
         handlers.changeFormat = changeFormat
         handlers.changeVisType = changeVisType
         handlers.changeVisRender = changeVisRender
+        handlers.toggleDebug = toggleDebug
         handlers.init = init
     </script>
 </head>
@@ -198,7 +199,7 @@ limitations under the License.-->
         <div id="debug_message"></div>
 
         <label for="render_debug">Render debug tab:</label>
-        <input type="checkbox" id="render_debug" onchange="toggleDebug(event)"><br>
+        <input type="checkbox" id="render_debug" onchange="handlers.toggleDebug(event)"><br>
         Last tableau:
         <div id="debug_tableau"></div>
         Last solution:
