@@ -480,3 +480,9 @@ svg.popout {
 .about-content {
     max-width: 40em;
 }
+/* footer */
+#footer {
+    border-top: 3px solid var(--accent);
+    padding-top: 2px;
+    background-color: var(--medium);
+}
