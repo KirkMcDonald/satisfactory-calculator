@@ -265,7 +265,7 @@ function renderVisualizer(settings) {
     } else {
         setVisualizerRender(DEFAULT_RENDER)
     }
-    d3.select(`#${visualizerType}_render`).attr("checked", true)
+    d3.select(`#${visualizerRender}_render`).attr("checked", true)
 }
 
 // recipe disabling
