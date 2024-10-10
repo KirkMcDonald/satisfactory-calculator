@@ -99,7 +99,7 @@ export function renderBoxGraph({nodes, links}, ignore, callback) {
             rects.selectAll("polygon").remove()
             renderNode(rects, recipeColors, ignore)
 
-            let edgeLabels = svg.selectAll(".edge")
+            let edges = svg.selectAll(".edge")
                 .each(function() {
                     let selector = d3.select(this)
                     let d = linkMap.get(selector.select("title").text())
@@ -112,9 +112,17 @@ export function renderBoxGraph({nodes, links}, ignore, callback) {
                     text.remove()
                 })
             tab.style("display", style)
-            edgeLabels.selectAll("path, polygon")
+            edges.selectAll("path, polygon")
                 .classed("highlighter", true)
-            edgeLabels.append("rect")
+            let edgeLabel = svg.select("g").append("g")
+                .selectAll("g")
+                .data(links)
+                .join("g")
+                    .classed("edge-label", true)
+                    .each(function(d) {
+                        d.elements.push(this)
+                    })
+            edgeLabel.append("rect")
                 .classed("highlighter", true)
                 .attr("x", d => {
                     let edge = d.label
@@ -131,7 +139,7 @@ export function renderBoxGraph({nodes, links}, ignore, callback) {
                 .attr("fill", d => d3.color(colorList[itemColors.get(d.item) % 10]).darker())
                 .attr("fill-opacity", 0)
                 .attr("stroke", "none")
-            edgeLabels.append("image")
+            edgeLabel.append("image")
                 .attr("x", d => {
                     let edge = d.label
                     return edge.x - (edge.width/2) + 5
@@ -143,7 +151,7 @@ export function renderBoxGraph({nodes, links}, ignore, callback) {
                 .attr("height", iconSize)
                 .attr("width", iconSize)
                 .attr("xlink:href", d => d.item.icon.path())
-            edgeLabels.append("text")
+            edgeLabel.append("text")
                 .attr("x", d => {
                     let edge = d.label
                     return edge.x - (edge.width/2) + 5 + iconSize
