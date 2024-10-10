@@ -227,7 +227,8 @@ export function renderSankey(data, ignore) {
             .attr("y", d => d.rect.y)
             .attr("width", d => d.rect.width)
             .attr("height", d => d.rect.height)
-            //.on("click", toggleIgnoreHandler)
+            .on("mouseover", (event, d) => d.node.highlight())
+            .on("mouseleave", (event, d) => d.node.unhighlight())
             .append("title")
                 .text(d => d.node.name + (d.node.count.isZero() ? "" : `\n${d.node.building.name} \u00d7 ${spec.format.count(d.node.count)}`))
 }
