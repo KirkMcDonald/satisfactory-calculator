@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 import { DEFAULT_RATE, DEFAULT_RATE_PRECISION, DEFAULT_COUNT_PRECISION, DEFAULT_FORMAT, longRateNames } from "./align.js"
+import { colorSchemes } from "./color.js"
 import { dropdown } from "./dropdown.js"
 import { DEFAULT_TAB, clickTab, DEFAULT_VISUALIZER, visualizerType, setVisualizerType, DEFAULT_RENDER, visualizerRender, setVisualizerRender } from "./events.js"
 import { spec, resourcePurities, DEFAULT_BELT, DEFAULT_PIPE } from "./factory.js"
@@ -183,6 +184,40 @@ function renderValueFormat(settings) {
     }
     let input = document.getElementById(spec.format.displayFormat + "_format")
     input.checked = true
+}
+
+// color scheme
+export const DEFAULT_COLOR_SCHEME = "default"
+
+export let colorScheme
+
+function renderColorScheme(settings) {
+    let color = DEFAULT_COLOR_SCHEME
+    if (settings.has("c")) {
+        color = settings.get("c")
+    }
+    setColorScheme(color)
+    d3.select("#color_scheme")
+        .on("change", function(event, d) {
+            setColorScheme(event.target.value)
+            spec.display()
+        })
+        .selectAll("option")
+        .data(colorSchemes)
+        .join("option")
+            .attr("value", d => d.key)
+            .attr("selected", d => d.key === color ? true : null)
+            .text(d => d.name)
+}
+
+function setColorScheme(schemeKey) {
+    for (let scheme of colorSchemes) {
+        if (scheme.key === schemeKey) {
+            colorScheme = scheme
+            colorScheme.apply()
+            return
+        }
+    }
 }
 
 // belt
@@ -443,6 +478,7 @@ export function renderSettings(settings) {
     renderRateOptions(settings)
     renderPrecisions(settings)
     renderValueFormat(settings)
+    renderColorScheme(settings)
     renderBelts(settings)
     renderVisualizer(settings)
     renderResources(settings)
