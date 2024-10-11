@@ -120,6 +120,28 @@ function renderSomersloop(settings) {
     }
 }
 
+// title
+
+export const DEFAULT_TITLE = "Satisfactory Calculator"
+
+export function setTitle(s) {
+    if (s === "") {
+        document.title = DEFAULT_TITLE
+    } else {
+        document.title = s
+    }
+}
+
+function renderTitle(settings) {
+    let input = d3.select("#title_setting").node()
+    let title = ""
+    if (settings.has("title")) {
+        title = decodeURIComponent(settings.get("title"))
+    }
+    input.value = title
+    setTitle(title)
+}
+
 // display rate
 
 function rateHandler() {
@@ -472,6 +494,7 @@ function renderDebugCheckbox(settings) {
 }
 
 export function renderSettings(settings) {
+    renderTitle(settings)
     renderIgnore(settings)
     renderOverclock(settings)
     renderSomersloop(settings)

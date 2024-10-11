@@ -24,10 +24,11 @@
         var handlers = {}
     </script>
     <script type="module">
-        import { plusHandler, clickTab, changeRatePrecision, changeCountPrecision, changeFormat, changeVisType, changeVisRender, toggleDebug } from "./events.js"
+        import { plusHandler, clickTab, changeTitle, changeRatePrecision, changeCountPrecision, changeFormat, changeVisType, changeVisRender, toggleDebug } from "./events.js"
         import { init } from "./init.js"
         handlers.plusHandler = plusHandler
         handlers.clickTab = clickTab
+        handlers.changeTitle = changeTitle
         handlers.changeRatePrecision = changeRatePrecision
         handlers.changeCountPrecision = changeCountPrecision
         handlers.changeFormat = changeFormat
@@ -128,6 +129,11 @@ limitations under the License.-->
         <tr class="setting-section">
         <td colspan="2"><span>Display</span><hr></td>
         </tr>
+
+            <tr class="setting-row">
+            <td class="setting-label">Title:</td>
+            <td><input id="title_setting" type="text" size="30" placeholder="Satisfactory Calculator" oninput="handlers.changeTitle(event)"></td>
+            </tr>
 
             <tr class="setting-row">
             <td class="setting-label top">Display rates as:</td>

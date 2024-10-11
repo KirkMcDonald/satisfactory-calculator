@@ -13,6 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 import { spec } from "./factory.js"
 import { formatSettings } from "./fragment.js"
+import { setTitle } from "./settings.js"
 
 // build target events
 
@@ -48,6 +49,11 @@ export function toggleIgnoreHandler(event, d) {
 }
 
 // setting events
+
+export function changeTitle(event) {
+    setTitle(event.target.value)
+    spec.setHash()
+}
 
 export function changeRatePrecision(event) {
     spec.format.ratePrecision = Number(event.target.value)
